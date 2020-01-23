@@ -9,11 +9,19 @@ import 'package:args/args.dart';
 
 void main(List<String> args) {
   var parser = ArgParser();
-  parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
+  parser.addFlag('print', abbr: 'p', defaultsTo: false, negatable: false, help: 'prints all environment variables');
 
   var results = parser.parse(args);
 
-  var verbose = results['verbose'] as bool;
+  var doPrint = results['print'] as bool;
+
+  Map<String, String> envVars = Platform.environment;
+
+  if (doPrint == true)
+  {
+    envVars.forEach((key, value) => print('$key:$value'));
+    exit(0);
+  }
 
   if (results.rest.length != 1)
   {
@@ -22,7 +30,6 @@ void main(List<String> args) {
   }
   var name = results.rest[0];
 
-  Map<String, String> envVars = Platform.environment;
 
   envVars.forEach((key, value) {
    if (key.startsWith(name))
