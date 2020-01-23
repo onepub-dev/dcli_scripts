@@ -8,20 +8,17 @@ void main(List<String> args) {
 
   if (result.rest.length != 2) {
     print(
-        "You must provide a certificate name like 'brett.noojee.org' and your email address");
+        '''You must provide a certificate name like \'brett.noojee.org\' and your email address
+we current have two certs domains
+roberts.noojee.org
+brett.noojee.org
+''');
     usage();
     exit(0);
   }
 
   var certName = result.rest[0];
-
-  // ar certbot_domain = env('CERTBOT_DOMAIN');
-
-  // var parts = certbot_domain.split('.');
-
-  // var domain = parts.sublist(1).join('.');
-
-  // var challenge = '_acme-challenge.$certbot_domain';
+  var emailaddress = result.rest[1];
 
   var lets_staging = 'https://acme-staging-v02.api.letsencrypt.org/directory';
 
@@ -33,20 +30,19 @@ void main(List<String> args) {
   var user;
   var key;
 
-  setEnv('NAMECHEAP_API_USER', user);
-  setEnv('NAMECHEAP_API_KEY', key);
-  'docker run goacme/lego --server=$server --dns namecheap --email bsutton@noojee.com.au --domains "$certName" run'
-      .run;
-
-  // give the dns a moment to propagate
-  sleep(25);
+  setEnv('NAMECHEAP_API_USER', read('namecheap_username').toList()[0]);
+  setEnv('NAMECHEAP_API_KEY', read('namecheap_key').toList()[0]);
+  'docker run -v /home/bsutton/git/dscripts/lego:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'.run;
+  // 'docker run --mount 'type=volume,src= :${join(HOME,git/dscripts/lego)}:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'
+      //.run;
+  print('keys have been saved to ${join(HOME, 'git/dscripts/lego')}');
 }
 
 void usage() {
   print('''Usage:
-      certbot_renew.dart <email address> <cert doman>
+      certbot_renew.dart <cert doman> <email address> 
 
       e.g.
-        certbot_renew.dart bsutton@noojee.org bsutton.noojee.org
+        certbot_renew.dart bsutton.noojee.org bsutton@noojee.org 
       ''');
 }
