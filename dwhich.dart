@@ -1,12 +1,11 @@
 #! /usr/bin/env dshell
 import 'dart:io';
 import 'package:dshell/dshell.dart';
-import 'package:args/args.dart';
 
-/// which appname
+/// dwhich appname - searches for 'appname' on the path
 void main(List<String> args) {
   var parser = ArgParser();
-  parser..addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
+  parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
 
   var results = parser.parse(args);
 
@@ -23,10 +22,15 @@ void main(List<String> args) {
 
   for (var path in PATH) {
     if (verbose) {
-      print('Searching: ${canonicalize(path)}');
+      print('Searching: ${truepath(path)}');
+    }
+    if (!exists(path))
+    {
+	printerr(red('The path $path does not exist.'));
+ 	continue;
     }
     if (exists(join(path, command))) {
-      print(red('Found at: ${canonicalize(join(path, command))}'));
+      print(red('Found at: ${truepath(path, command)}'));
     }
   }
 }

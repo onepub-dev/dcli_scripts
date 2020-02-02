@@ -29,10 +29,12 @@ void main(List<String> args) {
     exit(1);
   }
   var name = results.rest[0];
+  name = name.toLowerCase();
 
 
   envVars.forEach((key, value) {
-   if (key.startsWith(name))
+   
+   if (key.toLowerCase().startsWith(name))
    {
      print('$key=$value');
    }
