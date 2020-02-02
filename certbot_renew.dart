@@ -2,16 +2,15 @@
 import 'dart:io';
 import 'package:dshell/dshell.dart';
 
+static const tomcatPath = '$HOME/apps/tomcat$ vi ./apache-tomcat-9.0.16/conf/server.xml';
 void main(List<String> args) {
   var parser = ArgParser();
   var result = parser.parse(args);
 
   if (result.rest.length != 2) {
     print(
-        '''You must provide a certificate name like \'brett.noojee.org\' and your email address
+        '''You must provide a certificate name like \'host.somedomain.org\' and your email address
 we current have two certs domains
-roberts.noojee.org
-brett.noojee.org
 ''');
     usage();
     exit(0);
@@ -32,9 +31,7 @@ brett.noojee.org
 
   setEnv('NAMECHEAP_API_USER', read('namecheap_username').toList()[0]);
   setEnv('NAMECHEAP_API_KEY', read('namecheap_key').toList()[0]);
-  'docker run -v /home/bsutton/git/dscripts/lego:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'.run;
-  // 'docker run --mount 'type=volume,src= :${join(HOME,git/dscripts/lego)}:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'
-      //.run;
+  'docker run -v $pwd/lego:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'.run;
   print('keys have been saved to ${join(HOME, 'git/dscripts/lego')}');
 }
 
@@ -43,6 +40,6 @@ void usage() {
       certbot_renew.dart <cert doman> <email address> 
 
       e.g.
-        certbot_renew.dart bsutton.noojee.org bsutton@noojee.org 
+        certbot_renew.dart host.somedomain.org myemail@somedomain.org 
       ''');
 }
