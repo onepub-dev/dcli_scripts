@@ -2,15 +2,16 @@
 import 'dart:io';
 import 'package:dshell/dshell.dart';
 
-static const tomcatPath = '$HOME/apps/tomcat$ vi ./apache-tomcat-9.0.16/conf/server.xml';
+//const tomcatPath = '$HOME/apps/tomcat vi ./apache-tomcat-9.0.16/conf/server.xml';
+
 void main(List<String> args) {
   var parser = ArgParser();
+  parser.addFlag("production", abbr: 'p', defaultsTo: false);
   var result = parser.parse(args);
 
   if (result.rest.length != 2) {
     print(
-        '''You must provide a certificate name like \'host.somedomain.org\' and your email address
-we current have two certs domains
+        '''You must provide a certificate name like \'host.somedomain.org\' and your email address.
 ''');
     usage();
     exit(0);
@@ -18,26 +19,44 @@ we current have two certs domains
 
   var certName = result.rest[0];
   var emailaddress = result.rest[1];
+  var useProduction = result['production'] as bool;
 
   var lets_staging = 'https://acme-staging-v02.api.letsencrypt.org/directory';
 
   var lets_production = 'https://acme-v02.api.letsencrypt.org/directory';
 
   var server = lets_staging;
+  if (useProduction) {
+    server = lets_production;
+  }
+
+  // check that docker is installed
+  if (which('docker').firstLine == null) {
+    printerr(red('You need to install docker first'));
+    exit(1);
+  }
+
+  print("Using: $server");
 
   // namecheap api user and key.
-  var user;
-  var key;
+  var username = read('namecheap_username').firstLine;
+  var key = read('namecheap_key').firstLine;
 
-  setEnv('NAMECHEAP_API_USER', read('namecheap_username').toList()[0]);
-  setEnv('NAMECHEAP_API_KEY', read('namecheap_key').toList()[0]);
-  'docker run -v $pwd/lego:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'.run;
-  print('keys have been saved to ${join(HOME, 'git/dscripts/lego')}');
+  var saveDir = join(pwd, 'certificates');
+
+  setEnv('NAMECHEAP_API_USER', username);
+  setEnv('NAMECHEAP_API_KEY', key);
+  'docker run -v $saveDir:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'
+      .run;
+  print('keys have been saved to $saveDir');
 }
 
 void usage() {
   print('''Usage:
-      certbot_renew.dart <cert doman> <email address> 
+      certbot_renew.dart [--production|-p] <cert doman> <email address> 
+
+      If the production switch isn't passed then a trial cert is obtained from the
+      staging server.
 
       e.g.
         certbot_renew.dart host.somedomain.org myemail@somedomain.org 
