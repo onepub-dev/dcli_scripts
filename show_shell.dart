@@ -15,15 +15,22 @@ import 'package:dshell/dshell.dart';
 ///
 
 void main() {
+	print('PWD: $pwd');
 	//'ps -p 0 '.run;
-	print('shell: ${Shell().getShellPID()} : ${Shell().getShellName()}');
-	print('shell path: ${Shell().getShellStartScriptPath()}');
+	var shell = ShellDetection().identifyShell();
+
+	print('shell: ${ShellDetection().getShellPID()} : ${ShellDetection().getShellName()}');
+	print('shell path: ${shell.startScriptPath}');
 
 	int cpid =pid ;
 	while(cpid != 0)
 	{
-		cpid = Shell().getParentPID(cpid);
-		print('cpid: $cpid ${Shell().getPIDName(cpid)}');
+		cpid = ProcessHelper().getParentPID(cpid);
+		if (cpid == 0)
+		{
+			break;
+		}	
+		print('cpid: $cpid ${ProcessHelper().getPIDName(cpid)}');
 	}
 
 
