@@ -105,7 +105,7 @@ void restore(ArgParser parser, List<String> args) {
 
 void uninstall() {
   // Doing a backup is likely to over write the backup
-  // with an incorrect list of extensions of the
+  // with an incorrect list if extensions of the
   // uninstall had previously failed.
   // if (confirm(prompt: 'Would you like to backup your extensions first?')) {
   //   backup();
@@ -114,18 +114,44 @@ void uninstall() {
   var current = getCurrent();
 
   var extensions = read(backupfile).toList();
+  
+  var retries = <String>[];
+  bool hasRetries = false;
 
-  for (var extension in extensions) {
-    var parts = extension.split('@');
-    var name = parts[0];
-    // var version = parts[1];
 
-    if (!current.contains(name)) {
-      print('The extension $name is not installed. Skipping');
-    } else {
-      'code --uninstall-extension $name'.run;
-    }
-  }
+  do
+  {
+	hasRetries = false;
+  	for (var extension in extensions) {
+    		var parts = extension.split('@');
+    		var name = parts[0];
+    		// var version = parts[1];
+
+    		if (!current.contains(name)) {
+      		print('The extension $name is not installed. Skipping');
+    		} else {
+			try
+			{
+      				'code --uninstall-extension $name'.run;
+			}
+			on RunException  catch (e)
+			{
+				var msg = e.message;
+				if (msg.startsWith('Cannot uninstall extension') && msg.endsWith('depends on this.'))
+				{
+					hasRetries = true;
+					retries.add(extension);
+					print('adding $name to retry list has it has a dependency');
+				}
+			}
+    		}
+  	}
+	if (hasRetries)
+	{
+		extensions = retries;
+		retries.clear();
+	}
+ } while(hasRetries);
 }
 
 void usage(ArgParser parser) {
