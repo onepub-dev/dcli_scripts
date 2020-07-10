@@ -17,6 +17,7 @@ void main(List<String> args) {
   var extensionToCommand = <String, String>{
     ".tar.gz": "tar -zxvf %F",
     '.tar': 'tar -xvf %F',
+    '.xz': 'tar -xvf %F',
     '.rar': 'unrar e %F',
     '.zip': 'unzip %F'
   };
@@ -43,9 +44,8 @@ void main(List<String> args) {
     try {
       cmd.run;
     } catch (e) {
-      if (e is DShellException &&
-          e.message.startsWith("ProcessException: Could not find")) {
-        print(e.message);
+      if (e is RunException && e.exitCode == 2){
+        printerr(red('The extractor for $tarFile $cmd could not be found.'));
       }
       // otherwise supress the exception as the command will print its own error.
     }
