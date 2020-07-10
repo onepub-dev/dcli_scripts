@@ -1,0 +1,21 @@
+FROM ubuntu:latest
+
+WORKDIR /
+
+ENV HOME=/home
+RUN touch /home/.profile
+
+RUN apt -y update
+RUN apt -y upgrade
+RUN apt -y install vim
+RUN apt -y install wget
+
+# Add the dscript utilites for our container
+ADD . /dscript
+
+
+WORKDIR /home
+
+
+CMD ["/bin/bash"]
+
