@@ -17,7 +17,7 @@ void main(List<String> args) {
     exit(1);  
   }
 
-  var pattern = results.rest[0] as String;
+  var pattern = results.rest[0];
   print('looking for $pattern');
 
   find(pattern, root:'.').forEach((file) => print(file));
