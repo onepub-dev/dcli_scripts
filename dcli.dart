@@ -1,11 +1,12 @@
 #! /usr/bin/env dshell
+
 import 'dart:io';
 import 'package:dshell/dshell.dart';
 
 ///
 /// Provides access to a clean ubuntu cli.
 ///
-/// You can run this script in to modes
+/// You can run this script in two modes
 ///
 /// dcli build - builds the docker container
 /// dcli - launches the container with your pwd mounted into /home
@@ -15,8 +16,18 @@ void main(List<String> args) {
   var parser = ArgParser();
   parser.addCommand('build');
 
-  var results = parser.parse(args);
   var build = false;
+  var results;
+
+  try {
+    results = parser.parse(args);
+  } on FormatException catch (e) {
+    printerr(e.toString());
+    print('dcli - starts the cli');
+    print('dcli build - builds the docker image');
+    print(parser.usage);
+    exit(1);
+  }
 
   if (results.command != null) {
     build = results.command.name == 'build';
@@ -28,12 +39,14 @@ void main(List<String> args) {
   if (build) {
     // mount the local dshell files from ..
     'sudo docker build -f ./dcli.docker  -t dcli:dcli .'.run;
+    print('Build complete. Run dcli to start the docker cli');
+    exit(0);
   }
 
-  print('$pwd');
+  print('Mounting host ${green(pwd)} into the container at ${orange('/home/local')}');
 
   /// mount the current working directory
-  var cmd = 'docker run -v $pwd:/home --network host -it dcli:dcli /bin/bash';
+  var cmd = 'docker run -v $pwd:/home/local --network host -it dcli:dcli /bin/bash';
 
   // print(cmd);
   cmd.run;
