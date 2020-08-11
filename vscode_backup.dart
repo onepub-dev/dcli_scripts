@@ -76,7 +76,6 @@ void restore(ArgParser parser, List<String> args) {
 
   var extensions = read(backupfile).toList();
 
-  var current = getCurrent();
 
   int line = 0;
   for (var extension in extensions) {
