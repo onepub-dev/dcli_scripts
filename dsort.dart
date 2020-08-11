@@ -1,4 +1,5 @@
 #! /usr/bin/env dshell
+
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dshell/dshell.dart';
@@ -43,18 +44,10 @@ void dsort(List<String> args) async {
 
   var parser = ArgParser()
     ..addFlag('verbose', abbr: 'v', callback: (value) => verbose = value)
-    ..addOption(fieldDelimiterOption,
-        abbr: 'f',
-        defaultsTo: ',',
-        callback: (String value) => fieldDelimiter = value)
-    ..addOption(lineDelimiterOption,
-        abbr: 'l',
-        defaultsTo: '\n',
-        callback: (String value) => lineDelimiter = value)
+    ..addOption(fieldDelimiterOption, abbr: 'f', defaultsTo: ',', callback: (String value) => fieldDelimiter = value)
+    ..addOption(lineDelimiterOption, abbr: 'l', defaultsTo: '\n', callback: (String value) => lineDelimiter = value)
     ..addMultiOption(sortkeyOption,
-        abbr: 's',
-        callback: (List<String> values) =>
-            columns.addAll(FileSort.expandColumns(values)))
+        abbr: 's', callback: (List<String> values) => columns.addAll(FileSort.expandColumns(values)))
     ..addOption(outputOption, abbr: 'o');
 
   var results = parser.parse(args);
@@ -74,7 +67,7 @@ void dsort(List<String> args) async {
 
   if (columns.isEmpty) {
     /// if no columns defined we sort by the whole line.
-    columns.add(Column(0, CaseInsensitiveSort(), SortDirection.Ascending));
+    columns.add(Column(0, CaseInsensitiveSort(), SortDirection.ascending));
   }
 
   if (verbose) {
@@ -89,13 +82,10 @@ void dsort(List<String> args) async {
   }
 
   if (exists(outputPath) && outputPath != inputPath) {
-    usageError(
-        'The output_file $outputPath already exist. Delete the file and try again.');
+    usageError('The output_file $outputPath already exist. Delete the file and try again.');
   }
 
-  var sort = FileSort(
-      inputPath, outputPath, columns, fieldDelimiter, lineDelimiter,
-      verbose: verbose);
+  var sort = FileSort(inputPath, outputPath, columns, fieldDelimiter, lineDelimiter, verbose: verbose);
 
   await sort.sort();
 }
