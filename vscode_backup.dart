@@ -47,7 +47,7 @@ void backup() {
   var extensions = 'code --show-versions --list-extensions'.toList();
 
   if (exists(backupfile)) {
-    if (!confirm(prompt: 'overwrite backupfile: $backupfile?')) {
+    if (!confirm( 'overwrite backupfile: $backupfile?')) {
       exit(1);
     }
     backupfile.truncate();

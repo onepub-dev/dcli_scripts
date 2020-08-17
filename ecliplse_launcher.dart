@@ -20,7 +20,7 @@ void main(List<String> args) {
   var i = 0;
   installs.forEach((install) => print('${++i} $install'));
 
-  var selected = ask(prompt: 'Select eclipse version to use (1-${i})');
+  var selected = ask( 'Select eclipse version to use (1-${i})');
   var index = int.tryParse(selected);
 
   var install = installs[index - 1];

@@ -16,7 +16,7 @@ Sadly however, Bob's father is a horrible tyrannical fish who hates the poor inn
 So, he wont allow his sweet beautiful child get a cat. 
 How cruel :(''');
   var horrible =
-      confirm(prompt: magenta("Do you think Bob's father is a horrible fish being."));
+      confirm( magenta("Do you think Bob's father is a horrible fish being."));
   if (horrible) {
     print(blue('''"Yay!!!!!:)
 I knew you would agree with me.
