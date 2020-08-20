@@ -22,3 +22,7 @@ show_shell.dart
 vscode_backup
 vscode_paths
 tests/editor
+.pub-cache
+.bash_history
+.bashrc
+.wget-hsts
