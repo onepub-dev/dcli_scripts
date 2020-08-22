@@ -1,6 +1,6 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 import 'dart:io';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 /// dwhich appname - searches for 'appname' on the path
 void main(List<String> args) {

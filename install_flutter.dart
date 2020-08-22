@@ -1,6 +1,6 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 void main() {
   print('https://flutter.dev/docs/get-started/install/linux');
@@ -24,10 +24,10 @@ void main() {
   var pubCachePath = '$HOME/.pub-cache/bin';
   addPathToProfile(pubCachePath);
 
-  // todo add support for 'export' to dshell which then
+  // todo add support for 'export' to dcli which then
   // pass  the environment vars to any called app
-  '$dartPath/pub global activate dshell'.run;
-  '$pubCachePath/dshell install'.run;
+  '$dartPath/pub global activate dcli'.run;
+  '$pubCachePath/dcli install'.run;
 
   var appsPath = join('$HOME', 'apps');
 

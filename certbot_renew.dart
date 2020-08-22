@@ -1,6 +1,6 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 import 'dart:io';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 //const tomcatPath = '$HOME/apps/tomcat vi ./apache-tomcat-9.0.16/conf/server.xml';
 

@@ -1,7 +1,7 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 
 import 'dart:io';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:args/args.dart';
 
 /// This script runs chown for the given path(s) making the calling user the owner.

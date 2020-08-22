@@ -1,9 +1,9 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 
 import 'dart:io';
 import 'package:args/args.dart';
-import 'package:dshell/dshell.dart';
-import 'package:dshell/src/util/file_sort.dart';
+import 'package:dcli/dcli.dart';
+import 'package:dcli/src/util/file_sort.dart';
 
 /// dsort
 ///

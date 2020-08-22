@@ -1,7 +1,7 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 
 import 'dart:io';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 ///
 /// Provides access to a clean ubuntu cli.
@@ -37,7 +37,7 @@ void main(List<String> args) {
   }
 
   if (build) {
-    // mount the local dshell files from ..
+    // mount the local dcli files from ..
     'sudo docker build -f ./dcli.docker  -t dcli:dcli .'.run;
     print('Build complete. Run dcli to start the docker cli');
     exit(0);

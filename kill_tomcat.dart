@@ -1,5 +1,5 @@
-#! /usr/bin/env dshell
-import 'package:dshell/dshell.dart';
+#! /usr/bin/env dcli
+import 'package:dcli/dcli.dart';
 
 void main() {
   // find all java processes
