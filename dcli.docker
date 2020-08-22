@@ -12,10 +12,10 @@ RUN apt -y install wget
 
 RUN apt update
 RUN apt install --no-install-recommends -y wget ca-certificates gnupg2
-RUN wget https://github.com/bsutton/dshell/raw/master/bin/linux/dshell_install
-RUN chmod +x dshell_install
-ENV PATH="${PATH}":/usr/lib/dart/bin:"${HOME}/.pub-cache/bin":"${HOME}/.dshell/bin"
-RUN ./dshell_install
+RUN wget https://github.com/bsutton/dcli/raw/master/bin/linux/dcli_install
+RUN chmod +x dcli_install
+ENV PATH="${PATH}":/usr/lib/dart/bin:"${HOME}/.pub-cache/bin":"${HOME}/.dcli/bin"
+RUN ./dcli_install
 
 # Add the dscript utilites for our container
 ADD . /dscript
