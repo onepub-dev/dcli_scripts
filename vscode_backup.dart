@@ -77,7 +77,7 @@ void restore(ArgParser parser, List<String> args) {
   var extensions = read(backupfile).toList();
 
 
-  int line = 0;
+  var line = 0;
   for (var extension in extensions) {
     line++;
     var parts = extension.split('@');
@@ -115,7 +115,7 @@ void uninstall() {
   var extensions = read(backupfile).toList();
   
   var retries = <String>[];
-  bool hasRetries = false;
+  var hasRetries = false;
 
 
   do

@@ -17,7 +17,7 @@ void main(List<String> args) {
   parser.addCommand('build');
 
   var build = false;
-  var results;
+  ArgResults results;
 
   try {
     results = parser.parse(args);

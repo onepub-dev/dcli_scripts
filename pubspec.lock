@@ -74,17 +74,17 @@ packages:
   dcli:
     dependency: "direct main"
     description:
-      path: "/home/bsutton/git/dcli"
-      relative: false
-    source: path
-    version: "0.20.0"
+      name: dcli
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.22.0"
   equatable:
     dependency: transitive
     description:
       name: equatable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.3"
+    version: "1.2.4"
   file:
     dependency: transitive
     description:
@@ -315,7 +315,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.2"
   validators:
     dependency: transitive
     description:

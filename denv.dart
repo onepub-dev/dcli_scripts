@@ -15,7 +15,7 @@ void main(List<String> args) {
 
   var doPrint = results['print'] as bool;
 
-  Map<String, String> envVars = Platform.environment;
+  var envVars = Platform.environment;
 
   if (doPrint == true)
   {

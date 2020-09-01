@@ -15,7 +15,7 @@ void main(List<String> args) {
   var results = parser.parse(args);
 
   var extensionToCommand = <String, String>{
-    ".tar.gz": "tar -zxvf %F",
+    '.tar.gz': 'tar -zxvf %F',
     '.tar': 'tar -xvf %F',
     '.xz': 'tar -xvf %F',
     '.rar': 'unrar e %F',
@@ -51,7 +51,7 @@ void main(List<String> args) {
     }
   } else {
     printerr(red("The file $tarFile does not have a know extension."));
-    printerr(green("Supported extensions are:"));
+    printerr(green('Supported extensions are:'));
     for (var key in extensionToCommand.keys) {
       printerr("  $key");
     }

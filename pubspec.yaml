@@ -3,13 +3,10 @@ version: 1.0.0
 environment: 
   sdk: '>=2.6.0 <3.0.0'
 dependencies: 
-  dcli: ^0.20.0
+  dcli: ^0.22.0
   args: ^1.5.2
   path: ^1.6.4
 
-dependency_overrides:
-  dcli:
-    path: /home/bsutton/git/dcli
 
 
 

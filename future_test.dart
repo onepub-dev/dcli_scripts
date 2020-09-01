@@ -11,7 +11,7 @@
 import 'dart:async';
 
 void main() {
-  Future<void> doMe = doFutures();
+  var doMe = doFutures();
   print('doFutures returned');
   doMe.then((_) => print('do Future completed'));
 }
