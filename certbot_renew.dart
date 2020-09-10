@@ -36,7 +36,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  print("Using: $server");
+  print('Using: $server');
 
   // namecheap api user and key.
   var username = read('namecheap_username').firstLine;

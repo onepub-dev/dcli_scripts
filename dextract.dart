@@ -50,10 +50,10 @@ void main(List<String> args) {
       // otherwise supress the exception as the command will print its own error.
     }
   } else {
-    printerr(red("The file $tarFile does not have a know extension."));
+    printerr(red('The file $tarFile does not have a know extension.'));
     printerr(green('Supported extensions are:'));
     for (var key in extensionToCommand.keys) {
-      printerr("  $key");
+      printerr('  $key');
     }
     exit(1);
   }
