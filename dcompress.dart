@@ -3,9 +3,8 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 
-/// duntar <tarfile>
-/// untars a file
-
+/// dcompress <compress file.>
+/// de-compresses a variety of file formats.
 void main(List<String> args) {
   var parser = ArgParser();
   parser.addFlag('subdir',
