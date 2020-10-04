@@ -3,10 +3,7 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 import 'package:args/args.dart';
 
-/// denv appname
-/// print the systems PATH variable contents and validates each path.
-
-
+/// prints all environment variables
 void main(List<String> args) {
   var parser = ArgParser();
   parser.addFlag('print', abbr: 'p', defaultsTo: false, negatable: false, help: 'prints all environment variables');
