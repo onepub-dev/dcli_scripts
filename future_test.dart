@@ -27,7 +27,6 @@ Future<void> doFutures() async {
   print('about to await');
   await Future.delayed(Duration(seconds: 7), () => print('delayed 7'));
   print('await finished');
-  
 
   print('doFutures: ended');
 
