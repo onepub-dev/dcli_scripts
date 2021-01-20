@@ -31,7 +31,7 @@ void main(List<String> args) {
   }
 
   // check that docker is installed
-  if (which('docker').firstLine == null) {
+  if (which('docker').notfound) {
     printerr(red('You need to install docker first'));
     exit(1);
   }
