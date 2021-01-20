@@ -1,4 +1,5 @@
 #! /usr/bin/env dcli
+
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
@@ -7,10 +8,7 @@ import 'package:dcli/dcli.dart';
 /// de-compresses a variety of file formats.
 void main(List<String> args) {
   var parser = ArgParser();
-  parser.addFlag('subdir',
-      abbr: 'd',
-      defaultsTo: false,
-      help: 'Extracts the file to a subdirectory');
+  parser.addFlag('subdir', abbr: 'd', defaultsTo: false, help: 'Extracts the file to a subdirectory');
   var results = parser.parse(args);
 
   var extensionToCommand = <String, String>{
@@ -43,7 +41,7 @@ void main(List<String> args) {
     try {
       cmd.run;
     } catch (e) {
-      if (e is RunException && e.exitCode == 2){
+      if (e is RunException && e.exitCode == 2) {
         printerr(red('The extractor for $tarFile $cmd could not be found.'));
       }
       // otherwise supress the exception as the command will print its own error.

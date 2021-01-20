@@ -1,4 +1,5 @@
 #! /usr/bin/env dcli
+
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
@@ -47,7 +48,7 @@ void backup() {
   var extensions = 'code --show-versions --list-extensions'.toList();
 
   if (exists(backupfile)) {
-    if (!confirm( 'overwrite backupfile: $backupfile?')) {
+    if (!confirm('overwrite backupfile: $backupfile?')) {
       exit(1);
     }
     backupfile.truncate();
@@ -75,7 +76,6 @@ void restore(ArgParser parser, List<String> args) {
   var latest = result['latest'] as bool;
 
   var extensions = read(backupfile).toList();
-
 
   var line = 0;
   for (var extension in extensions) {
@@ -113,44 +113,37 @@ void uninstall() {
   var current = getCurrent();
 
   var extensions = read(backupfile).toList();
-  
+
   var retries = <String>[];
   var hasRetries = false;
 
+  do {
+    hasRetries = false;
+    for (var extension in extensions) {
+      var parts = extension.split('@');
+      var name = parts[0];
+      // var version = parts[1];
 
-  do
-  {
-	hasRetries = false;
-  	for (var extension in extensions) {
-    		var parts = extension.split('@');
-    		var name = parts[0];
-    		// var version = parts[1];
-
-    		if (!current.contains(name)) {
-      		print('The extension $name is not installed. Skipping');
-    		} else {
-			try
-			{
-      				'code --uninstall-extension $name'.run;
-			}
-			on RunException  catch (e)
-			{
-				var msg = e.message;
-				if (msg.startsWith('Cannot uninstall extension') && msg.endsWith('depends on this.'))
-				{
-					hasRetries = true;
-					retries.add(extension);
-					print('adding $name to retry list has it has a dependency');
-				}
-			}
-    		}
-  	}
-	if (hasRetries)
-	{
-		extensions = retries;
-		retries.clear();
-	}
- } while(hasRetries);
+      if (!current.contains(name)) {
+        print('The extension $name is not installed. Skipping');
+      } else {
+        try {
+          'code --uninstall-extension $name'.run;
+        } on RunException catch (e) {
+          var msg = e.message;
+          if (msg.startsWith('Cannot uninstall extension') && msg.endsWith('depends on this.')) {
+            hasRetries = true;
+            retries.add(extension);
+            print('adding $name to retry list has it has a dependency');
+          }
+        }
+      }
+    }
+    if (hasRetries) {
+      extensions = retries;
+      retries.clear();
+    }
+  } while (hasRetries);
 }
 
 void usage(ArgParser parser) {

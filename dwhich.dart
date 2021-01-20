@@ -1,4 +1,5 @@
 #! /usr/bin/env dcli
+
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
@@ -24,10 +25,9 @@ void main(List<String> args) {
     if (verbose) {
       print('Searching: ${truepath(path)}');
     }
-    if (!exists(path))
-    {
-	printerr(red('The path $path does not exist.'));
- 	continue;
+    if (!exists(path)) {
+      printerr(red('The path $path does not exist.'));
+      continue;
     }
     if (exists(join(path, command))) {
       print(red('Found at: ${truepath(path, command)}'));

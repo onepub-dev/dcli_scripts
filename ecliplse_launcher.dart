@@ -1,4 +1,5 @@
 #! /usr/bin/env dcli
+
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
@@ -13,14 +14,14 @@ import 'package:dcli/dcli.dart';
 
 /// eclipse_launcher.dart - create a desktop launcher for eclipse.
 void main(List<String> args) {
-  var installs = find('*', recursive: false,
-      root: join(HOME, 'apps', 'eclipse'),
-      types: [FileSystemEntityType.directory]).toList();
+  var installs =
+      find('*', recursive: false, root: join(HOME, 'apps', 'eclipse'), types: [FileSystemEntityType.directory])
+          .toList();
 
   var i = 0;
   installs.forEach((install) => print('${++i} $install'));
 
-  var selected = ask( 'Select eclipse version to use (1-${i})');
+  var selected = ask('Select eclipse version to use (1-${i})');
   var index = int.tryParse(selected);
 
   var install = installs[index - 1];

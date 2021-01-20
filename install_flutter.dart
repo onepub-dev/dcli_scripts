@@ -35,8 +35,7 @@ void main() {
     createDir(appsPath);
   }
 
-  'git clone https://github.com/flutter/flutter.git'
-      .start(workingDirectory: appsPath);
+  'git clone https://github.com/flutter/flutter.git'.start(workingDirectory: appsPath);
 
   'flutter/bin/flutter precache'.start(workingDirectory: appsPath);
 

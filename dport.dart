@@ -59,8 +59,7 @@ void main(List<String> args) {
 bool viaNetstat(int portNo) {
   var found = false;
   var lines = <String>[];
-  'netstat -pnat'
-      .start(privileged: true, progress: Progress((line) => lines.add(line)));
+  'netstat -pnat'.start(privileged: true, progress: Progress((line) => lines.add(line)));
 
   for (var line in lines.skip(1)) {
     if (line.contains(':$portNo ') && line.contains('LISTEN')) {
