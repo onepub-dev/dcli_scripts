@@ -1,6 +1,7 @@
 #! /usr/bin/env dcli
 
 import 'dart:io';
+import 'dart:math';
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 
@@ -40,7 +41,8 @@ class MemoryCommand extends Command<void> {
 
 class DiskCommand extends Command<void> {
   @override
-  String get description => 'Displays the top 50 largest directories below the current directory';
+  String get description =>
+      'Displays the top 50 largest directories below the current directory';
 
   @override
   String get name => 'disk';
@@ -61,7 +63,8 @@ class DiskCommand extends Command<void> {
       var directorySize = DirectorySize(directory);
       directorySizes.add(directorySize);
 
-      find('*', root: directory, includeHidden: true, recursive: false).forEach((file) {
+      find('*', root: directory, includeHidden: true, recursive: false)
+          .forEach((file) {
         try {
           directorySize.size += stat(file).size;
         } on FileSystemException catch (e) {
@@ -74,9 +77,12 @@ class DiskCommand extends Command<void> {
 
     print(orange('Free Space: ${humanNumber(availableSpace(pwd))}'));
 
-    for (var i = 0; i < 50; i++) {
-      print(Format.row(['${humanNumber(directorySizes[i].size)}', directorySizes[i].pathTo],
-          widths: [10, -1], alignments: [TableAlignment.right, TableAlignment.left]));
+    for (var i = 0; i < min(50, directorySizes.length); i++) {
+      if (directorySizes[i].size == 0) continue;
+      print(Format.row(
+          ['${humanNumber(directorySizes[i].size)}', directorySizes[i].pathTo],
+          widths: [10, -1],
+          alignments: [TableAlignment.right, TableAlignment.left]));
     }
   }
 }
@@ -117,12 +123,14 @@ String humanNumber(int bytes) {
 
 int availableSpace(String path) {
   if (!exists(path)) {
-    throw FileSystemException("The given path ${truepath(path)} doesn't exists");
+    throw FileSystemException(
+        "The given path ${truepath(path)} doesn't exists");
   }
 
   var lines = 'df -h "$path"'.toList();
   if (lines.length != 2) {
-    throw FileSystemException("An error occured retrieving the device path: ${lines.join('\n')}");
+    throw FileSystemException(
+        "An error occured retrieving the device path: ${lines.join('\n')}");
   }
 
   var line = lines[1];
@@ -138,13 +146,19 @@ int availableSpace(String path) {
 
   if (havailable == '0') return 0;
 
-  var factoryLetter = havailable.substring(havailable.length - 1);
+  var factorLetter = havailable.substring(havailable.length - 1);
   var hsize = havailable.substring(0, havailable.length - 1);
 
-  var factor = factors[factoryLetter];
-  if (factor == null) {
-    throw FileSystemException("Unrecognized size factor '$factoryLetter' in $havailable");
+  if (hsize == null) {
+    print(orange('Unable to process havailable: $havailable'));
+    hsize = '0';
   }
 
-  return int.tryParse(hsize) * factor;
+  var factor = factors[factorLetter];
+  if (factor == null) {
+    throw FileSystemException(
+        "Unrecognized size factor '$factorLetter' in $havailable");
+  }
+
+  return int.tryParse(hsize) ?? 0 * factor;
 }
