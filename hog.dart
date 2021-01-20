@@ -160,5 +160,5 @@ int availableSpace(String path) {
         "Unrecognized size factor '$factorLetter' in $havailable");
   }
 
-  return int.tryParse(hsize) ?? 0 * factor;
+  return (int.tryParse(hsize) ?? 0) * factor;
 }
