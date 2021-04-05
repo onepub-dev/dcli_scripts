@@ -37,17 +37,25 @@ void main(List<String> args) {
 
 void dsort(List<String> args) async {
   var columns = <Column>[];
-  String fieldDelimiter;
-  String lineDelimiter;
-  String outputPath;
-  bool verbose;
+  String? fieldDelimiter;
+  String? lineDelimiter;
+  String? outputPath;
+  bool? verbose;
 
   var parser = ArgParser()
     ..addFlag('verbose', abbr: 'v', callback: (value) => verbose = value)
-    ..addOption(fieldDelimiterOption, abbr: 'f', defaultsTo: ',', callback: (String value) => fieldDelimiter = value)
-    ..addOption(lineDelimiterOption, abbr: 'l', defaultsTo: '\n', callback: (String value) => lineDelimiter = value)
+    ..addOption(fieldDelimiterOption,
+        abbr: 'f',
+        defaultsTo: ',',
+        callback: (String? value) => fieldDelimiter = value)
+    ..addOption(lineDelimiterOption,
+        abbr: 'l',
+        defaultsTo: '\n',
+        callback: (String? value) => lineDelimiter = value)
     ..addMultiOption(sortkeyOption,
-        abbr: 's', callback: (List<String> values) => columns.addAll(FileSort.expandColumns(values)))
+        abbr: 's',
+        callback: (List<String> values) =>
+            columns.addAll(FileSort.expandColumns(values)))
     ..addOption(outputOption, abbr: 'o');
 
   var results = parser.parse(args);
@@ -70,9 +78,9 @@ void dsort(List<String> args) async {
     columns.add(Column(0, CaseInsensitiveSort(), SortDirection.ascending));
   }
 
-  if (verbose) {
+  if (verbose!) {
     print('Columns: ${columns.join("\n")}');
-    print('Input File: ${inputPath}, Output File: ${outputPath}');
+    print('Input File: $inputPath, Output File: $outputPath');
     print("Field Delimiter: '$fieldDelimiter'");
     print("Line Delimiter: '$lineDelimiter'");
   }
@@ -82,12 +90,15 @@ void dsort(List<String> args) async {
   }
 
   if (exists(outputPath) && outputPath != inputPath) {
-    usageError('The output_file $outputPath already exist. Delete the file and try again.');
+    usageError(
+        'The output_file $outputPath already exist. Delete the file and try again.');
   }
 
-  var sort = FileSort(inputPath, outputPath, columns, fieldDelimiter, lineDelimiter, verbose: verbose);
+  var sort = FileSort(
+      inputPath, outputPath, columns, fieldDelimiter, lineDelimiter,
+      verbose: verbose);
 
-  await sort.sort();
+  sort.sort();
 }
 
 void usageError(String error) {

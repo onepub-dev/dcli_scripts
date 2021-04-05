@@ -19,7 +19,7 @@ void main(List<String> args) {
   var parser = ArgParser();
   parser.addCommand('backup');
   var restoreParser = parser.addCommand('restore');
-  restoreParser.addFlag('latest', abbr: 'l');
+  restoreParser.addFlag('latest', abbr: 'l', defaultsTo: true);
   parser.addCommand('uninstall');
 
   var result = parser.parse(args);
@@ -29,7 +29,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  switch (result.command.name) {
+  switch (result.command!.name) {
     case 'backup':
       backup();
       break;
@@ -61,7 +61,7 @@ void backup() {
   print('extension have been backed up to $backupfile');
 }
 
-List<String> getCurrent() {
+List<String?> getCurrent() {
   return 'code --list-extensions'.toList();
 }
 
@@ -91,7 +91,7 @@ void restore(ArgParser parser, List<String> args) {
     //   continue;
     // }
 
-    latest = true;
+    // latest = true;
 
     if (latest) {
       print('removing $name');
@@ -131,7 +131,8 @@ void uninstall() {
           'code --uninstall-extension $name'.run;
         } on RunException catch (e) {
           var msg = e.message;
-          if (msg.startsWith('Cannot uninstall extension') && msg.endsWith('depends on this.')) {
+          if (msg.startsWith('Cannot uninstall extension') &&
+              msg.endsWith('depends on this.')) {
             hasRetries = true;
             retries.add(extension);
             print('adding $name to retry list has it has a dependency');

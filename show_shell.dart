@@ -21,7 +21,7 @@ void main() {
   print('shell: ${shell.pid} : ${shell.name}');
   print('shell path: ${shell.pathToStartScript}');
 
-  var cpid = pid;
+  int? cpid = pid;
   while (cpid != 0) {
     cpid = ProcessHelper().getParentPID(cpid);
     if (cpid == 0) {

@@ -3,12 +3,12 @@
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
-String name;
-List<String> categories;
-bool terminal;
-String comment;
-String iconPath;
-String exePath;
+String? name;
+List<String>? categories;
+late bool terminal;
+String? comment;
+String? iconPath;
+String? exePath;
 
 var parser = ArgParser();
 
@@ -35,7 +35,7 @@ void main(List<String> args) {
   var parsed = parser.parse(args);
 
   name = getRequiredString(parsed, 'name');
-  comment = parsed['comment'] as String;
+  comment = parsed['comment'] as String?;
   terminal = getBool(parsed, 'terminal');
   categories = getList(parsed, 'categories');
   iconPath = getPath(parsed, 'iconPath');
@@ -45,7 +45,7 @@ void main(List<String> args) {
 }
 
 String getRequiredPath(ArgResults parsed, String option) {
-  var path = getRequiredString(parsed, option);
+  var path = getRequiredString(parsed, option)!;
 
   if (!exists(path)) {
     print(red('The provided path for $option does not exists.'));
@@ -55,7 +55,7 @@ String getRequiredPath(ArgResults parsed, String option) {
   return truepath(path);
 }
 
-String getPath(ArgResults parsed, String option) {
+String? getPath(ArgResults parsed, String option) {
   if (!parsed.wasParsed(option)) {
     return null;
   }
@@ -70,12 +70,12 @@ String getPath(ArgResults parsed, String option) {
   return truepath(path);
 }
 
-String getRequiredString(ArgResults parsed, String option) {
+String? getRequiredString(ArgResults parsed, String option) {
   if (!parsed.wasParsed(option)) {
     print(red('You must provide the --$option argument'));
     showUsage();
   }
-  return parsed[option] as String;
+  return parsed[option] as String?;
 }
 
 bool getRequiredBool(ArgResults parsed, String option) {
@@ -90,17 +90,17 @@ bool getBool(ArgResults parsed, String option) {
   return parsed[option] == 'true';
 }
 
-List<String> getRequiredList(ArgResults parsed, String option) {
+List<String>? getRequiredList(ArgResults parsed, String option) {
   if (!parsed.wasParsed(option)) {
     print(red('You must provide the --$option argument'));
     showUsage();
   }
 
-  return parsed[option] as List<String>;
+  return parsed[option] as List<String>?;
 }
 
-List<String> getList(ArgResults parsed, String option) {
-  return parsed[option] as List<String>;
+List<String>? getList(ArgResults parsed, String option) {
+  return parsed[option] as List<String>?;
 }
 
 void showUsage() {
@@ -112,7 +112,7 @@ void showUsage() {
 }
 
 void writeDesktopEntry() {
-  var path = join(HOME, '.local', 'share', 'applications', '${name.replaceAll(RegExp('[^a-zA-Z0-9_]'), '_')}.desktop');
+  var path = join(HOME, '.local', 'share', 'applications', '${name!.replaceAll(RegExp('[^a-zA-Z0-9_]'), '_')}.desktop');
   // create desktop.ini
   if (exists(path)) {
     delete(path);
@@ -129,7 +129,7 @@ Name=$name
 
   if (comment != null) content.write('Comment=$comment\n');
 
-  content.write('Categories=${categories.join(';')}\n');
+  content.write('Categories=${categories!.join(';')}\n');
 
   content.write('Terminal=$terminal\n');
 

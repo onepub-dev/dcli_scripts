@@ -11,7 +11,7 @@ void main(List<String> args) {
 
   var results = parser.parse(args);
 
-  var doPrint = results['print'] as bool;
+  var doPrint = results['print'] as bool?;
 
   var envVars = Platform.environment;
 

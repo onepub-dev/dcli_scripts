@@ -42,11 +42,11 @@ void main(List<String> args) {
 
 void launch(String pathToDbSettings) {
   var settings = SettingsYaml.load(pathToSettings: pathToDbSettings);
-  var host = settings['host'] as String;
-  var port = settings['port'] as int;
-  var user = settings['user'] as String;
-  var password = settings['password'] as String;
-  var dbname = settings['dbname'] as String;
+  var host = settings['host'] as String?;
+  var port = settings['port'] as int?;
+  var user = settings['user'] as String?;
+  var password = settings['password'] as String?;
+  var dbname = settings['dbname'] as String?;
 
   'mysql -h $host --port=$port -u $user --password="$password" $dbname'.run;
 }
@@ -59,7 +59,7 @@ void config(String dbname, String pathToDbSettings) {
 
   settings['dbname'] = dbname;
   settings['host'] = ask('host:',
-      defaultValue: settings['host'] as String,
+      defaultValue: settings['host'] as String?,
       validator: Ask.any([
         Ask.fqdn,
         Ask.ipAddress(),
@@ -67,12 +67,12 @@ void config(String dbname, String pathToDbSettings) {
       ]));
 
   settings['port'] =
-      int.parse(ask('port:', defaultValue: (settings['port'] as int ?? 3306).toString(), validator: Ask.integer));
+      int.parse(ask('port:', defaultValue: (settings['port'] as int? ?? 3306).toString(), validator: Ask.integer));
 
-  settings['user'] = ask('user:', defaultValue: settings['user'] as String, validator: Ask.required);
+  settings['user'] = ask('user:', defaultValue: settings['user'] as String?, validator: Ask.required);
 
   settings['password'] =
-      ask('password:', defaultValue: settings['password'] as String, validator: Ask.required, hidden: true);
+      ask('password:', defaultValue: settings['password'] as String?, validator: Ask.required, hidden: true);
 
   settings.save();
 }

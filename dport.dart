@@ -56,7 +56,7 @@ void main(List<String> args) {
 //   }
 // }
 
-bool viaNetstat(int portNo) {
+bool viaNetstat(int? portNo) {
   var found = false;
   var lines = <String>[];
   'netstat -pnat'.start(privileged: true, progress: Progress((line) => lines.add(line)));
@@ -66,7 +66,7 @@ bool viaNetstat(int portNo) {
       var regEx = RegExp('[0-9]+\/[a-zA-Z_][a-zA-Z0-9_]*\:');
       var match = regEx.firstMatch(line);
       if (match != null) {
-        var pidName = match.group(0);
+        var pidName = match.group(0)!;
         var parts = pidName.split('/');
         var pid = parts[0];
         var name = parts[1];
@@ -99,7 +99,7 @@ bool viaLsof(int portNo) {
 
     var match = regexp.firstMatch(process);
     if (match != null) {
-      var port = match.group(0).substring(1);
+      var port = match.group(0)!.substring(1);
 
       var processPortNo = int.tryParse(port);
 

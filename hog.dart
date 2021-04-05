@@ -15,7 +15,7 @@ import 'package:dcli/dcli.dart';
 ///
 
 void main(List<String> args) {
-  args = ['disk'];
+  // args = ['disk'];
   CommandRunner<void>('hog', 'Find resource hogs')
     ..addCommand(DiskCommand())
     ..addCommand(MemoryCommand())
@@ -29,6 +29,11 @@ class CPUCommand extends Command<void> {
 
   @override
   String get name => 'cpu';
+
+  @override
+  void run() {
+    print('Not implemented');
+  }
 }
 
 class MemoryCommand extends Command<void> {
@@ -37,6 +42,11 @@ class MemoryCommand extends Command<void> {
 
   @override
   String get name => 'memory';
+
+  @override
+  void run() {
+    print('Not implemented');
+  }
 }
 
 class DiskCommand extends Command<void> {
@@ -63,7 +73,10 @@ class DiskCommand extends Command<void> {
       var directorySize = DirectorySize(directory);
       directorySizes.add(directorySize);
 
-      find('*', root: directory, includeHidden: true, recursive: false)
+      find('*',
+              workingDirectory: directory,
+              includeHidden: true,
+              recursive: false)
           .forEach((file) {
         try {
           directorySize.size += stat(file).size;
@@ -95,7 +108,7 @@ class DirectorySize {
 }
 
 void showUsage(ArgParser parser) {
-  print('Usage: hog.dart -v -prompt <a questions>');
+  print('Usage: hog -v -prompt <a questions>');
   print(parser.usage);
   exit(1);
 }
@@ -149,11 +162,6 @@ int availableSpace(String path) {
   var factorLetter = havailable.substring(havailable.length - 1);
   var hsize = havailable.substring(0, havailable.length - 1);
 
-  if (hsize == null) {
-    print(orange('Unable to process havailable: $havailable'));
-    hsize = '0';
-  }
-
   var factor = factors[factorLetter];
   if (factor == null) {
     throw FileSystemException(
@@ -161,4 +169,12 @@ int availableSpace(String path) {
   }
 
   return (int.tryParse(hsize) ?? 0) * factor;
+}
+
+void removeOldKernels() {
+  r'''dpkg --list | grep 'linux-image' | awk '{ print $2 }' | sort -V | sed -n '/'"$(uname -r | sed "s/\([0-9.-]*\)-\([^0-9]\+\)/\1/")"'/q;p' | xargs sudo apt-get -y purge'''
+      .run;
+
+  r'''dpkg --list | grep 'linux-headers' | awk '{ print $2 }' | sort -V | sed -n '/'"$(uname -r | sed "s/\([0-9.-]*\)-\([^0-9]\+\)/\1/")"'/q;p' | xargs sudo apt-get -y purge'''
+      .run;
 }

@@ -7,7 +7,7 @@ import 'package:args/args.dart';
 
 void main(List<String> args) {
   var parser = ArgParser();
-  parser..addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
+  parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
 
   var parsed = parser.parse(args);
   if (parsed.wasParsed('verbose')) {
@@ -20,13 +20,13 @@ void main(List<String> args) {
   }
 
   var total = 0;
-  find(parsed.rest[0], root: pwd, recursive: true).forEach((file) {
-    var line = 'wc -l $file'.firstLine;
+  find(parsed.rest[0], workingDirectory: pwd, recursive: true).forEach((file) {
+    var line = 'wc -l $file'.firstLine!;
     var parts = line.split(' ');
     if (parts.isEmpty) {
       printerr('Invalid line: $line');
     } else {
-      var count = int.tryParse(parts[0]);
+      var count = int.tryParse(parts[0])!;
       total += count;
     }
   });
