@@ -20,9 +20,9 @@ void main(List<String> args) {
     var pathexists = exists(path);
 
     if (pathexists == true) {
-      print('Test:  $posixTick ${canonicalize(path)}');
+      print('Test:  $posixTick ${normalize(path)}');
     } else {
-      print(red('Test: $cross ${canonicalize(path)}'));
+      print(red('Test: $cross ${normalize(path)}'));
     }
   }
 }
