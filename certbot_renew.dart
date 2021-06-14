@@ -1,4 +1,5 @@
 #! /usr/bin/env dcli
+
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
@@ -6,7 +7,7 @@ import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
   var parser = ArgParser();
-  parser.addFlag("production", abbr: 'p', defaultsTo: false);
+  parser.addFlag('production', abbr: 'p', defaultsTo: false);
   var result = parser.parse(args);
 
   if (result.rest.length != 2) {
@@ -31,12 +32,12 @@ void main(List<String> args) {
   }
 
   // check that docker is installed
-  if (which('docker').firstLine == null) {
+  if (which('docker').notfound) {
     printerr(red('You need to install docker first'));
     exit(1);
   }
 
-  print("Using: $server");
+  print('Using: $server');
 
   // namecheap api user and key.
   var username = read('namecheap_username').firstLine;
@@ -44,8 +45,8 @@ void main(List<String> args) {
 
   var saveDir = join(pwd, 'certificates');
 
-  setEnv('NAMECHEAP_API_USER', username);
-  setEnv('NAMECHEAP_API_KEY', key);
+  env['NAMECHEAP_API_USER'] = username;
+  env['NAMECHEAP_API_KEY'] = key;
   'docker run -v $saveDir:/.lego --env NAMECHEAP_API_USER --env NAMECHEAP_API_KEY goacme/lego --server=$server --dns namecheap --email $emailaddress --domains "$certName" --accept-tos run'
       .run;
   print('keys have been saved to $saveDir');

@@ -17,7 +17,7 @@ void main(List<String> args) {
   parser.addCommand('build');
 
   var build = false;
-  var results;
+  ArgResults results;
 
   try {
     results = parser.parse(args);
@@ -30,7 +30,7 @@ void main(List<String> args) {
   }
 
   if (results.command != null) {
-    build = results.command.name == 'build';
+    build = results.command!.name == 'build';
     if (build != true) {
       throw ArgumentError('The command arg must be "build" or nothing.');
     }
@@ -43,10 +43,12 @@ void main(List<String> args) {
     exit(0);
   }
 
-  print('Mounting host ${green(pwd)} into the container at ${orange('/home/local')}');
+  print(
+      'Mounting host ${green(pwd)} into the container at ${orange('/home/local')}');
 
   /// mount the current working directory
-  var cmd = 'docker run -v $pwd:/home/local --network host -it dcli:dcli /bin/bash';
+  var cmd =
+      'docker run -v $pwd:/home/local --network host -it dcli:dcli /bin/bash';
 
   // print(cmd);
   cmd.run;

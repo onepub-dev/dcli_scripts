@@ -1,4 +1,5 @@
 #! /usr/bin/env dcli
+
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
@@ -20,17 +21,25 @@ void main(List<String> args) {
 
   var command = results.rest[0];
 
+  print(PATH);
+
+  String? lastPath;
   for (var path in PATH) {
     if (verbose) {
       print('Searching: ${truepath(path)}');
     }
-    if (!exists(path))
-    {
-	printerr(red('The path $path does not exist.'));
- 	continue;
+    if (path.isEmpty) {
+      printerr(red(
+          'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
+      continue;
+    }
+    if (!exists(path)) {
+      printerr(red('The path $path does not exist.'));
+      continue;
     }
     if (exists(join(path, command))) {
       print(red('Found at: ${truepath(path, command)}'));
     }
+    lastPath = path;
   }
 }

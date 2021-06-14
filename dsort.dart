@@ -37,20 +37,25 @@ void main(List<String> args) {
 
 void dsort(List<String> args) async {
   var columns = <Column>[];
-  String fieldDelimiter;
-  String lineDelimiter;
-  String outputPath;
+  String? fieldDelimiter;
+  String? lineDelimiter;
+  String? outputPath;
   bool verbose;
 
   var parser = ArgParser()
-    ..addFlag('verbose', abbr: 'v', callback: (value) => verbose = value)
-    ..addOption(fieldDelimiterOption, abbr: 'f', defaultsTo: ',', callback: (String value) => fieldDelimiter = value)
-    ..addOption(lineDelimiterOption, abbr: 'l', defaultsTo: '\n', callback: (String value) => lineDelimiter = value)
+    ..addFlag('verbose', abbr: 'v', defaultsTo: false)
+    ..addOption(fieldDelimiterOption,
+        abbr: 'f', defaultsTo: ',', callback: (value) => fieldDelimiter = value)
+    ..addOption(lineDelimiterOption,
+        abbr: 'l', defaultsTo: '\n', callback: (value) => lineDelimiter = value)
     ..addMultiOption(sortkeyOption,
-        abbr: 's', callback: (List<String> values) => columns.addAll(FileSort.expandColumns(values)))
+        abbr: 's',
+        callback: (List<String> values) =>
+            columns.addAll(FileSort.expandColumns(values)))
     ..addOption(outputOption, abbr: 'o');
 
   var results = parser.parse(args);
+  verbose = results['verbose'] as bool;
 
   if (results.rest.length != 1) {
     usageError('Expected an input_file to sort.');
@@ -82,12 +87,15 @@ void dsort(List<String> args) async {
   }
 
   if (exists(outputPath) && outputPath != inputPath) {
-    usageError('The output_file $outputPath already exist. Delete the file and try again.');
+    usageError(
+        'The output_file $outputPath already exist. Delete the file and try again.');
   }
 
-  var sort = FileSort(inputPath, outputPath, columns, fieldDelimiter, lineDelimiter, verbose: verbose);
+  var sort = FileSort(
+      inputPath, outputPath, columns, fieldDelimiter, lineDelimiter,
+      verbose: verbose);
 
-  await sort.sort();
+  sort.sort();
 }
 
 void usageError(String error) {
