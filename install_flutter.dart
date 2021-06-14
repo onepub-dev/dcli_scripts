@@ -64,7 +64,7 @@ void addPathToProfile(String path) {
   }
 
   if (!found) {
-    print("adding $path to $HOME/.profile");
+    print('adding $path to $HOME/.profile');
     '$HOME/.profile'.append('export PATH="\$PATH:$path"');
     print('You will need to logout for your  path to be available');
   }

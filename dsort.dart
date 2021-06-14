@@ -77,7 +77,7 @@ void dsort(List<String> args) async {
 
   if (verbose) {
     print('Columns: ${columns.join("\n")}');
-    print('Input File: ${inputPath}, Output File: ${outputPath}');
+    print('Input File: $inputPath, Output File: $outputPath');
     print("Field Delimiter: '$fieldDelimiter'");
     print("Line Delimiter: '$lineDelimiter'");
   }

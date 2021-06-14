@@ -16,8 +16,8 @@ void main() {
 	NetworkInterface.list(includeLoopback: false, type: InternetAddressType.any)
     	.then((List<NetworkInterface> interfaces) {
         interfaces.forEach((interface) {
-          print("name: ${interface.name}");
-          int i = 0;
+          print('name: ${interface.name}');
+          var i = 0;
           interface.addresses.forEach((address) {
             print('  ${i++}) ${address.address}');
           });

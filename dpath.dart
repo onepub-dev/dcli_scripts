@@ -14,7 +14,7 @@ const String cross = 'x';
 
 void main(List<String> args) {
   var parser = ArgParser();
-  parser..addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
+  parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
 
   for (var path in PATH) {
     var pathexists = exists(path);
