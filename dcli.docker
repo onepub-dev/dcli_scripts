@@ -19,10 +19,10 @@ RUN chmod +x dcli_install
 ENV PATH="${PATH}":/usr/lib/dart/bin:"${HOME}/.pub-cache/bin":"${HOME}/.dcli/bin"
 
 RUN ulimit -c unlimited
-# RUN ./dcli_install -v
+RUN ./dcli_install -v
 
-# Add the dscript utilites for our container
-ADD . /dscript
+# Add the local directory into our container
+ADD . /local
 
 
 WORKDIR /home

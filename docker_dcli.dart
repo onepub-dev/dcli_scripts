@@ -23,8 +23,8 @@ void main(List<String> args) {
     results = parser.parse(args);
   } on FormatException catch (e) {
     printerr(e.toString());
-    print('dcli - starts the cli');
-    print('dcli build - builds the docker image');
+    print('docker_dcli - starts the cli');
+    print('docker_dcli build - builds the docker image');
     print(parser.usage);
     exit(1);
   }
@@ -43,10 +43,12 @@ void main(List<String> args) {
     exit(0);
   }
 
-  print('Mounting host ${green(pwd)} into the container at ${orange('/home/local')}');
+  print(
+      'Mounting host ${green(pwd)} into the container at ${orange('/home/local')}');
 
   /// mount the current working directory
-  var cmd = 'docker run -v $pwd:/home/local --network host -it dcli:dcli /bin/bash';
+  var cmd =
+      'docker run -v $pwd:/home/local --network host -it dcli:dcli /bin/bash';
 
   // print(cmd);
   cmd.run;

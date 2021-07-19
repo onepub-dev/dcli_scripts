@@ -8,7 +8,10 @@ import 'package:dcli/dcli.dart';
 /// de-compresses a variety of file formats.
 void main(List<String> args) {
   var parser = ArgParser();
-  parser.addFlag('subdir', abbr: 'd', defaultsTo: false, help: 'Extracts the file to a subdirectory');
+  parser.addFlag('subdir',
+      abbr: 'd',
+      defaultsTo: false,
+      help: 'Extracts the file to a subdirectory');
   var results = parser.parse(args);
 
   var extensionToCommand = <String, String>{
