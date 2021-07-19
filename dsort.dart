@@ -75,7 +75,7 @@ void dsort(List<String> args) async {
     columns.add(Column(0, CaseInsensitiveSort(), SortDirection.ascending));
   }
 
-  if (verbose!) {
+  if (verbose) {
     print('Columns: ${columns.join("\n")}');
     print('Input File: $inputPath, Output File: $outputPath');
     print("Field Delimiter: '$fieldDelimiter'");
