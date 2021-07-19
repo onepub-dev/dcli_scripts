@@ -40,19 +40,20 @@ void main(List<String> args) {
 
   final repo = parsed['repo'] as String;
 
-  var jsonFile = FileSync.tempFile();
-  var url = 'https://api.github.com/repos/$owner/$repo';
-  print('fetching $url');
-  fetch(url: url, saveToPath: jsonFile);
+  withTempFile((jsonFile) {
+    var url = 'https://api.github.com/repos/$owner/$repo';
+    print('fetching $url');
+    fetch(url: url, saveToPath: jsonFile);
 
-  var json =
-      jsonDecode(read(jsonFile).toList().join('\n')) as Map<String, dynamic>;
-  if (json.containsKey('created_at')) {
-    print(json['created_at']);
-  } else {
-    print(json);
-  }
-  ;
+    var json =
+        jsonDecode(read(jsonFile).toList().join('\n')) as Map<String, dynamic>;
+    if (json.containsKey('created_at')) {
+      print(json['created_at']);
+    } else {
+      print(json);
+    }
+    ;
+  }, create: false);
 }
 
 void showUsage(ArgParser parser) {
