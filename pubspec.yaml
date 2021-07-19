@@ -5,16 +5,14 @@ environment:
   sdk: '>=2.12.0-259.12.beta <3.0.0'
 dependencies: 
   args: ^2.0.0
-  dcli: ^0.51.0
-    
+  dcli: 1.2.1
   path: ^1.0.0
   settings_yaml: ^3.0.1
-
 dev_dependencies: 
   pedantic: ^1.0.0
 
 
-# dependency_overrides:
-#   dcli:
-#     path: ../dcli
-
+executables:
+  dcompress:
+  dreplace:
+  clean:

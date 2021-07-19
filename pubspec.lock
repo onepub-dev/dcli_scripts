@@ -14,21 +14,21 @@ packages:
       name: args
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   async:
     dependency: transitive
     description:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.1"
   basic_utils:
     dependency: transitive
     description:
       name: basic_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0-nullsafety.3"
+    version: "3.0.2"
   charcode:
     dependency: transitive
     description:
@@ -43,13 +43,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
-  convert:
-    dependency: transitive
-    description:
-      name: convert
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
   crypto:
     dependency: transitive
     description:
@@ -67,10 +60,10 @@ packages:
   dcli:
     dependency: "direct main"
     description:
-      path: "../dcli"
-      relative: true
-    source: path
-    version: "0.51.6"
+      name: dcli
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
   equatable:
     dependency: transitive
     description:
@@ -105,7 +98,7 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.1"
+    version: "0.13.3"
   http_parser:
     dependency: transitive
     description:
@@ -119,7 +112,7 @@ packages:
       name: ini
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0-beta"
+    version: "2.1.0"
   json_annotation:
     dependency: transitive
     description:
@@ -175,7 +168,7 @@ packages:
       name: posix
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   pub_semver:
     dependency: transitive
     description:
@@ -196,7 +189,7 @@ packages:
       name: quiver
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   random_string:
     dependency: transitive
     description:
@@ -210,7 +203,7 @@ packages:
       name: settings_yaml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.3"
+    version: "3.0.4"
   source_span:
     dependency: transitive
     description:
@@ -259,7 +252,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.3"
+    version: "3.0.4"
   validators2:
     dependency: transitive
     description:
