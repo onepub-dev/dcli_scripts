@@ -163,7 +163,7 @@ packages:
     source: hosted
     version: "1.8.0"
   pedantic:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: pedantic
       url: "https://pub.dartlang.org"
@@ -211,6 +211,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0-nullsafety"
+  settings_yaml:
+    dependency: "direct main"
+    description:
+      name: settings_yaml
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.6"
   source_span:
     dependency: transitive
     description:

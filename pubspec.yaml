@@ -8,6 +8,7 @@ dependencies:
   dcli: ^1.5.5
   args: ^2.1.1
   path: ^1.6.4
+  settings_yaml: ^3.0.6
 
 dependency_overrides:
   # dcli:
