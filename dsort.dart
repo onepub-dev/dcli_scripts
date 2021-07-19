@@ -40,18 +40,14 @@ void dsort(List<String> args) async {
   String? fieldDelimiter;
   String? lineDelimiter;
   String? outputPath;
-  bool? verbose;
+  bool verbose;
 
   var parser = ArgParser()
-    ..addFlag('verbose', abbr: 'v', callback: (value) => verbose = value)
+    ..addFlag('verbose', abbr: 'v', defaultsTo: false)
     ..addOption(fieldDelimiterOption,
-        abbr: 'f',
-        defaultsTo: ',',
-        callback: (String? value) => fieldDelimiter = value)
+        abbr: 'f', defaultsTo: ',', callback: (value) => fieldDelimiter = value)
     ..addOption(lineDelimiterOption,
-        abbr: 'l',
-        defaultsTo: '\n',
-        callback: (String? value) => lineDelimiter = value)
+        abbr: 'l', defaultsTo: '\n', callback: (value) => lineDelimiter = value)
     ..addMultiOption(sortkeyOption,
         abbr: 's',
         callback: (List<String> values) =>
@@ -59,6 +55,7 @@ void dsort(List<String> args) async {
     ..addOption(outputOption, abbr: 'o');
 
   var results = parser.parse(args);
+  verbose = results['verbose'] as bool;
 
   if (results.rest.length != 1) {
     usageError('Expected an input_file to sort.');

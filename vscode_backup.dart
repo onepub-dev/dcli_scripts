@@ -91,8 +91,6 @@ void restore(ArgParser parser, List<String> args) {
     //   continue;
     // }
 
-    // latest = true;
-
     if (latest) {
       print('removing $name');
       'code --install-extension $name'.run;
