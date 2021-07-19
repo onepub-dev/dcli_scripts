@@ -59,15 +59,14 @@ void main(List<String> args) {
 bool viaNetstat(int? portNo) {
   var found = false;
   var lines = <String>[];
-  'netstat -pnat'.start(privileged: true, progress: Progress((line) => lines.add(line)));
+  'netstat -pnat'
+      .start(privileged: true, progress: Progress((line) => lines.add(line)));
 
   for (var line in lines.skip(1)) {
     if (line.contains(':$portNo ') && line.contains('LISTEN')) {
-      var regEx = RegExp('[0-9]+\/[a-zA-Z_][a-zA-Z0-9_]*\:');
-      var match = regEx.firstMatch(line);
-      if (match != null) {
-        var pidName = match.group(0)!;
-        var parts = pidName.split('/');
+      final columns = line.replaceAll(RegExp(r'\s+'), ' ').trim().split(' ');
+      if (columns.length == 7) {
+        var parts = columns[6].split('/');
         var pid = parts[0];
         var name = parts[1];
         if (name.endsWith(':')) {
@@ -77,7 +76,11 @@ bool viaNetstat(int? portNo) {
         parts = line.split(' ');
         var protocol = parts[0];
 
-        print('PID: $pid Process: $name Protocol: $protocol');
+        var parentPID = ProcessHelper().getParentPID(int.tryParse(pid) ?? 0);
+        final parentName = ProcessHelper().getProcessName(parentPID);
+
+        print(
+            '${orange('PID: $pid Process: $name Protocol: $protocol')} ${blue('Parent: $parentPID Parent PID: $parentName')}');
         found = true;
       } else {
         print(line);
