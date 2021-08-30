@@ -9,14 +9,43 @@ dependencies:
   args: ^2.1.1
   path: ^1.6.4
   settings_yaml: ^3.0.6
+  docker2: ^2.0.1
+  
 
 dependency_overrides:
   # dcli:
   #   path: /home/bsutton/git/dcli
 
 
-
 executables:
-  dcompress:
-  dreplace:
+  add_gnome_launcher:
+  artifactory:
+  certbot_renew:
   clean:
+  dcompress:
+  dcopy_dir:
+  denv:
+  dfind:
+  dmialhog:
+  dmysql:
+  dnsflush:
+  docker_dcli:
+  downit:
+  dpath:
+  dport:
+  dreplace:
+  dsort:
+  dvirtualbox:
+  dwc:
+  dwhich:
+  dzfs_clean:
+  eclipse_launcher:
+  find_old_dart_packages:
+  gh_add_team_to_repository:
+  git_creation_date:
+  gitgc:
+  gitsyncfork:
+  hog:
+  install_flutter:
+  ipaddr:
+  kill_tomcat:

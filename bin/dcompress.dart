@@ -4,6 +4,14 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 
+var extensionToCommand = <String, String>{
+  '.tar.gz': 'tar -zxvf %F',
+  '.tar': 'tar -xvf %F',
+  '.xz': 'tar -xvf %F',
+  '.rar': 'unrar e %F',
+  '.zip': 'unzip %F'
+};
+
 /// dcompress <compress file.>
 /// de-compresses a variety of file formats.
 void main(List<String> args) {
@@ -13,14 +21,6 @@ void main(List<String> args) {
       defaultsTo: false,
       help: 'Extracts the file to a subdirectory');
   var results = parser.parse(args);
-
-  var extensionToCommand = <String, String>{
-    '.tar.gz': 'tar -zxvf %F',
-    '.tar': 'tar -xvf %F',
-    '.xz': 'tar -xvf %F',
-    '.rar': 'unrar e %F',
-    '.zip': 'unzip %F'
-  };
 
   if (results.rest.length != 1) {
     print('Expands a compressed file.');
@@ -37,7 +37,7 @@ void main(List<String> args) {
     exit(2);
   }
 
-  var cmd = extensionToCommand[extension(tarFile)];
+  var cmd = getCommand(tarFile);
 
   if (cmd != null) {
     cmd = cmd.replaceAll('%F', tarFile);
@@ -57,4 +57,11 @@ void main(List<String> args) {
     }
     exit(1);
   }
+}
+
+String? getCommand(String tarFile) {
+  for (var extension in extensionToCommand.keys) {
+    if (tarFile.endsWith(extension)) return extensionToCommand[extension];
+  }
+  return null;
 }

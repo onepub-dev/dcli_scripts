@@ -24,8 +24,6 @@ void main() {
   var pubCachePath = '$HOME/.pub-cache/bin';
   addPathToProfile(pubCachePath);
 
-  // todo add support for 'export' to dcli which then
-  // pass  the environment vars to any called app
   '$dartPath/pub global activate dcli'.run;
   '$pubCachePath/dcli install'.run;
 
@@ -35,7 +33,8 @@ void main() {
     createDir(appsPath);
   }
 
-  'git clone https://github.com/flutter/flutter.git'.start(workingDirectory: appsPath);
+  'git clone https://github.com/flutter/flutter.git'
+      .start(workingDirectory: appsPath);
 
   'flutter/bin/flutter precache'.start(workingDirectory: appsPath);
 

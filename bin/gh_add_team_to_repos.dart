@@ -7,7 +7,7 @@
 /// e.g.
 /// adfiler,https://<user>@bitbucket.org/<org>>/<repo_name>.git
 ///
-/// You need to provide a 'settings.yaml' file (in the cwd)
+/// You need to provide a 'github.yaml' file (in the cwd)
 /// that contains a git personal access token
 /// ```yaml
 ///   gittoken: ASDFZcvaskjwerf
@@ -29,6 +29,11 @@ void main(List<String> args) {
       abbr: 'o',
       mandatory: true,
       help: 'Name of owner/org that owns the repos');
+  argParser.addOption('permission',
+      abbr: 'p',
+      allowed: ['admin', 'push', 'pull'],
+      defaultsTo: 'pull',
+      help: 'Sets the permission the team has on the repos.');
 
   ArgResults results;
 
@@ -42,8 +47,9 @@ void main(List<String> args) {
 
   var team = results['team'] as String;
   var owner = results['owner'] as String;
+  var permission = results['permission'] as String;
 
-  var json = 'gh repo list --json "owner,name,url" $owner'.parser().jsonDecode()
+  var json = 'gh repo list --json "owner,name,url" $owner -L 10000'.parser().jsonDecode()
       as List<dynamic>;
 
   for (var repo in json) {
@@ -53,18 +59,20 @@ void main(List<String> args) {
     final owner = ownerMap['login'] as String;
     // final url = repo['url'] as String;
 
-    addToTeam(owner, team, name);
+    addToTeam(owner, team, name, permission: permission);
   }
 }
 
-void addToTeam(String owner, String team, String repoName) {
-  var settings = SettingsYaml.load(pathToSettings: 'settings.yaml');
+void addToTeam(String owner, String team, String repoName,
+    {required String permission}) {
+  var settings = SettingsYaml.load(pathToSettings: 'github.yaml');
   var token = settings['gittoken'] as String;
+  print('adding $team to $owner/$repoName');
   '''
 curl -X PUT 
 --header "authorization: Bearer $token" 
 -H "Accept: application/vnd.github.v3+json" 
 https://api.github.com/orgs/$owner/teams/$team/repos/$owner/$repoName 
--d '{"permission":"admin"}'''
+-d '{"permission":"$permission"}'''
       .run;
 }
