@@ -39,22 +39,6 @@ void main(List<String> args) {
   }
 }
 
-// void matchLine() {
-//   var line = 'tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      3354807/nginx: mast';
-
-//   // var regEx = RegExp('\d+\/[a-zA-Z_][a-zA-Z0-9_]*\:');
-//   var regEx = RegExp('[0-9]+\/[a-zA-Z_][a-zA-Z0-9_]*\:');
-//   var match = regEx.firstMatch(line);
-//   if (match != null) {
-//     var pidName = match.group(0);
-//     var parts = pidName.split('/');
-//     var pid = parts[0];
-//     var name = parts[1];
-//     if (name.endsWith(':')) {
-//       name = name.substring(0, name.length - 1);
-//     }
-//   }
-// }
 
 bool viaNetstat(int? portNo) {
   var found = false;
