@@ -15,10 +15,10 @@ executables:
   certbot_renew: 
   clean: 
   dcompress: 
-  dcopy_dir: 
+  dcopydir: 
   denv: 
   dfind: 
-  dmialhog: 
+  dmailhog: 
   dmysql: 
   dnsflush: 
   docker_dcli: 
@@ -33,10 +33,10 @@ executables:
   dzfs_clean: 
   eclipse_launcher: 
   find_old_dart_packages: 
-  gh_add_team_to_repository: 
-  git_creation_date: 
+  gitadd_team_to_repository: 
+  gitcreation_date: 
   gitgc: 
-  git_uncommited: 
+  gituncommited: 
   gitsyncfork: 
   hog: 
   install_flutter: 
