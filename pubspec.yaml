@@ -1,6 +1,7 @@
 name: dcli_scripts
 version: 1.0.0
 description: A collection of cli scripts that do odd jobs for me.
+repository: https://github.com/bsutton/dcli_scripts
 environment: 
   sdk: '>=2.12.0 <3.0.0'
 dependencies: 
