@@ -1,4 +1,4 @@
-name: dscripts
+name: dcli_scripts
 version: 1.0.0
 description: A collection of cli scripts that do odd jobs for me.
 environment: 
