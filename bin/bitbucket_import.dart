@@ -21,6 +21,7 @@ void main() {
   var repos = read(list).toList();
 
   for (var repo in repos) {
+    if (repo.trim().isEmpty) continue;
     var parts = repo.split(',');
     final name = parts[0].replaceAll('"', '');
     final url = parts[1].replaceAll('"', '');
