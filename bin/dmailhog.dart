@@ -26,7 +26,8 @@ void install() {
     print(orange('Installing mailhog'));
     'wget https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_linux_amd64'
         .start(workingDirectory: mailHogDirectoryPath);
-    'cp MailHog_linux_amd64 $mailHogAppPath'.start(privileged: true, workingDirectory: mailHogDirectoryPath);
+    'cp MailHog_linux_amd64 $mailHogAppPath'
+        .start(privileged: true, workingDirectory: mailHogDirectoryPath);
     'chmod +x $mailHogAppPath'.start(privileged: true, detached: true);
   }
 }

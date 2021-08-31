@@ -12,6 +12,6 @@ import 'package:dcli/dcli.dart';
 ///
 
 void main() {
-  'systemd-resolve --flush-caches'.start(privileged:  true);
+  'systemd-resolve --flush-caches'.start(privileged: true);
   'systemd-resolve --statistics'.start(privileged: true);
 }

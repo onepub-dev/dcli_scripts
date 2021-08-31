@@ -18,14 +18,18 @@ var parser = ArgParser();
 void main(List<String> args) {
   Settings().setVerbose(enabled: false);
 
-  parser.addOption('name', help: 'Name of the application to be displayed in the gnome menu');
+  parser.addOption('name',
+      help: 'Name of the application to be displayed in the gnome menu');
 
   parser.addMultiOption('categories',
       defaultsTo: ['Development'],
-      help: 'Gnome list of categories. Controls where in the gnome menu the entry appears. e.g. \'Development\'');
+      help:
+          'Gnome list of categories. Controls where in the gnome menu the entry appears. e.g. \'Development\'');
 
   parser.addOption('terminal',
-      defaultsTo: 'true', help: 'If true (the default) then the app is launched in a terminal window.');
+      defaultsTo: 'true',
+      help:
+          'If true (the default) then the app is launched in a terminal window.');
 
   parser.addOption('comment', help: 'Adds a comment to the Gnome menu item');
 
@@ -112,7 +116,8 @@ void showUsage() {
 }
 
 void writeDesktopEntry() {
-  var path = join(HOME, '.local', 'share', 'applications', '${name!.replaceAll(RegExp('[^a-zA-Z0-9_]'), '_')}.desktop');
+  var path = join(HOME, '.local', 'share', 'applications',
+      '${name!.replaceAll(RegExp('[^a-zA-Z0-9_]'), '_')}.desktop');
   // create desktop.ini
   if (exists(path)) {
     delete(path);

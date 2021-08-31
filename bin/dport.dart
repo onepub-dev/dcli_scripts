@@ -39,7 +39,6 @@ void main(List<String> args) {
   }
 }
 
-
 bool viaNetstat(int? portNo) {
   var found = false;
   var lines = <String>[];

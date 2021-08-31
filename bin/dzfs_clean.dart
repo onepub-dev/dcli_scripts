@@ -8,8 +8,10 @@ void main() {
 
   var snapshots = <String>[];
 
-  var progress = Progress((line) => snapshots.add(line), stderr: (line) => snapshots.add(line));
-  'zfs list -t snapshot -o name -S creation'.start(privileged: true, progress: progress);
+  var progress = Progress((line) => snapshots.add(line),
+      stderr: (line) => snapshots.add(line));
+  'zfs list -t snapshot -o name -S creation'
+      .start(privileged: true, progress: progress);
 
   for (var snapshot in snapshots) {
     if (snapshot.contains('@auto')) {

@@ -7,7 +7,11 @@ import 'package:args/args.dart';
 /// prints all environment variables
 void main(List<String> args) {
   var parser = ArgParser();
-  parser.addFlag('print', abbr: 'p', defaultsTo: false, negatable: false, help: 'prints all environment variables');
+  parser.addFlag('print',
+      abbr: 'p',
+      defaultsTo: false,
+      negatable: false,
+      help: 'prints all environment variables');
 
   var results = parser.parse(args);
 

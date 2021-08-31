@@ -11,7 +11,8 @@ void main(List<String> args) {
   var result = parser.parse(args);
 
   if (result.rest.length != 2) {
-    print('''You must provide a certificate name like \'host.somedomain.org\' and your email address.
+    print(
+        '''You must provide a certificate name like \'host.somedomain.org\' and your email address.
 ''');
     usage();
     exit(0);

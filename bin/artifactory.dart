@@ -1,6 +1,5 @@
 #! /usr/bin/env dcli
 
-
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 
@@ -122,7 +121,6 @@ void install() {
 
   print(blue('Installing Nginx-LE'));
   DartSdk().globalActivate('nginx_le');
-  
 }
 
 void delete() {

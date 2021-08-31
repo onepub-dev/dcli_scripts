@@ -49,8 +49,9 @@ void main(List<String> args) {
   var owner = results['owner'] as String;
   var permission = results['permission'] as String;
 
-  var json = 'gh repo list --json "owner,name,url" $owner -L 10000'.parser().jsonDecode()
-      as List<dynamic>;
+  var json = 'gh repo list --json "owner,name,url" $owner -L 10000'
+      .parser()
+      .jsonDecode() as List<dynamic>;
 
   for (var repo in json) {
     final map = repo as Map<String, dynamic>;
