@@ -42,7 +42,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var width = int.tryParse(parsed['width']);
+  var width = int.tryParse(parsed['width'] as String);
 
   if (width == null) {
     printerr(red('Width must be an integer. Found ${parsed['width']}'));
