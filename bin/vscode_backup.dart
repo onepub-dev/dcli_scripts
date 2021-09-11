@@ -19,7 +19,7 @@ void main(List<String> args) {
   var parser = ArgParser();
   parser.addCommand('backup');
   var restoreParser = parser.addCommand('restore');
-  restoreParser.addFlag('latest', abbr: 'l');
+  restoreParser.addFlag('latest', abbr: 'l', defaultsTo: true);
   parser.addCommand('uninstall');
 
   var result = parser.parse(args);
@@ -61,7 +61,7 @@ void backup() {
   print('extension have been backed up to $backupfile');
 }
 
-List<String> getCurrent() {
+List<String?> getCurrent() {
   return 'code --list-extensions'.toList();
 }
 

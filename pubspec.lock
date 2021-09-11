@@ -74,10 +74,17 @@ packages:
   dcli:
     dependency: "direct main"
     description:
-      path: "../dcli"
-      relative: true
-    source: path
-    version: "1.7.3"
+      name: dcli
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.5.5"
+  docker2:
+    dependency: "direct main"
+    description:
+      name: docker2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   equatable:
     dependency: transitive
     description:
@@ -211,6 +218,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0-nullsafety"
+  settings_yaml:
+    dependency: "direct main"
+    description:
+      name: settings_yaml
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.6"
   source_span:
     dependency: transitive
     description:

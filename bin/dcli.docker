@@ -10,15 +10,19 @@ RUN apt -y upgrade
 RUN apt -y install vim
 RUN apt -y install wget
 
+
+
 RUN apt update
-RUN apt install --no-install-recommends -y wget ca-certificates gnupg2
-RUN wget https://github.com/bsutton/dcli/raw/master/bin/linux/dcli_install
+RUN apt install --no-install-recommends -y wget ca-certificates gnupg2 procps
+RUN wget https://github.com/noojee/dcli/releases/download/latest-linux/dcli_install
 RUN chmod +x dcli_install
 ENV PATH="${PATH}":/usr/lib/dart/bin:"${HOME}/.pub-cache/bin":"${HOME}/.dcli/bin"
-RUN ./dcli_install
 
-# Add the dscript utilites for our container
-ADD . /dscript
+RUN ulimit -c unlimited
+RUN ./dcli_install -v
+
+# Add the local directory into our container
+ADD . /local
 
 
 WORKDIR /home

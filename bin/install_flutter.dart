@@ -24,8 +24,6 @@ void main() {
   var pubCachePath = '$HOME/.pub-cache/bin';
   addPathToProfile(pubCachePath);
 
-  // todo add support for 'export' to dcli which then
-  // pass  the environment vars to any called app
   '$dartPath/pub global activate dcli'.run;
   '$pubCachePath/dcli install'.run;
 
@@ -64,7 +62,7 @@ void addPathToProfile(String path) {
   }
 
   if (!found) {
-    print('adding $path to $HOME/.profile');
+    print('"adding $path to $HOME/.profile');
     '$HOME/.profile'.append('export PATH="\$PATH:$path"');
     print('You will need to logout for your  path to be available');
   }

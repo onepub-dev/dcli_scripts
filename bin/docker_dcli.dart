@@ -8,8 +8,8 @@ import 'package:dcli/dcli.dart';
 ///
 /// You can run this script in two modes
 ///
-/// dcli build - builds the docker container
-/// dcli - launches the container with your pwd mounted into /home
+/// docker_dcli build - builds the docker container
+/// docker_dcli - launches the container with your pwd mounted into /home
 
 void main(List<String> args) {
   Settings().setVerbose(enabled: false);
@@ -23,8 +23,8 @@ void main(List<String> args) {
     results = parser.parse(args);
   } on FormatException catch (e) {
     printerr(e.toString());
-    print('dcli - starts the cli');
-    print('dcli build - builds the docker image');
+    print('docker_dcli - starts the cli');
+    print('docker_dcli build - builds the docker image');
     print(parser.usage);
     exit(1);
   }
@@ -39,7 +39,7 @@ void main(List<String> args) {
   if (build) {
     // mount the local dcli files from ..
     'sudo docker build -f ./dcli.docker  -t dcli:dcli .'.run;
-    print('Build complete. Run dcli to start the docker cli');
+    print('Build complete. Run docker_dcli to start the docker cli');
     exit(0);
   }
 
