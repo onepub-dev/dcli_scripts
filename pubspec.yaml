@@ -45,6 +45,7 @@ executables:
   gituncommited: 
   gitsyncfork: 
   gitupdate_remote: 
+  hexdump:
   hog: 
   install_flutter: 
   ipaddr: 
