@@ -8,8 +8,8 @@ dependencies:
   path: ^1.6.4
 
 dependency_overrides:
-  # dcli:
-  #   path: /home/bsutton/git/dcli
+  dcli:
+    path: ../dcli
 
 
 
