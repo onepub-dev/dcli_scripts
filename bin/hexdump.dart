@@ -12,9 +12,22 @@ void main(List<String> args) {
     ..addOption('width',
         abbr: 'w',
         defaultsTo: '16',
-        help: 'Controls no. of hex characters output per line')
+        help: 'Controls no. of hex characters output per line.')
     ..addFlag('offset',
-        abbr: 'o', defaultsTo: true, help: 'Show the offset on each line');
+        abbr: 'o',
+        defaultsTo: false,
+        negatable: false,
+        help: 'Suppress the offset on each line.')
+    ..addFlag('ascii',
+        abbr: 'a',
+        defaultsTo: false,
+        negatable: false,
+        help: 'Suppress ascii output.')
+    ..addFlag('help',
+        abbr: 'h',
+        defaultsTo: false,
+        negatable: false,
+        help: 'Shows the usage message.');
 
   ArgResults parsed;
   try {
@@ -25,6 +38,10 @@ void main(List<String> args) {
     exit(1);
   }
 
+  if (parsed['help'] as bool == true) {
+    showUsage(parser);
+    exit(1);
+  }
   if (parsed.rest.length != 1) {
     printerr(red('You must provide one file as an argument.'));
     showUsage(parser);
@@ -52,13 +69,15 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var showOffset = parsed['offset'] as bool;
+  var showOffset = !(parsed['offset'] as bool);
 
-  dump(file, width, parser, showOffset: showOffset);
+  var showAscii = !(parsed['ascii'] as bool);
+
+  dump(file, width, parser, showOffset: showOffset, showAscii: showAscii);
 }
 
 void dump(String file, int width, ArgParser parser,
-    {required bool showOffset}) {
+    {required bool showOffset, required bool showAscii}) {
   withOpenFile(file, (openFile) {
     var buffer = List.filled(width, 0);
 
@@ -66,12 +85,17 @@ void dump(String file, int width, ArgParser parser,
       var read = 0;
       var offset = 0;
 
+      /// read the file into the buffer.
       while ((read = openFile.readIntoSync(buffer)) != 0) {
         var count = 0;
+
+        // if requested show the byte offset for the current line.
         if (showOffset) {
           echo('$offset'.padLeft(6, '0') + ': ');
           offset += width;
         }
+
+        // dump hex version of buffer
         for (var val in buffer) {
           count++;
           if (count > read) {
@@ -86,12 +110,15 @@ void dump(String file, int width, ArgParser parser,
         count = 1;
         echo(' ');
 
-        for (var val in buffer) {
-          final char = isPrintable(val) ? String.fromCharCode(val) : ' ';
-          echo(char);
+        /// dump ascii version of buffer
+        if (showAscii) {
+          for (var val in buffer) {
+            final char = isPrintable(val) ? String.fromCharCode(val) : ' ';
+            echo(char);
 
-          count++;
-          if (count > read) break;
+            count++;
+            if (count > read) break;
+          }
         }
         print('');
       }
@@ -130,7 +157,7 @@ bool isPrintable(int codeUnit) {
 
 void showUsage(ArgParser parser) {
   print('Usage:');
-  print('hexdump <file>');
+  print('hexdump <path to file>');
   print('Outputs a hexidecimal representation of the passed file.');
   print(parser.usage);
 }
