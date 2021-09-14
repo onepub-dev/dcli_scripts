@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 
 /// Outputs a hexi-decimal representation of a file
-/// allowing with an asci representation.
+/// along with an asci representation.
 
 void main(List<String> args) {
   var parser = ArgParser()
