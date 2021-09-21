@@ -52,7 +52,6 @@ void main(List<String> args) {
     } else {
       print(json);
     }
-    ;
   }, create: false);
 }
 

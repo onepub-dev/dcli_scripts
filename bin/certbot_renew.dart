@@ -12,7 +12,7 @@ void main(List<String> args) {
 
   if (result.rest.length != 2) {
     print(
-        '''You must provide a certificate name like \'host.somedomain.org\' and your email address.
+        '''You must provide a certificate name like 'host.somedomain.org' and your email address.
 ''');
     usage();
     exit(0);
@@ -22,13 +22,13 @@ void main(List<String> args) {
   var emailaddress = result.rest[1];
   var useProduction = result['production'] as bool;
 
-  var lets_staging = 'https://acme-staging-v02.api.letsencrypt.org/directory';
+  var letsStaging = 'https://acme-staging-v02.api.letsencrypt.org/directory';
 
-  var lets_production = 'https://acme-v02.api.letsencrypt.org/directory';
+  var letsProduction = 'https://acme-v02.api.letsencrypt.org/directory';
 
-  var server = lets_staging;
+  var server = letsStaging;
   if (useProduction) {
-    server = lets_production;
+    server = letsProduction;
   }
 
   // check that docker is installed
