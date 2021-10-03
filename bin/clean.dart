@@ -17,13 +17,13 @@ void main(List<String> args) {
   'docker system prune -a -f'.run;
 
   print(blue('Running git clean'));
-  join(DartProject.self.pathToProjectRoot, 'gitgc.dart')
+  join(DartProject.self.pathToBinDir, 'gitgc.dart')
       .start(terminal: true, workingDirectory: '/home/bsutton/git');
 
   print(blue('cleaning dcli test directories..'));
   deleteDir('/tmp/dcli', recursive: true);
 
   print(blue('Running hog'));
-  join(DartProject.self.pathToProjectRoot, 'hog.dart disk')
+  join(DartProject.self.pathToBinDir, 'hog.dart disk')
       .start(terminal: true, workingDirectory: '/home/bsutton');
 }
