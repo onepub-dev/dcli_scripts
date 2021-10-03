@@ -37,7 +37,7 @@ void main(List<String> args) {
   withTempFile((file) {
     fetch(
         url: url,
-        method: Fetch.post,
+        method: FetchMethod.post,
         saveToPath: file,
         fetchProgress: (progress) {
           showProgress(progress);
