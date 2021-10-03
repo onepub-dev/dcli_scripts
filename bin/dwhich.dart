@@ -21,7 +21,7 @@ void main(List<String> args) {
 
   var command = results.rest[0];
 
-  print(PATH);
+  Settings().verbose(PATH.join(Env().delimiterForPATH));
 
   String? lastPath;
   for (var path in PATH) {
@@ -37,9 +37,22 @@ void main(List<String> args) {
       printerr(red('The path $path does not exist.'));
       continue;
     }
-    if (exists(join(path, command))) {
-      print(red('Found at: ${truepath(path, command)}'));
+    var pathToCmd = checkPath(truepath(path, command));
+    if (pathToCmd != null) {
+      print(red('Found at: $pathToCmd'));
     }
     lastPath = path;
   }
+}
+
+String? checkPath(String cmd) {
+  if (!Platform.isWindows || extension(cmd).isNotEmpty) {
+    return exists(cmd) ? cmd : null;
+  }
+
+  for (var ext in env['PATHEXT']!.split(';')) {
+    var fullCmd = '$cmd$ext';
+    if (exists(fullCmd)) return fullCmd;
+  }
+  return null;
 }
