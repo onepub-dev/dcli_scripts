@@ -77,7 +77,7 @@ packages:
       path: "../dcli"
       relative: true
     source: path
-    version: "1.9.0"
+    version: "1.9.3"
   docker2:
     dependency: "direct main"
     description:
