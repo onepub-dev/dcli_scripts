@@ -1,6 +1,8 @@
 #! /usr/bin/env dcli
 
 // ignore: prefer_relative_imports
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 
 /// Cleans up disk space usage.
@@ -17,8 +19,11 @@ void main(List<String> args) {
   'docker system prune -a -f'.run;
 
   print(blue('Running git clean'));
-  join(DartProject.self.pathToBinDir, 'gitgc.dart')
-      .start(terminal: true, workingDirectory: '/home/bsutton/git');
+  if (which('gitgc').notfound) {
+    printerr(red('gitgc not found. Run dart pub global activate dcli_scripts'));
+    exit(1);
+  }
+  'gitgc'.start(terminal: true, workingDirectory: '/home/bsutton/git');
 
   print(blue('cleaning dcli test directories..'));
   deleteDir('/tmp/dcli', recursive: true);
