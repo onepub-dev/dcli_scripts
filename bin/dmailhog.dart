@@ -1,13 +1,36 @@
 #! /usr/bin/env dcli
 
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 
 /// installs (if necessary) and runs mailhog
 
-void main() {
+void main(List<String> args) {
+  var parser = ArgParser()
+    ..addFlag('help', abbr: 'h', help: 'Shows this help message');
+
+  ArgResults parsed;
+  try {
+    parsed = parser.parse(args);
+  } on FormatException catch (e) {
+    printerr(red(e.message));
+    showUsage(parser);
+    exit(1);
+  }
+
+  if (parsed['help'] as bool) {
+    showUsage(parser);
+    exit(1);
+  }
   install();
 
   run();
+}
+
+void showUsage(ArgParser parser) {
+  print('Runs and if required installs mailhog ');
+  print(parser.usage);
 }
 
 void run() {
