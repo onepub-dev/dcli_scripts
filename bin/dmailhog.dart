@@ -8,7 +8,9 @@ import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
   var parser = ArgParser()
-    ..addFlag('help', abbr: 'h', help: 'Shows this help message');
+    ..addFlag('help', abbr: 'h', help: 'Shows this help message')
+    ..addFlag('shutdown',
+        abbr: 'd', defaultsTo: false, help: 'Shutdown mailhog');
 
   ArgResults parsed;
   try {
@@ -23,9 +25,21 @@ void main(List<String> args) {
     showUsage(parser);
     exit(1);
   }
-  install();
 
-  run();
+  if (parsed['shutdown'] as bool) {
+    shutdownMailHog();
+  } else {
+    install();
+
+    startMailHog();
+  }
+}
+
+void shutdownMailHog() {
+  final processes = ProcessHelper().getProcessesByName('mailhog');
+  if (processes.isNotEmpty) {
+    'killall ${processes.first.name}'.run;
+  }
 }
 
 void showUsage(ArgParser parser) {
@@ -33,7 +47,7 @@ void showUsage(ArgParser parser) {
   print(parser.usage);
 }
 
-void run() {
+void startMailHog() {
   print(green('Starting mailhog'));
 
   print(orange('Access mail hog at: http://localhost:8025'));
