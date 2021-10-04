@@ -1,3 +1,12 @@
+# 1.0.5
+- upgraded dcli version.
+- Add command line flag to shutdown mailhog.
+- changed clean to look for gitgc on the path.
+- added help option to mailhog.
+- Fixed the paths to other scripts which are now in the bin directory.
+- moved to lints/recommended lint cleanup
+- new app to post an http request and report progress.
+
 # 1.0.4
 Added option to suppress the ascii output and -h to show help.
 
