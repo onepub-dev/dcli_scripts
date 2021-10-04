@@ -1,3 +1,6 @@
+# 1.0.6
+- added test that dcli directory exists. cleanedup home paths.
+
 # 1.0.5
 - upgraded dcli version.
 - Add command line flag to shutdown mailhog.
