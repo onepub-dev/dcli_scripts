@@ -23,12 +23,14 @@ void main(List<String> args) {
     printerr(red('gitgc not found. Run dart pub global activate dcli_scripts'));
     exit(1);
   }
-  'gitgc'.start(terminal: true, workingDirectory: '/home/bsutton/git');
+  'gitgc'.start(terminal: true, workingDirectory: join(HOME, 'git'));
 
   print(blue('cleaning dcli test directories..'));
-  deleteDir('/tmp/dcli', recursive: true);
+  if (exists('/tmp/dcli')) {
+    deleteDir('/tmp/dcli', recursive: true);
+  }
 
   print(blue('Running hog'));
   join(DartProject.self.pathToBinDir, 'hog.dart disk')
-      .start(terminal: true, workingDirectory: '/home/bsutton');
+      .start(terminal: true, workingDirectory: HOME);
 }
