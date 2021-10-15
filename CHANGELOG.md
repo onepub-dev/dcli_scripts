@@ -1,3 +1,7 @@
+# 1.0.7
+- Fixed a bug in dwc where it failed if passed a file with a space in the name.
+- Added fetch command.
+
 # 1.0.6
 - added test that dcli directory exists. cleanedup home paths.
 
