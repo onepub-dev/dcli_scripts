@@ -1,15 +1,17 @@
 name: dcli_scripts
-version: 1.0.4
+version: 1.0.7
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.14.0 <3.0.0'
 dependencies: 
-  dcli: ^1.8.0
+  dcli: ^1.9.1
   args: ^2.1.1
   path: ^1.6.4
   settings_yaml: ^3.0.6
   docker2: ^2.0.1
+dev_dependencies: 
+  lints: ^1.0.0
 dependency_overrides: 
   dcli: 
     path: ../dcli

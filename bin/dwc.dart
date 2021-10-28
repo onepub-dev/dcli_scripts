@@ -21,7 +21,7 @@ void main(List<String> args) {
 
   var total = 0;
   find(parsed.rest[0], workingDirectory: pwd, recursive: true).forEach((file) {
-    var line = 'wc -l $file'.firstLine!;
+    var line = 'wc -l "$file"'.firstLine!;
     var parts = line.split(' ');
     if (parts.isEmpty) {
       printerr('Invalid line: $line');

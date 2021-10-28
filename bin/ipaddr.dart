@@ -14,12 +14,12 @@ import 'dart:io';
 void main() {
   NetworkInterface.list(includeLoopback: false, type: InternetAddressType.any)
       .then((List<NetworkInterface> interfaces) {
-    interfaces.forEach((interface) {
+    for (var interface in interfaces) {
       print('name: ${interface.name}');
       var i = 0;
-      interface.addresses.forEach((address) {
+      for (var address in interface.addresses) {
         print('  ${i++}) ${address.address}');
-      });
-    });
+      }
+    }
   });
 }

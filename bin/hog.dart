@@ -93,7 +93,7 @@ class DiskCommand extends Command<void> {
     for (var i = 0; i < min(50, directorySizes.length); i++) {
       if (directorySizes[i].size == 0) continue;
       print(Format().row(
-          ['${humanNumber(directorySizes[i].size)}', directorySizes[i].pathTo],
+          [(humanNumber(directorySizes[i].size)), directorySizes[i].pathTo],
           widths: [10, -1],
           alignments: [TableAlignment.right, TableAlignment.left]));
     }

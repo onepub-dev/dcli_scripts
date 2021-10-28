@@ -20,7 +20,9 @@ void main(List<String> args) {
       types: [FileSystemEntityType.directory]).toList();
 
   var i = 0;
-  installs.forEach((install) => print('${++i} $install'));
+  for (var install in installs) {
+    print('${++i} $install');
+  }
 
   var install =
       menu(prompt: 'Select eclipse version to use: ', options: installs);

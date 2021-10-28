@@ -13,7 +13,7 @@ import 'package:dcli/dcli.dart';
 
 void main() {
   find('build.gradle', recursive: true).forEach((file) {
-    print('$file');
+    print(file);
     read(file).forEach((line) {
       if (line.contains('compilesdkversion') && line.contains('27')) {
         print('file: $file, line: $line');

@@ -27,7 +27,7 @@ void main() {
   '$dartPath/pub global activate dcli'.run;
   '$pubCachePath/dcli install'.run;
 
-  var appsPath = join('$HOME', 'apps');
+  var appsPath = join(HOME, 'apps');
 
   if (!exists(appsPath)) {
     createDir(appsPath);

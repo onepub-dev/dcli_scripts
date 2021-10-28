@@ -1,16 +1,53 @@
 #! /usr/bin/env dcli
 
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 
 /// installs (if necessary) and runs mailhog
 
-void main() {
-  install();
+void main(List<String> args) {
+  var parser = ArgParser()
+    ..addFlag('help', abbr: 'h', help: 'Shows this help message')
+    ..addFlag('shutdown',
+        abbr: 'd', defaultsTo: false, help: 'Shutdown mailhog');
 
-  run();
+  ArgResults parsed;
+  try {
+    parsed = parser.parse(args);
+  } on FormatException catch (e) {
+    printerr(red(e.message));
+    showUsage(parser);
+    exit(1);
+  }
+
+  if (parsed['help'] as bool) {
+    showUsage(parser);
+    exit(1);
+  }
+
+  if (parsed['shutdown'] as bool) {
+    shutdownMailHog();
+  } else {
+    install();
+
+    startMailHog();
+  }
 }
 
-void run() {
+void shutdownMailHog() {
+  final processes = ProcessHelper().getProcessesByName('mailhog');
+  if (processes.isNotEmpty) {
+    'killall ${processes.first.name}'.run;
+  }
+}
+
+void showUsage(ArgParser parser) {
+  print('Runs and if required installs mailhog ');
+  print(parser.usage);
+}
+
+void startMailHog() {
   print(green('Starting mailhog'));
 
   print(orange('Access mail hog at: http://localhost:8025'));
