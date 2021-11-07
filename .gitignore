@@ -31,5 +31,4 @@ repo.list.ods
 repo.list.processed.csv
 bitbucket.yaml
 github.yaml
-.vscode/launch.json
 .failed_tracker
