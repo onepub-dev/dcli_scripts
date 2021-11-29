@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:dcli/dcli.dart';
-import 'package:args/args.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 /// Connects you to a mysql cli pulling settings (username/password)

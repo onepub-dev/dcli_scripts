@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
-import 'package:args/args.dart';
 
 /// Retrives the date a github repo was created.
 void main(List<String> args) {

@@ -1,7 +1,6 @@
 #! /usr/bin/env dcli
 
 import 'dart:io';
-import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:dcli/src/util/file_sort.dart';
 

@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:dcli/dcli.dart';
-import 'package:args/args.dart';
 
 /// This script runs chown for the given path(s) making the calling user the owner.
 /// The script uses sudo.

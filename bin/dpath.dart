@@ -1,7 +1,6 @@
 #! /usr/bin/env dcli
 
 import 'package:dcli/dcli.dart';
-import 'package:args/args.dart';
 
 /// dpath appname
 /// print the systems PATH variable contents and validates each path.

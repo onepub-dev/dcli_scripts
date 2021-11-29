@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
-import 'package:args/args.dart';
 
 void main(List<String> args) {
   var parser = ArgParser();
