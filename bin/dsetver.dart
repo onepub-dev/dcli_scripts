@@ -23,6 +23,7 @@ void main(List<String> args) {
   pub.Version? parsedVersion;
 
   final pathToPubspec = DartProject.self.pathToPubSpec;
+
   if (version != null) {
     try {
       parsedVersion = pub.Version.parse(version);
@@ -33,7 +34,6 @@ void main(List<String> args) {
     }
   } else {
     final currentVersion = pub.version(pubspecPath: pathToPubspec);
-
     if (currentVersion == null) {
       printerr(red('Unable to get the current version.'));
       printerr('Check that you are running from the projects root diretory');
@@ -41,8 +41,8 @@ void main(List<String> args) {
     }
 
     parsedVersion = pub.askForVersion(currentVersion);
-
-    pub.updateVersion(
-        parsedVersion, PubSpec.fromFile(pathToPubspec), pathToPubspec);
   }
+
+  pub.updateVersion(
+      parsedVersion, PubSpec.fromFile(pathToPubspec), pathToPubspec);
 }
