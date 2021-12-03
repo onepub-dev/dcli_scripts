@@ -1,5 +1,5 @@
 name: dcli_scripts
-version: 1.0.7
+version: 1.0.8
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
@@ -10,11 +10,9 @@ dependencies:
   path: ^1.6.4
   settings_yaml: ^3.0.6
   docker2: ^2.0.1
+  pub_release: ^7.1.16
 dev_dependencies: 
   lints: ^1.0.0
-dependency_overrides: 
-  dcli: 
-    path: ../dcli
 executables: 
   add_gnome_launcher: 
   artifactory: 
