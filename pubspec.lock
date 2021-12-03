@@ -88,10 +88,17 @@ packages:
   dcli:
     dependency: "direct main"
     description:
-      path: "../dcli"
-      relative: true
-    source: path
-    version: "1.11.0"
+      name: dcli
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.14.1"
+  dcli_core:
+    dependency: transitive
+    description:
+      name: dcli_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   docker2:
     dependency: "direct main"
     description:
