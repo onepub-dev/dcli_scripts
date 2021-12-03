@@ -10,7 +10,7 @@ void main(List<String> args) {
 
   var results = parser.parse(args);
 
-  var verbose = results['verbose'] as bool?;
+  var verbose = results['verbose'] as bool;
 
   if (results.rest.length != 1) {
     print(red('You must pass the name of the executable to search for.'));
@@ -21,13 +21,11 @@ void main(List<String> args) {
 
   var command = results.rest[0];
 
-  Settings().verbose(PATH.join(Env().delimiterForPATH));
+  log(verbose, () => PATH.join(Env().delimiterForPATH));
 
   String? lastPath;
   for (var path in PATH) {
-    if (verbose!) {
-      print('Searching: ${truepath(path)}');
-    }
+    log(verbose, () => 'Searching: ${truepath(path)}');
     if (path.isEmpty) {
       printerr(red(
           'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
@@ -55,4 +53,8 @@ String? checkPath(String cmd) {
     if (exists(fullCmd)) return fullCmd;
   }
   return null;
+}
+
+void log(bool verbose, String Function() message) {
+  if (verbose) print(message());
 }

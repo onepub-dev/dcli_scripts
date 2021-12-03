@@ -1,3 +1,7 @@
+# 1.0.8
+- upgraded to dcli 1.11.0
+- removed excess logging when running in non-verbose mode.
+
 # 1.0.7
 - Fixed a bug in dwc where it failed if passed a file with a space in the name.
 - Added fetch command.
