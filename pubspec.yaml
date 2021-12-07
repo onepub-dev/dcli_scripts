@@ -5,16 +5,19 @@ repository: https://github.com/bsutton/dcli_scripts
 environment: 
   sdk: '>=2.14.0 <3.0.0'
 dependencies: 
-  dcli: ^1.11.0
+  dcli: ^1.13.4
   args: ^2.1.1
   path: ^1.6.4
   settings_yaml: ^3.0.6
   docker2: ^2.0.1
 dev_dependencies: 
   lints: ^1.0.0
-dependency_overrides: 
-  dcli: 
-    path: ../dcli
+# dependency_overrides: 
+#   dcli: 
+#     path: ../dcli
+#   dcli_core: 
+#     path: ../dcli_core
+
 executables: 
   add_gnome_launcher: 
   artifactory: 
@@ -28,6 +31,7 @@ executables:
   dmysql: 
   dnsflush: 
   docker_dcli: 
+  docker_push:
   downit: 
   dpath: 
   dport: 

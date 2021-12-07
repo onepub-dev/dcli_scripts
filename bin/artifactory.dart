@@ -120,7 +120,7 @@ void install() {
   print(blue('Creating the $name container'));
 
   print(blue('Installing Nginx-LE'));
-  DartSdk().globalActivate('nginx_le');
+  PubCache().globalActivate('nginx_le');
 }
 
 void delete() {
