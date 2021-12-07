@@ -1,5 +1,5 @@
 name: dcli_scripts
-version: 1.0.10
+version: 1.1.0
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
@@ -13,12 +13,6 @@ dependencies:
   pub_release: ^7.1.16
 dev_dependencies: 
   lints: ^1.0.0
-# dependency_overrides: 
-#   dcli: 
-#     path: ../dcli
-#   dcli_core: 
-#     path: ../dcli_core
-
 executables: 
   add_gnome_launcher: 
   artifactory: 
@@ -32,7 +26,7 @@ executables:
   dmysql: 
   dnsflush: 
   docker_dcli: 
-  docker_push:
+  docker_push: 
   downit: 
   dpath: 
   dport: 
@@ -56,4 +50,4 @@ executables:
   install_flutter: 
   ipaddr: 
   kill_tomcat: 
-  pub_get_all:
+  pub_get_all: 

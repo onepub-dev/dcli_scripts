@@ -13,11 +13,13 @@ void main() {
         if (which('flutter').notfound) {
           printerr(red('You need to install flutter to pub get this project'));
         } else {
-          'flutter pub get'.start(workingDirectory: dirname(project), progress: Progress.devNull());
+          'flutter pub get'.start(
+              workingDirectory: dirname(project), progress: Progress.devNull());
         }
       } else {
         print(blue('Dart: project: ${dirname(project)}'));
-        'dart pub get'.start(workingDirectory: dirname(project), progress: Progress.devNull());
+        'dart pub get'.start(
+            workingDirectory: dirname(project), progress: Progress.devNull());
       }
     } catch (e) {
       printerr(red('pub get of ${dirname(project)} failed: $e'));

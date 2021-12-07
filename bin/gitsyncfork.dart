@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
-
 /// Syncs the current git repo with the upstream repo it was forked from.
 void main(List<String> args) {
   final parser = ArgParser();

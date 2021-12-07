@@ -1,3 +1,7 @@
+# 1.1.0
+- created pub_get_all to run pub get on all subprojects.
+- improved dwhich to correctly deal with empty paths.
+
 # 1.0.10
  - added dsetver as an exe.
 
