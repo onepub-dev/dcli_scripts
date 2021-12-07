@@ -7,10 +7,19 @@ import 'package:dcli/dcli.dart';
 void main(List<String> args) {
   var parser = ArgParser();
   parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
+  parser.addFlag('scan',
+      abbr: 's',
+      defaultsTo: false,
+      negatable: false,
+      help:
+          'Does an extended search of your path for all occurances of the app and validates the path');
 
   var results = parser.parse(args);
 
-  var verbose = results['verbose'] as bool;
+  print('hi');
+
+  var _verbose = results['verbose'] as bool;
+  var scan = results['scan'] as bool;
 
   if (results.rest.length != 1) {
     print(red('You must pass the name of the executable to search for.'));
@@ -21,15 +30,27 @@ void main(List<String> args) {
 
   var command = results.rest[0];
 
-  log(verbose, () => PATH.join(Env().delimiterForPATH));
+  Settings().setVerbose(enabled: _verbose);
+  print('Verbose: $_verbose');
+
+  log(_verbose, () => 'Path: ${env['PATH']}');
 
   String? lastPath;
   for (var path in PATH) {
-    log(verbose, () => 'Searching: ${truepath(path)}');
+    log(scan, () => 'Searching: ${truepath(path)}');
     if (path.isEmpty) {
-      printerr(red(
-          'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
-      continue;
+      verbose(() => 'Empty path found');
+      if (Platform.isLinux) {
+        path = '.';
+
+        /// current
+        printerr(orange(
+            'WARNING: current directory is on your path due to an empty path ${lastPath == null ? '' : 'after $lastPath'} .'));
+      } else {
+        printerr(red(
+            'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
+        continue;
+      }
     }
     if (!exists(path)) {
       printerr(red('The path $path does not exist.'));
