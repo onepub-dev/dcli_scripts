@@ -1,3 +1,9 @@
+# 1.0.10
+ - added dsetver as an exe.
+
+# 1.0.9
+ - added dsetver command which updates pubspec.yaml version from the cli.
+
 # 1.0.8
 - upgraded to dcli 1.11.0
 - removed excess logging when running in non-verbose mode.

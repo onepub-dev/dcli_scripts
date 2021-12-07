@@ -1,15 +1,16 @@
 name: dcli_scripts
-version: 1.0.8
+version: 1.0.10
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
   sdk: '>=2.14.0 <3.0.0'
 dependencies: 
-  dcli: ^1.13.4
+  dcli: ^1.14.1
   args: ^2.1.1
   path: ^1.6.4
   settings_yaml: ^3.0.6
-  docker2: ^2.0.1
+  docker2: ^2.1.2
+  pub_release: ^7.1.16
 dev_dependencies: 
   lints: ^1.0.0
 # dependency_overrides: 
@@ -36,6 +37,7 @@ executables:
   dpath: 
   dport: 
   dreplace: 
+  dsetver: 
   dsort: 
   dvirtualbox: 
   dwc: 
@@ -54,3 +56,4 @@ executables:
   install_flutter: 
   ipaddr: 
   kill_tomcat: 
+  pub_get_all:
