@@ -31,6 +31,5 @@ void main(List<String> args) {
   }
 
   print(blue('Running hog'));
-  join(DartProject.self.pathToBinDir, 'hog.dart disk')
-      .start(terminal: true, workingDirectory: HOME);
+  'hog disk'.start(terminal: true, workingDirectory: HOME);
 }
