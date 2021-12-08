@@ -1,3 +1,6 @@
+# 1.1.1
+- Fixed a bug in clean that tries to run hog.dart rather than hog.
+
 # 1.1.0
 - created pub_get_all to run pub get on all subprojects.
 - improved dwhich to correctly deal with empty paths.
