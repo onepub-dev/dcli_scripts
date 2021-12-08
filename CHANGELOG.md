@@ -1,3 +1,5 @@
+# 1.1.2
+
 # 1.1.1
 - Fixed a bug in clean that tries to run hog.dart rather than hog.
 
