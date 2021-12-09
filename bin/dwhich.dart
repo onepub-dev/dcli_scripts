@@ -15,9 +15,6 @@ void main(List<String> args) {
           'Does an extended search of your path for all occurances of the app and validates the path');
 
   var results = parser.parse(args);
-
-  print('hi');
-
   var _verbose = results['verbose'] as bool;
   var scan = results['scan'] as bool;
 
@@ -31,9 +28,12 @@ void main(List<String> args) {
   var command = results.rest[0];
 
   Settings().setVerbose(enabled: _verbose);
-  print('Verbose: $_verbose');
 
   log(_verbose, () => 'Path: ${env['PATH']}');
+
+  if (_verbose) {
+    _checkDuplicates();
+  }
 
   String? lastPath;
   for (var path in PATH) {
@@ -61,6 +61,19 @@ void main(List<String> args) {
       print(red('Found at: $pathToCmd'));
     }
     lastPath = path;
+  }
+}
+
+/// reports any duplicate path entries.
+void _checkDuplicates() {
+  var paths = <String>{};
+
+  for (final path in PATH) {
+    if (paths.contains(path)) {
+      printerr(orange('Found duplicated path: $path in PATH'));
+    } else {
+      paths.add(path);
+    }
   }
 }
 
