@@ -1,3 +1,6 @@
+# 1.1.3
+- Added logic to check for duplicate path entries when --verbose switch passed.
+
 # 1.1.2
 
 # 1.1.1
