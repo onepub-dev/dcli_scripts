@@ -129,9 +129,9 @@ Name=$name
     content.write('Comment=$comment\n');
   }
 
-  content..write('Categories=${categories!.join(';')}\n')
-
-  ..write('Terminal=$terminal\n');
+  content
+    ..write('Categories=${categories!.join(';')}\n')
+    ..write('Terminal=$terminal\n');
 
   if (iconPath != null) {
     content.write('Icon=$iconPath\n');

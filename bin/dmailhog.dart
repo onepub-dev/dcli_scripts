@@ -9,8 +9,7 @@ import 'package:dcli/dcli.dart';
 void main(List<String> args) {
   final parser = ArgParser()
     ..addFlag('help', abbr: 'h', help: 'Shows this help message')
-    ..addFlag('shutdown',
-        abbr: 'd', help: 'Shutdown mailhog');
+    ..addFlag('shutdown', abbr: 'd', help: 'Shutdown mailhog');
 
   ArgResults parsed;
   try {

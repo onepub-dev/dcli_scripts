@@ -21,7 +21,7 @@ void main() {
         'dart pub get'.start(
             workingDirectory: dirname(project), progress: Progress.devNull());
       }
-    // ignore: avoid_catches_without_on_clauses
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       printerr(red('pub get of ${dirname(project)} failed: $e'));
     }

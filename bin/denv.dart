@@ -8,10 +8,8 @@ import 'package:dcli/dcli.dart';
 /// prints all environment variables
 void main(List<String> args) {
   final parser = ArgParser()
-  ..addFlag('print',
-      abbr: 'p',
-      negatable: false,
-      help: 'prints all environment variables');
+    ..addFlag('print',
+        abbr: 'p', negatable: false, help: 'prints all environment variables');
 
   final results = parser.parse(args);
 

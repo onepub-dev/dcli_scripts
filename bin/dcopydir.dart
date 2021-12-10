@@ -27,8 +27,7 @@ void main(List<String> args) {
   if (confirm('Continue?')) {
     createDir(dest, recursive: true);
     print(green('Copying $source to $dest'));
-    copyTree(source, dest,
-        includeHidden: true);
+    copyTree(source, dest, includeHidden: true);
     print(green('Done'));
   }
 }

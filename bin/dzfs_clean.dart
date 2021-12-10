@@ -8,8 +8,7 @@ void main() {
 
   final snapshots = <String>[];
 
-  final progress = Progress(snapshots.add,
-      stderr: snapshots.add);
+  final progress = Progress(snapshots.add, stderr: snapshots.add);
   'zfs list -t snapshot -o name -S creation'
       .start(privileged: true, progress: progress);
 
