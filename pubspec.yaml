@@ -11,8 +11,9 @@ dependencies:
   settings_yaml: ^3.0.6
   docker2: ^2.1.2
   pub_release: ^7.1.16
+  uuid: ^3.0.5
 dev_dependencies: 
-  lints: ^1.0.0
+  lint_hard: ^1.0.0
 executables: 
   add_gnome_launcher: 
   artifactory: 

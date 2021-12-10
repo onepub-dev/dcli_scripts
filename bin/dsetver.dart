@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:dcli/dcli.dart';
-import 'package:args/args.dart';
 import 'package:pub_release/pub_release.dart' as pub;
 
 /// Updates the version no. on your dart package by changing pubspec.yaml
