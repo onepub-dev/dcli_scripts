@@ -6,25 +6,24 @@ import 'package:dcli/dcli.dart';
 //const tomcatPath = '$HOME/apps/tomcat vi ./apache-tomcat-9.0.16/conf/server.xml';
 
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addFlag('production', abbr: 'p', defaultsTo: false);
-  var result = parser.parse(args);
+  final parser = ArgParser()..addFlag('production', abbr: 'p');
+  final result = parser.parse(args);
 
   if (result.rest.length != 2) {
-    print(
-        '''You must provide a certificate name like 'host.somedomain.org' and your email address.
+    print('''
+You must provide a certificate name like 'host.somedomain.org' and your email address.
 ''');
     usage();
     exit(0);
   }
 
-  var certName = result.rest[0];
-  var emailaddress = result.rest[1];
-  var useProduction = result['production'] as bool;
+  final certName = result.rest[0];
+  final emailaddress = result.rest[1];
+  final useProduction = result['production'] as bool;
 
-  var letsStaging = 'https://acme-staging-v02.api.letsencrypt.org/directory';
+  const letsStaging = 'https://acme-staging-v02.api.letsencrypt.org/directory';
 
-  var letsProduction = 'https://acme-v02.api.letsencrypt.org/directory';
+  const letsProduction = 'https://acme-v02.api.letsencrypt.org/directory';
 
   var server = letsStaging;
   if (useProduction) {
@@ -40,10 +39,10 @@ void main(List<String> args) {
   print('Using: $server');
 
   // namecheap api user and key.
-  var username = read('namecheap_username').firstLine;
-  var key = read('namecheap_key').firstLine;
+  final username = read('namecheap_username').firstLine;
+  final key = read('namecheap_key').firstLine;
 
-  var saveDir = join(pwd, 'certificates');
+  final saveDir = join(pwd, 'certificates');
 
   env['NAMECHEAP_API_USER'] = username;
   env['NAMECHEAP_API_KEY'] = key;
@@ -53,7 +52,8 @@ void main(List<String> args) {
 }
 
 void usage() {
-  print('''Usage:
+  print('''
+Usage:
       certbot_renew.dart [--production|-p] <cert doman> <email address> 
 
       If the production switch isn't passed then a trial cert is obtained from the

@@ -13,8 +13,7 @@ import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
   Settings().setVerbose(enabled: false);
-  var parser = ArgParser();
-  parser.addCommand('build');
+  final parser = ArgParser()..addCommand('build');
 
   var build = false;
   ArgResults results;
@@ -43,13 +42,9 @@ void main(List<String> args) {
     exit(0);
   }
 
-  print(
-      'Mounting host ${green(pwd)} into the container at ${orange('/home/local')}');
+  print('Mounting host ${green(pwd)} into the container at '
+      '${orange('/home/local')}');
 
   /// mount the current working directory
-  var cmd =
-      'docker run -v $pwd:/home/local --network host -it dcli:dcli /bin/bash';
-
-  // print(cmd);
-  cmd.run;
+  'docker run -v $pwd:/home/local --network host -it dcli:dcli /bin/bash'.run;
 }

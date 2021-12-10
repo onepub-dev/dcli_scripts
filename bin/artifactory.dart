@@ -4,17 +4,18 @@ import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 
 /// The port that artifactory will listen on.
-var port = '8081';
-var port2 = '8082';
-var bind = '127.0.0.1';
-var name = 'artifactory';
+String port = '8081';
+String port2 = '8082';
+String bind = '127.0.0.1';
+String name = 'artifactory';
 
-var imageName = 'docker.bintray.io/jfrog/artifactory-oss:latest';
+String imageName = 'docker.bintray.io/jfrog/artifactory-oss:latest';
 
 /// installs, starts/stops the artifactory docker container.
 void main(List<String> args) {
   // if (!DartScript.self.isCompiled) {
-  //   printerr('You must run this as a compiled dart script as sudo is required');
+  //   printerr('You must run this as a compiled dart script '
+  // 'as sudo is required');
   //   exit(1);
   // }
   // if (!Shell.current.isPrivilegedUser) {
@@ -23,7 +24,7 @@ void main(List<String> args) {
   // }
 
   Settings().setVerbose(enabled: true);
-  var parser = ArgParser()
+  final parser = ArgParser()
     ..addFlag('install',
         abbr: 'i', help: 'Install the artifactory OSS docker image')
     ..addFlag('run',
@@ -31,15 +32,15 @@ void main(List<String> args) {
         help: 'Run the artifactory docker image. This is the default action ')
     ..addFlag('delete',
         abbr: 'd',
-        help:
-            'Delete the artifactory docker container. The volume will be unaffected.')
+        help: 'Delete the artifactory docker container. '
+            'The volume will be unaffected.')
     ..addFlag('start',
         abbr: 's', help: 'Runs artifactory docker image as a daemon.')
     ..addFlag('stop', abbr: 't', help: 'Stops the artifactory docker process')
     ..addFlag('attach',
         abbr: 'a', help: 'Attach to the artifactory docker cli');
 
-  var parsed = parser.parse(args);
+  final parsed = parser.parse(args);
   if (parsed['install'] as bool) {
     install();
   } else if (parsed['delete'] as bool) {
@@ -87,7 +88,7 @@ void start({required bool daemon}) {
     print(blue('Starting Artifactory in interactive mode.'));
   }
 
-  var image = Docker().findImageByName(imageName);
+  final image = Docker().findImageByName(imageName);
   if (image == null) {
     printerr(red(
         "The artificatory image isn't installed. Run ./artifactory.dart --install"));
@@ -102,7 +103,8 @@ void start({required bool daemon}) {
   Docker().run(image,
       argString:
 
-          /// list on primary and secondary artifactory ports and mount a host volume.
+          /// list on primary and secondary artifactory ports and mount
+          /// a host volume.
           '-p $bind:$port:8081 -p $bind:$port2:8082 -v /var/opt/jfrog/artifactory:/var/opt/jfrog/artifactory',
       daemon: daemon);
 

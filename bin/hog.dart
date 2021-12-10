@@ -59,18 +59,18 @@ class DiskCommand extends Command<void> {
 
   @override
   void run() {
-    var directories = <String>[];
+    final directories = <String>[];
     print(green('Scanning...'));
-    find('*', includeHidden: true, recursive: true, types: [Find.directory])
-        .forEach((directory) => directories.add(directory));
+    find('*', includeHidden: true, types: [Find.directory])
+        .forEach(directories.add);
 
-    var directorySizes = <DirectorySize>[];
+    final directorySizes = <DirectorySize>[];
 
     print(orange('Found ${directories.length} directories'));
 
     print(green('Calculating sizes...'));
-    for (var directory in directories) {
-      var directorySize = DirectorySize(directory);
+    for (final directory in directories) {
+      final directorySize = DirectorySize(directory);
       directorySizes.add(directorySize);
 
       find('*',
@@ -91,7 +91,9 @@ class DiskCommand extends Command<void> {
     print(orange('Free Space: ${humanNumber(availableSpace(pwd))}'));
 
     for (var i = 0; i < min(50, directorySizes.length); i++) {
-      if (directorySizes[i].size == 0) continue;
+      if (directorySizes[i].size == 0) {
+        continue;
+      }
       print(Format().row(
           [(humanNumber(directorySizes[i].size)), directorySizes[i].pathTo],
           widths: [10, -1],
@@ -101,10 +103,9 @@ class DiskCommand extends Command<void> {
 }
 
 class DirectorySize {
+  DirectorySize(this.pathTo);
   String pathTo;
   int size = 0;
-
-  DirectorySize(this.pathTo);
 }
 
 void showUsage(ArgParser parser) {
@@ -118,7 +119,7 @@ void showUsage(ArgParser parser) {
 String humanNumber(int bytes) {
   String human;
 
-  var svalue = '$bytes';
+  final svalue = '$bytes';
   if (bytes > 1000000000) {
     human = svalue.substring(0, svalue.length - 9);
     human += 'G';
@@ -140,29 +141,31 @@ int availableSpace(String path) {
         "The given path ${truepath(path)} doesn't exists");
   }
 
-  var lines = 'df -h "$path"'.toList();
+  final lines = 'df -h "$path"'.toList();
   if (lines.length != 2) {
     throw FileSystemException(
         "An error occured retrieving the device path: ${lines.join('\n')}");
   }
 
-  var line = lines[1];
-  var parts = line.split(RegExp(r'\s+'));
+  final line = lines[1];
+  final parts = line.split(RegExp(r'\s+'));
 
   if (parts.length != 6) {
     throw FileSystemException('An error parsing line: $line');
   }
 
-  var factors = {'G': 1000000000, 'M': 1000000, 'K': 1000, 'B': 1};
+  final factors = {'G': 1000000000, 'M': 1000000, 'K': 1000, 'B': 1};
 
-  var havailable = parts[3];
+  final havailable = parts[3];
 
-  if (havailable == '0') return 0;
+  if (havailable == '0') {
+    return 0;
+  }
 
-  var factorLetter = havailable.substring(havailable.length - 1);
-  var hsize = havailable.substring(0, havailable.length - 1);
+  final factorLetter = havailable.substring(havailable.length - 1);
+  final hsize = havailable.substring(0, havailable.length - 1);
 
-  var factor = factors[factorLetter];
+  final factor = factors[factorLetter];
   if (factor == null) {
     throw FileSystemException(
         "Unrecognized size factor '$factorLetter' in $havailable");

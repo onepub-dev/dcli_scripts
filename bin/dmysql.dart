@@ -8,26 +8,25 @@ import 'package:settings_yaml/settings_yaml.dart';
 /// from a local settings file.
 /// Use
 
-var pathToDMysql = '$HOME/.dmysql';
+String pathToDMysql = '$HOME/.dmysql';
 
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addFlag('config',
-      abbr: 'c',
-      defaultsTo: false,
-      help:
-          'starts dmysql in configuration mode so you can enter the settings for the given db');
+  final parser = ArgParser()
+    ..addFlag('config',
+        abbr: 'c',
+        help: 'starts dmysql in configuration mode so you can enter the '
+            'settings for the given db');
 
-  var results = parser.parse(args);
-  var rest = results.rest;
+  final results = parser.parse(args);
+  final rest = results.rest;
 
   if (rest.length != 1) {
     printerr(red('You must provide the database name'));
     showUsage(parser);
   }
 
-  var dbname = rest[0];
-  var pathToDbSettings = join(pathToDMysql, dbname);
+  final dbname = rest[0];
+  final pathToDbSettings = join(pathToDMysql, dbname);
 
   if (results['config'] as bool) {
     config(dbname, pathToDbSettings);
@@ -41,12 +40,12 @@ void main(List<String> args) {
 }
 
 void launch(String pathToDbSettings) {
-  var settings = SettingsYaml.load(pathToSettings: pathToDbSettings);
-  var host = settings['host'] as String?;
-  var port = settings['port'] as int?;
-  var user = settings['user'] as String?;
-  var password = settings['password'] as String?;
-  var dbname = settings['dbname'] as String?;
+  final settings = SettingsYaml.load(pathToSettings: pathToDbSettings);
+  final host = settings['host'] as String?;
+  final port = settings['port'] as int?;
+  final user = settings['user'] as String?;
+  final password = settings['password'] as String?;
+  final dbname = settings['dbname'] as String?;
 
   'mysql -h $host --port=$port -u $user --password="$password" $dbname'.run;
 }
@@ -55,7 +54,7 @@ void config(String dbname, String pathToDbSettings) {
   if (!exists(dirname(pathToDbSettings))) {
     createDir(dirname(pathToDbSettings), recursive: true);
   }
-  var settings = SettingsYaml.load(pathToSettings: pathToDbSettings);
+  final settings = SettingsYaml.load(pathToSettings: pathToDbSettings);
 
   settings['dbname'] = dbname;
   settings['host'] = ask('host:',

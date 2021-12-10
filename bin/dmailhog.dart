@@ -7,10 +7,10 @@ import 'package:dcli/dcli.dart';
 /// installs (if necessary) and runs mailhog
 
 void main(List<String> args) {
-  var parser = ArgParser()
+  final parser = ArgParser()
     ..addFlag('help', abbr: 'h', help: 'Shows this help message')
     ..addFlag('shutdown',
-        abbr: 'd', defaultsTo: false, help: 'Shutdown mailhog');
+        abbr: 'd', help: 'Shutdown mailhog');
 
   ArgResults parsed;
   try {
@@ -69,9 +69,7 @@ void install() {
   }
 }
 
-String get mailHogDirectoryPath {
-  return join(HOME, 'apps', 'mailhog');
-}
+String get mailHogDirectoryPath => join(HOME, 'apps', 'mailhog');
 
 String get mailHogAppPath => join(mailHogDirectoryPath, mailHogAppname);
 

@@ -5,10 +5,9 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
+  final parser = ArgParser()..addFlag('verbose', abbr: 'v', negatable: false);
 
-  var parsed = parser.parse(args);
+  final parsed = parser.parse(args);
   if (parsed.wasParsed('verbose')) {
     Settings().setVerbose(enabled: true);
   }
@@ -19,13 +18,13 @@ void main(List<String> args) {
   }
 
   var total = 0;
-  find(parsed.rest[0], workingDirectory: pwd, recursive: true).forEach((file) {
-    var line = 'wc -l "$file"'.firstLine!;
-    var parts = line.split(' ');
+  find(parsed.rest[0], workingDirectory: pwd).forEach((file) {
+    final line = 'wc -l "$file"'.firstLine!;
+    final parts = line.split(' ');
     if (parts.isEmpty) {
       printerr('Invalid line: $line');
     } else {
-      var count = int.tryParse(parts[0])!;
+      final count = int.tryParse(parts[0])!;
       total += count;
     }
   });

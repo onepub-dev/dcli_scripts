@@ -17,8 +17,8 @@ void main(List<String> args) {
     printerr('usage rename_tag <oldTag> <newTag>');
     exit(1);
   }
-  var oldTag = args[0];
-  var newTag = args[1];
+  final oldTag = args[0];
+  final newTag = args[1];
 
   'git tag $newTag $oldTag'.run;
   'git tag -d $oldTag'.run;

@@ -7,16 +7,16 @@ import 'package:dcli/dcli.dart';
 /// print the systems PATH variable contents and validates each path.
 
 void main(List<String> args) {
-  var parser = ArgParser();
+  final parser = ArgParser();
 
-  var results = parser.parse(args);
+  final results = parser.parse(args);
   if (results.rest.isEmpty) {
     printerr('You must provide a filename to find');
     exit(1);
   }
 
-  var pattern = results.rest[0];
+  final pattern = results.rest[0];
   print('looking for $pattern');
 
-  find(pattern, workingDirectory: '.').forEach((file) => print(file));
+  find(pattern).forEach(print);
 }

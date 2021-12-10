@@ -1,23 +1,23 @@
 #! /usr/bin/env dcli
 
 import 'dart:io';
-import 'package:dcli/dcli.dart';
+
 import 'package:args/args.dart';
+import 'package:dcli/dcli.dart';
 
 /// prints all environment variables
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addFlag('print',
+  final parser = ArgParser()
+  ..addFlag('print',
       abbr: 'p',
-      defaultsTo: false,
       negatable: false,
       help: 'prints all environment variables');
 
-  var results = parser.parse(args);
+  final results = parser.parse(args);
 
-  var doPrint = results['print'] as bool?;
+  final doPrint = results['print'] as bool?;
 
-  var envVars = Platform.environment;
+  final envVars = Platform.environment;
 
   if (doPrint == true) {
     envVars.forEach((key, value) => print('$key:$value'));

@@ -6,17 +6,15 @@ import 'package:dcli/dcli.dart';
 
 /// Retrives the date a github repo was created.
 void main(List<String> args) {
-  final parser = ArgParser();
-  parser.addFlag(
-    'verbose',
-    abbr: 'v',
-    negatable: false,
-    help: 'Logs additional details to the cli',
-  );
-
-  parser.addOption('owner', abbr: 'o', help: 'The github owner of the  repo.');
-  parser.addOption('repo',
-      abbr: 'r', help: 'The github repo name of the  repo.');
+  final parser = ArgParser()
+    ..addFlag(
+      'verbose',
+      abbr: 'v',
+      negatable: false,
+      help: 'Logs additional details to the cli',
+    )
+    ..addOption('owner', abbr: 'o', help: 'The github owner of the  repo.')
+    ..addOption('repo', abbr: 'r', help: 'The github repo name of the  repo.');
 
   final parsed = parser.parse(args);
 
@@ -39,11 +37,11 @@ void main(List<String> args) {
   final repo = parsed['repo'] as String;
 
   withTempFile((jsonFile) {
-    var url = 'https://api.github.com/repos/$owner/$repo';
+    final url = 'https://api.github.com/repos/$owner/$repo';
     print('fetching $url');
     fetch(url: url, saveToPath: jsonFile);
 
-    var json =
+    final json =
         jsonDecode(read(jsonFile).toList().join('\n')) as Map<String, dynamic>;
     if (json.containsKey('created_at')) {
       print(json['created_at']);

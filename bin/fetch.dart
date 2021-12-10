@@ -5,8 +5,7 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
+  final parser = ArgParser()..addFlag('verbose', abbr: 'v', negatable: false);
 
   late final ArgResults parsed;
   try {
@@ -23,15 +22,9 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var url = parsed.rest[0];
+  final url = parsed.rest[0];
   withTempFile((file) {
-    fetch(
-        url: url,
-        method: FetchMethod.get,
-        saveToPath: file,
-        fetchProgress: (progress) {
-          showProgress(progress);
-        });
+    fetch(url: url, saveToPath: file, fetchProgress: showProgress);
     print(green('Data Recieved'));
     cat(file);
   }, create: false);
@@ -45,7 +38,7 @@ void showProgress(FetchProgress progress) {
   if (progress.headers != null) {
     print(blue('Headers'));
     progress.headers?.forEach((key, value) {
-      print('$key=>' + value.join(','));
+      print('$key=>${value.join(',')}');
     });
   }
 }

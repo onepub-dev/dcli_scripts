@@ -6,14 +6,14 @@ void main() {
   print('clean automatically generated zfs snapshots');
   // check if there are any to delete.
 
-  var snapshots = <String>[];
+  final snapshots = <String>[];
 
-  var progress = Progress((line) => snapshots.add(line),
-      stderr: (line) => snapshots.add(line));
+  final progress = Progress(snapshots.add,
+      stderr: snapshots.add);
   'zfs list -t snapshot -o name -S creation'
       .start(privileged: true, progress: progress);
 
-  for (var snapshot in snapshots) {
+  for (final snapshot in snapshots) {
     if (snapshot.contains('@auto')) {
       'zfs destroy -vr $snapshot'.start(privileged: true);
     }

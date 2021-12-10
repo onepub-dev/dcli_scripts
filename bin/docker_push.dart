@@ -6,13 +6,13 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
-  var parser = ArgParser()
+  final parser = ArgParser()
     ..addOption('repo',
         abbr: 'r',
         mandatory: true,
         help: 'The name of the docker repository to publish to.');
-  var project = DartProject.fromPath('.', search: true);
-  var projectRootPath = project.pathToProjectRoot;
+  final project = DartProject.fromPath('.');
+  final projectRootPath = project.pathToProjectRoot;
   print('projectRoot $projectRootPath');
 
   ArgResults parsed;
@@ -23,19 +23,19 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var repo = parsed['repo'] as String;
-  var projectName = project.pubSpec.name;
-  var version = project.pubSpec.version;
-  var name = '$repo/$projectName';
+  final repo = parsed['repo'] as String;
+  final projectName = project.pubSpec.name;
+  final version = project.pubSpec.version;
+  final name = '$repo/$projectName';
 
-  var imageTag = '$name:$version';
+  final imageTag = '$name:$version';
   print('Pushing Docker image $imageTag.');
 
   print('docker path: ${findDockerFilePath()}');
   print(green('Building $projectName docker image'));
   'docker build -t$imageTag .'.start(workingDirectory: findDockerFilePath());
   print(green('Pushing docker image: $imageTag and latest'));
-  var latestTag = '$name:latest';
+  final latestTag = '$name:latest';
   'docker image tag $imageTag $latestTag'.run;
   'docker push $imageTag'.run;
   'docker push $latestTag'.run;

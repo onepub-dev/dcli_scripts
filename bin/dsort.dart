@@ -6,7 +6,9 @@ import 'package:dcli/src/util/file_sort.dart';
 
 /// dsort
 ///
-/// dsort --field-delimiter=<FD> --linedelimiter=<LD> --key=<columns> --output output <file>
+/// ```
+/// dsort --field-delimiter=<FD> --linedelimiter=<LD> --key=<columns>
+///     --output output <file>
 ///
 /// <columns>=1[type][direction],3,7,1-7
 /// <type>=<s|n|m>
@@ -22,7 +24,7 @@ import 'package:dcli/src/util/file_sort.dart';
 /// e.g.
 ///
 /// dsort -fd=, -ld=\n --sortkey=1nd,2,3sd,1-7nd unsorted.txt
-///
+/// ```
 ///
 
 const String fieldDelimiterOption = 'field-delimiter';
@@ -34,33 +36,32 @@ void main(List<String> args) {
   dsort(args);
 }
 
-void dsort(List<String> args) async {
-  var columns = <Column>[];
+Future<void> dsort(List<String> args) async {
+  final columns = <Column>[];
   String? fieldDelimiter;
   String? lineDelimiter;
   String? outputPath;
   bool verbose;
 
-  var parser = ArgParser()
-    ..addFlag('verbose', abbr: 'v', defaultsTo: false)
+  final parser = ArgParser()
+    ..addFlag('verbose', abbr: 'v')
     ..addOption(fieldDelimiterOption,
         abbr: 'f', defaultsTo: ',', callback: (value) => fieldDelimiter = value)
     ..addOption(lineDelimiterOption,
         abbr: 'l', defaultsTo: '\n', callback: (value) => lineDelimiter = value)
     ..addMultiOption(sortkeyOption,
         abbr: 's',
-        callback: (List<String> values) =>
-            columns.addAll(FileSort.expandColumns(values)))
+        callback: (values) => columns.addAll(FileSort.expandColumns(values)))
     ..addOption(outputOption, abbr: 'o');
 
-  var results = parser.parse(args);
+  final results = parser.parse(args);
   verbose = results['verbose'] as bool;
 
   if (results.rest.length != 1) {
     usageError('Expected an input_file to sort.');
   }
 
-  var inputPath = absolute(results.rest[0]);
+  final inputPath = absolute(results.rest[0]);
 
   if (results[outputOption] != null) {
     outputPath = results[outputOption].toString();
@@ -71,7 +72,8 @@ void dsort(List<String> args) async {
 
   if (columns.isEmpty) {
     /// if no columns defined we sort by the whole line.
-    columns.add(Column(0, CaseInsensitiveSort(), SortDirection.ascending));
+    columns
+        .add(Column(0, const CaseInsensitiveSort(), SortDirection.ascending));
   }
 
   if (verbose) {
@@ -86,15 +88,13 @@ void dsort(List<String> args) async {
   }
 
   if (exists(outputPath) && outputPath != inputPath) {
-    usageError(
-        'The output_file $outputPath already exist. Delete the file and try again.');
+    usageError('The output_file $outputPath already exist. '
+        'Delete the file and try again.');
   }
 
-  var sort = FileSort(
-      inputPath, outputPath, columns, fieldDelimiter, lineDelimiter,
-      verbose: verbose);
-
-  sort.sort();
+  FileSort(inputPath, outputPath, columns, fieldDelimiter, lineDelimiter,
+          verbose: verbose)
+      .sort();
 }
 
 void usageError(String error) {

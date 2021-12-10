@@ -27,7 +27,7 @@ void main(List<String> args) {
 
   print(blue('cleaning dcli test directories..'));
   if (exists('/tmp/dcli')) {
-    deleteDir('/tmp/dcli', recursive: true);
+    deleteDir('/tmp/dcli');
   }
 
   print(blue('Running hog'));

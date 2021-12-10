@@ -8,26 +8,17 @@ import 'package:dcli/dcli.dart';
 /// along with an asci representation.
 
 void main(List<String> args) {
-  var parser = ArgParser()
+  final parser = ArgParser()
     ..addOption('width',
         abbr: 'w',
         defaultsTo: '16',
         help: 'Controls no. of hex characters output per line.')
     ..addFlag('offset',
-        abbr: 'o',
-        defaultsTo: false,
-        negatable: false,
-        help: 'Suppress the offset on each line.')
+        abbr: 'o', negatable: false, help: 'Suppress the offset on each line.')
     ..addFlag('ascii',
-        abbr: 'a',
-        defaultsTo: false,
-        negatable: false,
-        help: 'Suppress ascii output.')
+        abbr: 'a', negatable: false, help: 'Suppress ascii output.')
     ..addFlag('help',
-        abbr: 'h',
-        defaultsTo: false,
-        negatable: false,
-        help: 'Shows the usage message.');
+        abbr: 'h', negatable: false, help: 'Shows the usage message.');
 
   ArgResults parsed;
   try {
@@ -48,7 +39,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var file = parsed.rest[0];
+  final file = parsed.rest[0];
   if (!exists(file)) {
     printerr(red('The file ${truepath(file)} does not exist.'));
     showUsage(parser);
@@ -61,7 +52,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var width = int.tryParse(parsed['width'] as String);
+  final width = int.tryParse(parsed['width'] as String);
 
   if (width == null) {
     printerr(red('Width must be an integer. Found ${parsed['width']}'));
@@ -69,9 +60,9 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var showOffset = !(parsed['offset'] as bool);
+  final showOffset = !(parsed['offset'] as bool);
 
-  var showAscii = !(parsed['ascii'] as bool);
+  final showAscii = !(parsed['ascii'] as bool);
 
   dump(file, width, parser, showOffset: showOffset, showAscii: showAscii);
 }
@@ -79,7 +70,7 @@ void main(List<String> args) {
 void dump(String file, int width, ArgParser parser,
     {required bool showOffset, required bool showAscii}) {
   withOpenFile(file, (openFile) {
-    var buffer = List.filled(width, 0);
+    final buffer = List.filled(width, 0);
 
     try {
       var read = 0;
@@ -91,19 +82,19 @@ void dump(String file, int width, ArgParser parser,
 
         // if requested show the byte offset for the current line.
         if (showOffset) {
-          echo('$offset'.padLeft(6, '0') + ': ');
+          echo('${'$offset'.padLeft(6, '0')}: ');
           offset += width;
         }
 
         // dump hex version of buffer
-        for (var val in buffer) {
+        for (final val in buffer) {
           count++;
           if (count > read) {
             echo('  ');
           } else {
             echo(val.toRadixString(16).padLeft(2, '0'));
           }
-          if (count % 2 == 0) {
+          if (count.isEven) {
             echo(' ');
           }
         }
@@ -112,12 +103,14 @@ void dump(String file, int width, ArgParser parser,
 
         /// dump ascii version of buffer
         if (showAscii) {
-          for (var val in buffer) {
+          for (final val in buffer) {
             final char = isPrintable(val) ? String.fromCharCode(val) : ' ';
             echo(char);
 
             count++;
-            if (count > read) break;
+            if (count > read) {
+              break;
+            }
           }
         }
         print('');
@@ -133,7 +126,7 @@ void dump(String file, int width, ArgParser parser,
 /// Replaces all non-printable characters in value with a space.
 /// tabs, newline etc are all considered non-printable.
 String replaceNoPrintable(String value) {
-  var charCodes = <int>[];
+  final charCodes = <int>[];
 
   for (final codeUnit in value.codeUnits) {
     if (isPrintable(codeUnit)) {
@@ -149,8 +142,12 @@ String replaceNoPrintable(String value) {
 bool isPrintable(int codeUnit) {
   var printable = true;
 
-  if (codeUnit < 33) printable = false;
-  if (codeUnit >= 127) printable = false;
+  if (codeUnit < 33) {
+    printable = false;
+  }
+  if (codeUnit >= 127) {
+    printable = false;
+  }
 
   return printable;
 }

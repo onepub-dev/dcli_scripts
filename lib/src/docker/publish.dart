@@ -36,7 +36,7 @@ void dockerPublish(
   final name = project.pubSpec.name;
   final version = project.pubSpec.version.toString();
 
-  if (!confirm(('Building $name $version'))) {
+  if (!confirm('Building $name $version')) {
     printerr(red('Stopping build'));
     exit(1);
   }

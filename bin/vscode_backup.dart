@@ -12,16 +12,15 @@ import 'package:dcli/dcli.dart';
 /// For details on installing dcli.
 ///
 
-var backupfile = '.vscode_extension.bak';
+String backupfile = '.vscode_extension.bak';
 
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addCommand('backup');
-  var restoreParser = parser.addCommand('restore');
-  restoreParser.addFlag('latest', abbr: 'l', defaultsTo: true);
+  final parser = ArgParser()..addCommand('backup');
+  final restoreParser = parser.addCommand('restore')
+    ..addFlag('latest', abbr: 'l', defaultsTo: true);
   parser.addCommand('uninstall');
 
-  var result = parser.parse(args);
+  final result = parser.parse(args);
 
   if (result.command == null) {
     usage(parser);
@@ -44,7 +43,7 @@ void main(List<String> args) {
 }
 
 void backup() {
-  var extensions = 'code --show-versions --list-extensions'.toList();
+  final extensions = 'code --show-versions --list-extensions'.toList();
 
   if (exists(backupfile)) {
     if (!confirm('overwrite backupfile: $backupfile?')) {
@@ -53,16 +52,12 @@ void backup() {
     backupfile.truncate();
   }
 
-  for (var extension in extensions) {
-    backupfile.append(extension);
-  }
+  extensions.forEach(backupfile.append);
 
   print('extension have been backed up to $backupfile');
 }
 
-List<String?> getCurrent() {
-  return 'code --list-extensions'.toList();
-}
+List<String?> getCurrent() => 'code --list-extensions'.toList();
 
 void restore(ArgParser parser, List<String> args) {
   if (!exists(backupfile)) {
@@ -71,20 +66,22 @@ void restore(ArgParser parser, List<String> args) {
     exit(1);
   }
 
-  var result = parser.parse(args);
-  var latest = result['latest'] as bool;
+  final result = parser.parse(args);
+  final latest = result['latest'] as bool;
 
-  var extensions = read(backupfile).toList();
+  final extensions = read(backupfile).toList();
 
   var line = 0;
-  for (var extension in extensions) {
+  for (final extension in extensions) {
     line++;
-    var parts = extension.split('@');
+    final parts = extension.split('@');
 
     if (parts.length != 2) {
-      throw ('The backupfile ${absolute(backupfile)} contains an invalid line ($line) $extension. Expected format is <name>@<version> ');
+      throw Exception('The backupfile ${absolute(backupfile)} contains an '
+          'invalid line ($line) $extension. '
+          'Expected format is <name>@<version> ');
     }
-    var name = parts[0];
+    final name = parts[0];
 
     // if (current.contains(name)) {
     //   continue;
@@ -107,18 +104,18 @@ void uninstall() {
   //   backup();
   // }
 
-  var current = getCurrent();
+  final current = getCurrent();
 
   var extensions = read(backupfile).toList();
 
-  var retries = <String>[];
+  final retries = <String>[];
   var hasRetries = false;
 
   do {
     hasRetries = false;
-    for (var extension in extensions) {
-      var parts = extension.split('@');
-      var name = parts[0];
+    for (final extension in extensions) {
+      final parts = extension.split('@');
+      final name = parts[0];
       // var version = parts[1];
 
       if (!current.contains(name)) {
@@ -127,7 +124,7 @@ void uninstall() {
         try {
           'code --uninstall-extension $name'.run;
         } on RunException catch (e) {
-          var msg = e.message;
+          final msg = e.message;
           if (msg.startsWith('Cannot uninstall extension') &&
               msg.endsWith('depends on this.')) {
             hasRetries = true;
@@ -145,7 +142,8 @@ void uninstall() {
 }
 
 void usage(ArgParser parser) {
-  print('''Usage: 
+  print('''
+Usage: 
   vscode_backup.dart backup
     backups up all your vscode extensions
   vscode_backup.dart restore <--latest>

@@ -13,16 +13,18 @@ import 'package:dcli/dcli.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 void main() {
-  var list = 'repo.list.csv';
+  const list = 'repo.list.csv';
   if (!exists(list)) {
     printerr('List not found');
     exit(1);
   }
-  var repos = read(list).toList();
+  final repos = read(list).toList();
 
-  for (var repo in repos) {
-    if (repo.trim().isEmpty) continue;
-    var parts = repo.split(',');
+  for (final repo in repos) {
+    if (repo.trim().isEmpty) {
+      continue;
+    }
+    final parts = repo.split(',');
     final name = parts[0].replaceAll('"', '');
     final url = parts[1].replaceAll('"', '');
     import(name, url);
@@ -30,11 +32,11 @@ void main() {
 }
 
 void import(String name, String url) {
-  var settings = SettingsYaml.load(pathToSettings: 'bitbucket.yaml');
-  var password = settings['password'] as String;
-  var token = settings['gittoken'] as String;
-  var username = settings['gitusername'] as String;
-  var owner = settings['gitowner'] as String;
+  final settings = SettingsYaml.load(pathToSettings: 'bitbucket.yaml');
+  final password = settings['password'] as String;
+  final token = settings['gittoken'] as String;
+  final username = settings['gitusername'] as String;
+  final owner = settings['gitowner'] as String;
 
   Settings().setVerbose(enabled: false);
 
@@ -42,9 +44,9 @@ void import(String name, String url) {
 
   withTempDir((dir) {
     print('Cloning into $dir');
-    url = url.replaceAll('@', ':$password@');
+    final _url = url.replaceAll('@', ':$password@');
 
-    'git clone --bare $url'
+    'git clone --bare $_url'
         .start(workingDirectory: dir, progress: Progress.print());
 
     'git push --mirror https://$username:$token@github.com/$owner/$name.git'
@@ -56,7 +58,7 @@ void import(String name, String url) {
 
 void createGithubRepo(String owner, String name) {
   withTempDir((dir) {
-    var url = 'git@github.com:$owner/$name.git';
+    final url = 'git@github.com:$owner/$name.git';
     'gh repo create  $url --confirm --private'
         .start(workingDirectory: dir, progress: Progress.print());
     'git init'.start(workingDirectory: dir, progress: Progress.print());

@@ -17,17 +17,17 @@ void main() {
   //var dartPath = dartPaths[0];
 
   // find a way to search for this.
-  var dartPath = '/usr/lib/dart/bin';
+  const dartPath = '/usr/lib/dart/bin';
 
   addPathToProfile(dartPath);
 
-  var pubCachePath = '$HOME/.pub-cache/bin';
+  final pubCachePath = '$HOME/.pub-cache/bin';
   addPathToProfile(pubCachePath);
 
   '$dartPath/pub global activate dcli'.run;
   '$pubCachePath/dcli install'.run;
 
-  var appsPath = join(HOME, 'apps');
+  final appsPath = join(HOME, 'apps');
 
   if (!exists(appsPath)) {
     createDir(appsPath);
@@ -52,9 +52,9 @@ void main() {
 }
 
 void addPathToProfile(String path) {
-  var profileLines = read('$HOME/.profile').toList();
+  final profileLines = read('$HOME/.profile').toList();
   var found = false;
-  for (var line in profileLines) {
+  for (final line in profileLines) {
     if (line.contains(path)) {
       found = true;
       break;

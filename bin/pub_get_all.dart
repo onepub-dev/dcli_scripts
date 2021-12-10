@@ -6,7 +6,7 @@ import 'package:dcli/dcli.dart';
 void main() {
   for (final project in find('pubspec.yaml').toList()) {
     try {
-      var pubspec = PubSpec.fromFile(project);
+      final pubspec = PubSpec.fromFile(project);
 
       if (pubspec.dependencies.keys.contains('flutter')) {
         print(blue('Flutter project: ${dirname(project)}'));
@@ -21,6 +21,7 @@ void main() {
         'dart pub get'.start(
             workingDirectory: dirname(project), progress: Progress.devNull());
       }
+    // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       printerr(red('pub get of ${dirname(project)} failed: $e'));
     }

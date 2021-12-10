@@ -5,12 +5,12 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
-  var parser = ArgParser()
+  final parser = ArgParser()
     ..addOption('dir', abbr: 'd', help: 'root directory to start search from')
     ..addOption('find', abbr: 'f', help: 'The text to find')
     ..addOption('replace', abbr: 'r', help: 'The text to replace "find" with');
 
-  var parsed = parser.parse(args);
+  final parsed = parser.parse(args);
 
   if (parsed.rest.isEmpty) {
     printerr(red('You must provide a list of files or globs to process'));
@@ -38,9 +38,9 @@ void main(List<String> args) {
 
   workingDir = parsed['dir'] as String;
 
-  var patterns = parsed.rest;
+  final patterns = parsed.rest;
 
-  for (var pattern in patterns) {
+  for (final pattern in patterns) {
     print('scanning for $pattern');
     find(pattern, workingDirectory: workingDir)
         .forEach((file) => update(file, from, to));
@@ -53,8 +53,8 @@ void update(String path, String from, String to) {
 }
 
 void showUsage(ArgParser parser) {
-  print(
-      'Searches for and replaces a text string in matching file patterns recursively');
+  print('Searches for and replaces a text string in matching file '
+      'patterns recursively');
   print(parser.usage);
   exit(1);
 }

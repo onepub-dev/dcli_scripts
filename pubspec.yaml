@@ -5,12 +5,12 @@ repository: https://github.com/bsutton/dcli_scripts
 environment: 
   sdk: '>=2.14.0 <3.0.0'
 dependencies: 
-  dcli: ^1.14.1
   args: ^2.1.1
-  path: ^1.6.4
-  settings_yaml: ^3.0.6
+  dcli: ^1.14.1
   docker2: ^2.1.2
+  path: ^1.6.4
   pub_release: ^7.1.16
+  settings_yaml: ^3.0.6
   uuid: ^3.0.5
 dev_dependencies: 
   lint_hard: ^1.0.0

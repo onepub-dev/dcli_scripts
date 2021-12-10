@@ -8,9 +8,9 @@ import 'package:dcli/dcli.dart';
 /// It then reports any that have uncommited files or which
 /// need to be pushed.
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addFlag('detail',
-      abbr: 'd', help: 'Shows a list of any uncommited files');
+  final parser = ArgParser()
+    ..addFlag('detail',
+        abbr: 'd', help: 'Shows a list of any uncommited files');
 
   ArgResults results;
   try {
@@ -20,7 +20,7 @@ void main(List<String> args) {
     print(parser.usage);
     exit(1);
   }
-  var detail = results['detail'] as bool;
+  final detail = results['detail'] as bool;
 
   find('.git', includeHidden: true, types: [Find.directory]).forEach((gitPath) {
     var uncommited = <String>[];
@@ -34,13 +34,11 @@ void main(List<String> args) {
       if (uncommited.isNotEmpty) {
         print('Uncommited files in $gitPath');
         if (detail) {
-          for (var line in uncommited) {
-            print(line);
-          }
+          uncommited.forEach(print);
         }
       } else {
         /// check if code has been pushed
-        var status = 'git status'
+        final status = 'git status'
             .start(workingDirectory: gitPath, progress: Progress.capture())
             .toList()
             .join('\n');
@@ -49,6 +47,7 @@ void main(List<String> args) {
           print('Push required on $gitPath');
         }
       }
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       print('error: ${e.toString()}');
       print(uncommited);

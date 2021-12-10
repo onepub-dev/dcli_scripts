@@ -20,20 +20,20 @@ import 'package:settings_yaml/settings_yaml.dart';
 
 /// Adds the given team to every repo owned by the passed organisation.
 void main(List<String> args) {
-  final argParser = ArgParser();
-  argParser.addOption('team',
-      abbr: 't',
-      mandatory: true,
-      help: 'Name of the team to assign to the repos');
-  argParser.addOption('owner',
-      abbr: 'o',
-      mandatory: true,
-      help: 'Name of owner/org that owns the repos');
-  argParser.addOption('permission',
-      abbr: 'p',
-      allowed: ['admin', 'push', 'pull'],
-      defaultsTo: 'pull',
-      help: 'Sets the permission the team has on the repos.');
+  final argParser = ArgParser()
+    ..addOption('team',
+        abbr: 't',
+        mandatory: true,
+        help: 'Name of the team to assign to the repos')
+    ..addOption('owner',
+        abbr: 'o',
+        mandatory: true,
+        help: 'Name of owner/org that owns the repos')
+    ..addOption('permission',
+        abbr: 'p',
+        allowed: ['admin', 'push', 'pull'],
+        defaultsTo: 'pull',
+        help: 'Sets the permission the team has on the repos.');
 
   ArgResults results;
 
@@ -45,15 +45,15 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var team = results['team'] as String;
-  var owner = results['owner'] as String;
-  var permission = results['permission'] as String;
+  final team = results['team'] as String;
+  final owner = results['owner'] as String;
+  final permission = results['permission'] as String;
 
-  var json = 'gh repo list --json "owner,name,url" $owner -L 10000'
+  final json = 'gh repo list --json "owner,name,url" $owner -L 10000'
       .parser()
       .jsonDecode() as List<dynamic>;
 
-  for (var repo in json) {
+  for (final repo in json) {
     final map = repo as Map<String, dynamic>;
     final name = map['name'] as String;
     final ownerMap = map['owner'] as Map<String, dynamic>;
@@ -66,8 +66,8 @@ void main(List<String> args) {
 
 void addToTeam(String owner, String team, String repoName,
     {required String permission}) {
-  var settings = SettingsYaml.load(pathToSettings: 'github.yaml');
-  var token = settings['gittoken'] as String;
+  final settings = SettingsYaml.load(pathToSettings: 'github.yaml');
+  final token = settings['gittoken'] as String;
   print('adding $team to $owner/$repoName');
   '''
 curl -X PUT 

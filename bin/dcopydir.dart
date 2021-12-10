@@ -11,8 +11,8 @@ void main(List<String> args) {
     showUsage();
   }
 
-  var source = args[0];
-  var dest = args[1];
+  final source = args[0];
+  final dest = args[1];
 
   if (!exists(source)) {
     printerr(red('The source directory "$source" does not exist.'));
@@ -28,7 +28,7 @@ void main(List<String> args) {
     createDir(dest, recursive: true);
     print(green('Copying $source to $dest'));
     copyTree(source, dest,
-        includeHidden: true, recursive: true, overwrite: false);
+        includeHidden: true);
     print(green('Done'));
   }
 }

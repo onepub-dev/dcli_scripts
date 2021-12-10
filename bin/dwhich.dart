@@ -5,18 +5,17 @@ import 'package:dcli/dcli.dart';
 
 /// dwhich appname - searches for 'appname' on the path
 void main(List<String> args) {
-  var parser = ArgParser();
-  parser.addFlag('verbose', abbr: 'v', defaultsTo: false, negatable: false);
-  parser.addFlag('scan',
-      abbr: 's',
-      defaultsTo: false,
-      negatable: false,
-      help:
-          'Does an extended search of your path for all occurances of the app and validates the path');
+  final parser = ArgParser()
+    ..addFlag('verbose', abbr: 'v', negatable: false)
+    ..addFlag('scan',
+        abbr: 's',
+        negatable: false,
+        help: 'Does an extended search of your path for all occurances of '
+            'the app and validates the path');
 
-  var results = parser.parse(args);
-  var _verbose = results['verbose'] as bool;
-  var scan = results['scan'] as bool;
+  final results = parser.parse(args);
+  final _verbose = results['verbose'] as bool;
+  final scan = results['scan'] as bool;
 
   if (results.rest.length != 1) {
     print(red('You must pass the name of the executable to search for.'));
@@ -25,7 +24,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  var command = results.rest[0];
+  final command = results.rest[0];
 
   Settings().setVerbose(enabled: _verbose);
 
@@ -45,7 +44,8 @@ void main(List<String> args) {
 
         /// current
         printerr(orange(
-            'WARNING: current directory is on your path due to an empty path ${lastPath == null ? '' : 'after $lastPath'} .'));
+            'WARNING: current directory is on your path due to an empty path '
+            '${lastPath == null ? '' : 'after $lastPath'} .'));
       } else {
         printerr(red(
             'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
@@ -56,7 +56,7 @@ void main(List<String> args) {
       printerr(red('The path $path does not exist.'));
       continue;
     }
-    var pathToCmd = checkPath(truepath(path, command));
+    final pathToCmd = checkPath(truepath(path, command));
     if (pathToCmd != null) {
       print(red('Found at: $pathToCmd'));
     }
@@ -66,7 +66,7 @@ void main(List<String> args) {
 
 /// reports any duplicate path entries.
 void _checkDuplicates() {
-  var paths = <String>{};
+  final paths = <String>{};
 
   for (final path in PATH) {
     if (paths.contains(path)) {
@@ -82,13 +82,18 @@ String? checkPath(String cmd) {
     return exists(cmd) ? cmd : null;
   }
 
-  for (var ext in env['PATHEXT']!.split(';')) {
-    var fullCmd = '$cmd$ext';
-    if (exists(fullCmd)) return fullCmd;
+  for (final ext in env['PATHEXT']!.split(';')) {
+    final fullCmd = '$cmd$ext';
+    if (exists(fullCmd)) {
+      return fullCmd;
+    }
   }
   return null;
 }
 
+// ignore: avoid_positional_boolean_parameters
 void log(bool verbose, String Function() message) {
-  if (verbose) print(message());
+  if (verbose) {
+    print(message());
+  }
 }

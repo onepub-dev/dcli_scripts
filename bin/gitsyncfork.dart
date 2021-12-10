@@ -5,18 +5,17 @@ import 'package:dcli/dcli.dart';
 
 /// Syncs the current git repo with the upstream repo it was forked from.
 void main(List<String> args) {
-  final parser = ArgParser();
-  parser.addFlag(
-    'verbose',
-    abbr: 'v',
-    negatable: false,
-    help: 'Logs additional details to the cli',
-  );
-
-  parser.addOption('owner',
-      abbr: 'o', help: 'The github owner of the upstream repo.');
-  parser.addOption('repo',
-      abbr: 'r', help: 'The github repo name of the upstream repo.');
+  final parser = ArgParser()
+    ..addFlag(
+      'verbose',
+      abbr: 'v',
+      negatable: false,
+      help: 'Logs additional details to the cli',
+    )
+    ..addOption('owner',
+        abbr: 'o', help: 'The github owner of the upstream repo.')
+    ..addOption('repo',
+        abbr: 'r', help: 'The github repo name of the upstream repo.');
 
   final parsed = parser.parse(args);
 
@@ -44,7 +43,7 @@ void main(List<String> args) {
 
   'git fetch upstream'.run;
 
-  var defaultBranch = getDefaultBranch();
+  final defaultBranch = getDefaultBranch();
 
   'git checkout $defaultBranch'.run;
 
@@ -52,7 +51,7 @@ void main(List<String> args) {
 }
 
 bool hasUpstream(String upstreamOwner, String upstreamRepo) {
-  var remotes = getRemotes();
+  final remotes = getRemotes();
   var found = false;
   for (final remote in remotes) {
     if (remote.contains('upstream') &&
@@ -71,28 +70,30 @@ void addUpstream(String upstreamOwner, String upstreamRepo) {
   'git remote -v'.run;
 }
 
-List<String> getRemotes() {
-  return 'git remote -v'.toList();
-}
+List<String> getRemotes() => 'git remote -v'.toList();
 
 String getDefaultBranch() {
-  var lines = 'git remote show origin'.toList(skipLines: 3);
+  final lines = 'git remote show origin'.toList(skipLines: 3);
 
-  if (lines.isEmpty) throw Exception('Unable to get default branch name');
+  if (lines.isEmpty) {
+    throw Exception('Unable to get default branch name');
+  }
 
   final line = lines.first.trim();
 
-  var parts = line.split(' ');
+  final parts = line.split(' ');
 
   return parts[2];
 }
 
 String getBranch() {
-  var line = 'git status'.firstLine;
+  final line = 'git status'.firstLine;
 
-  if (line == null) throw Exception('Unable to get branch name');
+  if (line == null) {
+    throw Exception('Unable to get branch name');
+  }
 
-  var parts = line.trim().split(' ');
+  final parts = line.trim().split(' ');
 
   return parts[2];
 }

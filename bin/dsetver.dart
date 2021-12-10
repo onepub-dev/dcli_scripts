@@ -11,13 +11,12 @@ import 'package:pub_release/pub_release.dart' as pub;
 ///  dsetver --version=x.x.x
 ///  dsetver to display a menu to with suggested version nos.
 void main(List<String> args) {
-  var parser = ArgParser();
+  final parser = ArgParser()
+    ..addOption('version', abbr: 'v', help: 'Set the version no.');
 
-  parser.addOption('version', abbr: 'v', help: 'Set the version no.');
+  final results = parser.parse(args);
 
-  var results = parser.parse(args);
-
-  var version = results['version'] as String?;
+  final version = results['version'] as String?;
 
   pub.Version? parsedVersion;
 
@@ -27,8 +26,8 @@ void main(List<String> args) {
     try {
       parsedVersion = pub.Version.parse(version);
     } on FormatException catch (_) {
-      printerr(red(
-          'The version no. "$version" passed to setVersion is not a valid version.'));
+      printerr(red('The version no. "$version" passed to setVersion is not a '
+          'valid version.'));
       exit(1);
     }
   } else {
