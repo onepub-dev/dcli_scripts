@@ -28,7 +28,7 @@ packages:
       name: basic_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.9.1"
+    version: "3.9.3"
   charcode:
     dependency: transitive
     description:
@@ -91,21 +91,21 @@ packages:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.14.1"
+    version: "1.15.4"
   dcli_core:
     dependency: transitive
     description:
       name: dcli_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.4"
+    version: "0.0.5"
   docker2:
     dependency: "direct main"
     description:
       name: docker2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.2"
+    version: "2.2.0"
   equatable:
     dependency: transitive
     description:
@@ -231,7 +231,7 @@ packages:
       name: posix
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.2"
+    version: "2.2.3"
   pub_release:
     dependency: "direct main"
     description:
@@ -294,7 +294,7 @@ packages:
       name: stacktrace_impl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.1"
+    version: "2.3.0"
   string_scanner:
     dependency: transitive
     description:
