@@ -2,7 +2,8 @@
 
 import 'dart:io';
 
-import 'package:dcli/dcli.dart';
+import 'package:dcli/dcli.dart' hide confirm;
+import 'package:dcli/dcli.dart' as dcli;
 import 'package:uuid/uuid.dart';
 
 /// Designed to build and publish a Docker file built using dcli and
@@ -30,14 +31,15 @@ void dockerPublish(
     bool pack = false,
     bool clean = false,
     bool clone = false,
-    bool push = true}) {
+    bool push = true,
+    bool confirm = true}) {
   join(DartProject.self.pathToProjectRoot, 'docker', 'Dockerfile');
 
   final project = DartProject.self;
   final name = project.pubSpec.name;
   final version = project.pubSpec.version.toString();
 
-  if (!confirm('Building $name $version')) {
+  if (confirm && !dcli.confirm('Building $name $version')) {
     printerr(red('Stopping build'));
     exit(1);
   }

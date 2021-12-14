@@ -1,4 +1,4 @@
-# 1.1.6
+# 1.1.7
 Added no-cofirm option to dockerPublish api.
 # 1.1.5
 - Added no-push option to the dockerPublish api.
