@@ -1,3 +1,6 @@
+# 1.1.5
+- Added no-push option to the dockerPublish api.
+
 # 1.1.4
 - applied lint_hard
 - created barrel file and dockerPublish

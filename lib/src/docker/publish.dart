@@ -29,7 +29,8 @@ void dockerPublish(
     required String repository,
     bool pack = false,
     bool clean = false,
-    bool clone = false}) {
+    bool clone = false,
+    bool push = true}) {
   join(DartProject.self.pathToProjectRoot, 'docker', 'Dockerfile');
 
   final project = DartProject.self;
@@ -63,6 +64,8 @@ void dockerPublish(
 
   'docker  build $cleanArg -t $tag -t $latest -f $pathToDockerFile .'.run;
 
-  'docker push $tag'.run;
-  'docker push $latest'.run;
+  if (push) {
+    'docker push $tag'.run;
+    'docker push $latest'.run;
+  }
 }
