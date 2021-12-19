@@ -19,11 +19,6 @@ void main(List<String> args) {
       workingDirectory: join(HOME, 'apps', 'eclipse'),
       types: [FileSystemEntityType.directory]).toList();
 
-  var i = 0;
-  for (final install in installs) {
-    print('${++i} $install');
-  }
-
   final install =
       menu(prompt: 'Select eclipse version to use: ', options: installs);
 
@@ -42,8 +37,8 @@ Name=Eclipse
 Comment=Jave IDE
 Categories=Development;IDE;
 Terminal=false''')
-    ..append('Icon=${join(install, "eclipse", "icon.xpm")}')
-    ..append('Exec=${join(install, "eclipse", "eclipse")}');
+    ..append('Icon=${join(install, "icon.xpm")}')
+    ..append('Exec=env GTK_THEME=Adwaita ${join(install, "eclipse")}');
 
   print('Created:');
   cat(path);
