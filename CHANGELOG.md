@@ -1,3 +1,8 @@
+# 1.1.9
+- restructured the mysql commands into one apps with commands.
+- add hook to activate dcli_scripts after doing a pub_relase.
+- added check that mysqldump was installed when running mysql_backup
+
 # 1.1.8
 - updated the eclipse desktop launcher builder to work with changes to eclipse paths.
 - added mysql_backup and renamed dmysql to mysql_cli
