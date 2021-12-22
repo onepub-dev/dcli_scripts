@@ -1,3 +1,6 @@
+# 1.1.10
+Fixed an import.
+
 # 1.1.9
 - restructured the mysql commands into one apps with commands.
 - add hook to activate dcli_scripts after doing a pub_relase.

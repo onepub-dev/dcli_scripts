@@ -1,5 +1,5 @@
 import 'package:args/command_runner.dart';
-import 'package:dcli/src/util/string_as_process.dart';
+import 'package:dcli/dcli.dart';
 
 import 'mysql.dart';
 import 'mysql_settings.dart';
