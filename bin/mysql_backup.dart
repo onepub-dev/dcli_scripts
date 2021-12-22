@@ -25,6 +25,11 @@ void main(List<String> args) {
     showUsage(parser);
   }
 
+  if (which('mysqldump').notfound) {
+    printerr(red('You must install mysqldump first'));
+    exit(1);
+  }
+
   final dbname = rest[0];
   final pathToDbSettings = join(pathToDMysql, dbname);
 
