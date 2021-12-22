@@ -35,11 +35,11 @@ void main(List<String> args) {
       printerr(red('You must first configure your database using --config'));
       showUsage(parser);
     }
-    launch(pathToDbSettings);
+    backup(pathToDbSettings);
   }
 }
 
-void launch(String pathToDbSettings) {
+void backup(String pathToDbSettings) {
   final settings = SettingsYaml.load(pathToSettings: pathToDbSettings);
   final host = settings['host'] as String?;
   final port = settings['port'] as int?;
@@ -47,7 +47,8 @@ void launch(String pathToDbSettings) {
   final password = settings['password'] as String?;
   final dbname = settings['dbname'] as String?;
 
-  'mysql -h $host --port=$port -u $user --password="$password" $dbname'.run;
+  'mysqldump -h $host --port=$port -u $user --password="$password" $dbname'
+      .start(nothrow: true);
 }
 
 void config(String dbname, String pathToDbSettings) {
@@ -82,13 +83,13 @@ void config(String dbname, String pathToDbSettings) {
 
 void showUsage(ArgParser parser) {
   print('''
-Connects you to a mysql cli pulling settings (username/password...) from a local settings file.
+Backs up a MySql database pulling settings (username/password...) from a local settings file.
 
-${green('To connect to a db:')}
-   dmysql <dbname>
+${green('To backup a db:')}
+   mysql_backup <dbname>
 
-${green('To connfigure settings for a db:')}
-  dmysql --config <dbname>
+${green('To configure settings for a db:')}
+  mysql_backup --config <dbname>
   ''');
   print(parser.usage);
   exit(1);

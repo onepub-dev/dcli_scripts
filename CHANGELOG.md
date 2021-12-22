@@ -1,3 +1,7 @@
+# 1.1.8
+- updated the eclipse desktop launcher builder to work with changes to eclipse paths.
+- added mysql_backup and renamed dmysql to mysql_cli
+
 # 1.1.7
 Added no-cofirm option to dockerPublish api.
 # 1.1.5

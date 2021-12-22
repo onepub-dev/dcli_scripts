@@ -1,5 +1,5 @@
 name: dcli_scripts
-version: 1.1.7
+version: 1.1.8
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
@@ -24,7 +24,6 @@ executables:
   denv: 
   dfind: 
   dmailhog: 
-  dmysql: 
   dnsflush: 
   docker_dcli: 
   docker_push: 
@@ -51,4 +50,6 @@ executables:
   install_flutter: 
   ipaddr: 
   kill_tomcat: 
+  mysql_cli: 
+  mysql_backup: 
   pub_get_all: 
