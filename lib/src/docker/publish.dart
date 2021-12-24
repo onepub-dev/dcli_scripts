@@ -14,27 +14,38 @@ import 'package:uuid/uuid.dart';
 /// ```docker
 /// RUN mkdir -p /BUILD_TOKEN/
 /// ```
-///
-/// Your Docker file should be in:
-///
-/// docker/Dockerfile
-///
 /// We will run a:
-/// dcli pack
-/// git add *
-/// git commit -m 'release'
-/// git push
+/// * dcli pack
+/// * git add *
+/// * git commit -m 'release'
+/// * git push
+///
+/// You need to provide the path to your dockerfile via [pathToDockerFile].
+/// The repository name will be generated from your pubspec.yaml and
+/// the [repository] argument in the form:
+///
+/// <repository>/<pubspec.name>:<pubspec.version>
+///
+/// If you pass the [clean] = true then the image will be rebuilt from scratch
+/// If you pass the [fresh] = true then we search for the BUILD_TOKEN line
+/// in your docker file and update the token UUID. This will cause the docker
+/// image to be rebuilt from the BUILD_TOKEN line. This can be used if you need
+/// to re-clone a git repo (or any similar action).
+/// By default the image will be pushed to docker hub unless
+/// you pass [push] = false.
+/// By default we ask you to confirm the build process. Pass [confirm] = false
+/// to skip the question.
+/// If you pass [pack] = true then the 'dcli pack' command will be run
+/// before the build starts.
 ///
 void dockerPublish(
     {required String pathToDockerFile,
     required String repository,
     bool pack = false,
     bool clean = false,
-    bool clone = false,
+    bool fresh = false,
     bool push = true,
     bool confirm = true}) {
-  join(DartProject.self.pathToProjectRoot, 'docker', 'Dockerfile');
-
   final project = DartProject.self;
   final name = project.pubSpec.name;
   final version = project.pubSpec.version.toString();
@@ -58,7 +69,7 @@ void dockerPublish(
     cleanArg = ' --no-cache';
   }
 
-  if (clone) {
+  if (fresh) {
     final uuid = const Uuid().v4().replaceAll('-', '');
     replace(pathToDockerFile, RegExp('RUN mkdir -p /BUILD_TOKEN/.*'),
         'RUN mkdir -p /BUILD_TOKEN/$uuid');

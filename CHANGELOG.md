@@ -1,3 +1,6 @@
+# 1.1.11
+Improved the DockerPublish api documentation.
+
 # 1.1.10
 Fixed an import.
 
