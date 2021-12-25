@@ -1,3 +1,5 @@
+# 1.1.12
+Added find_text app to recursively search for text in a file.
 # 1.1.11
 Improved the DockerPublish api documentation.
 
