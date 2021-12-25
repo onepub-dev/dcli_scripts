@@ -41,6 +41,7 @@ executables:
   dzfs_clean: 
   eclipse_launcher: 
   find_old_dart_packages: 
+  find_text:
   gitadd_team_to_repository: 
   gitcreation_date: 
   gitgc: 
