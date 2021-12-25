@@ -9,8 +9,6 @@ void main(List<String> args) {
 
   final results = parser.parse(args);
 
-  print(results.rest);
-
   if (results.rest.length != 2) {
     printerr('You must provide a filename and text to search for.');
     print('find_text <match text> "glob"');
