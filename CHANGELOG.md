@@ -1,3 +1,7 @@
+# 1.1.14
+- enh: find_text now otuputing the file name.
+- removed debug statement.
+
 # 1.1.13
 - enh: attempt two to publish with find_text as an exe.
 
