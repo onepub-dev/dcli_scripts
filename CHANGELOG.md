@@ -1,3 +1,6 @@
+# 1.1.13
+- enh: attempt two to publish with find_text as an exe.
+
 # 1.1.12
 Added find_text app to recursively search for text in a file.
 # 1.1.11
