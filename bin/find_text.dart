@@ -26,7 +26,7 @@ void main(List<String> args) {
     read(file).forEach((line) {
       count++;
       if (reg.hasMatch(line)) {
-        print('file($count): $line');
+        print('$file($count): $line');
       }
     });
   });
