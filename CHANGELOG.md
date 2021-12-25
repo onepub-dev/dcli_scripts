@@ -1,3 +1,6 @@
+# 1.1.15
+- enh: change find_text to output relative paths.
+
 # 1.1.14
 - enh: find_text now otuputing the file name.
 - removed debug statement.
