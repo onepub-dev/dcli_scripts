@@ -1,3 +1,6 @@
+# 1.1.17
+- fix: bug in dsetver. It was always trying to set the version of the dcli_scripts package.
+
 # 1.1.16
 - fix: improved error messages when an invalid arg passed to dsetver
 
