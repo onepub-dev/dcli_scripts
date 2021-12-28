@@ -27,7 +27,14 @@ void main(List<String> args) {
 
   pub.Version? parsedVersion;
 
-  final pathToPubspec = DartProject.self.pathToPubSpec;
+  final project = DartProject.findProject('.');
+  if (project == null) {
+    printerr(red(
+        'Unable to find a project in the current directory or any parent.'));
+    exit(1);
+  }
+
+  final pathToPubspec = DartProject.fromPath('.').pathToPubSpec;
 
   if (version != null) {
     try {
