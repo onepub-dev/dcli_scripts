@@ -1,3 +1,6 @@
+# 1.1.16
+- fix: improved error messages when an invalid arg passed to dsetver
+
 # 1.1.15
 - enh: change find_text to output relative paths.
 
