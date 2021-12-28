@@ -14,7 +14,14 @@ void main(List<String> args) {
   final parser = ArgParser()
     ..addOption('version', abbr: 'v', help: 'Set the version no.');
 
-  final results = parser.parse(args);
+  final ArgResults results;
+  try {
+    results = parser.parse(args);
+  } on FormatException catch (e) {
+    printerr(red(e.message));
+    showUsage(parser);
+    exit(1);
+  }
 
   final version = results['version'] as String?;
 
@@ -43,4 +50,14 @@ void main(List<String> args) {
 
   pub.updateVersion(
       parsedVersion, PubSpec.fromFile(pathToPubspec), pathToPubspec);
+}
+
+void showUsage(ArgParser parser) {
+  print('');
+  print(green('Usage:'));
+  print(green('dsetver [--version]'));
+  print('');
+  print("If the --version switch isn't passed "
+      'then you are prompted to enter a version.');
+  print(parser.usage);
 }
