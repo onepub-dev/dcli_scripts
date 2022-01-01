@@ -1,3 +1,5 @@
+# 1.1.18
+Added --column-statistics=0 to dmysql backup so we can backup a v5 db using v8 tools.
 # 1.1.17
 - fix: bug in dsetver. It was always trying to set the version of the dcli_scripts package.
 

@@ -126,14 +126,21 @@ packages:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.15.4"
+    version: "1.16.0"
   dcli_core:
     dependency: transitive
     description:
       name: dcli_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.5"
+    version: "0.0.6"
+  di_zone2:
+    dependency: transitive
+    description:
+      name: di_zone2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   docker2:
     dependency: "direct main"
     description:
@@ -308,7 +315,7 @@ packages:
       name: posix
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.3"
+    version: "3.0.0"
   pub_release:
     dependency: "direct main"
     description:
@@ -534,4 +541,4 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.14.1 <3.0.0"
+  dart: ">=2.14.0 <3.0.0"

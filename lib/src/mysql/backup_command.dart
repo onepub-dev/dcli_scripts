@@ -27,6 +27,9 @@ class BackupCommand extends Command<void> {
     'mysqldump --host ${settings.host} '
             '--port=${settings.port} '
             '--user ${settings.user} '
+            // so we can backup a v5 db using v8 tools. For large table this
+            // is also recommended.
+            '--column-statistics=0 '
             '--password="${settings.password}" '
             '--databases ${settings.dbname} '
             '--result-file=$pathToBackupfile '
