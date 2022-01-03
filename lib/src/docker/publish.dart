@@ -7,7 +7,7 @@ import 'package:dcli/dcli.dart' as dcli;
 import 'package:uuid/uuid.dart';
 
 /// Designed to build and publish a Docker file built using dcli and
-/// some fairly opionated setup.
+/// some fairly opinionated setup.
 ///
 /// Your docker file should have the following line just before
 /// the packages git clone line.
@@ -38,6 +38,8 @@ import 'package:uuid/uuid.dart';
 /// If you pass [pack] = true then the 'dcli pack' command will be run
 /// before the build starts.
 ///
+/// The [buildArgs] is a list of arguments that are passed to the docker build
+/// command.
 void dockerPublish(
     {required String pathToDockerFile,
     required String repository,
@@ -45,10 +47,13 @@ void dockerPublish(
     bool clean = false,
     bool fresh = false,
     bool push = true,
-    bool confirm = true}) {
+    bool confirm = true,
+    List<String> buildArgs = const <String>[]}) {
   final project = DartProject.self;
   final name = project.pubSpec.name;
   final version = project.pubSpec.version.toString();
+
+  var _fresh = fresh;
 
   if (confirm && !dcli.confirm('Building $name $version')) {
     printerr(red('Stopping build'));
@@ -57,6 +62,7 @@ void dockerPublish(
 
   if (pack) {
     'dcli pack'.run;
+    _fresh = true;
   }
 
   print(blue('Building $name $version'));
@@ -69,13 +75,15 @@ void dockerPublish(
     cleanArg = ' --no-cache';
   }
 
-  if (fresh) {
+  if (_fresh) {
     final uuid = const Uuid().v4().replaceAll('-', '');
     replace(pathToDockerFile, RegExp('RUN mkdir -p /BUILD_TOKEN/.*'),
         'RUN mkdir -p /BUILD_TOKEN/$uuid');
   }
 
-  'docker  build $cleanArg -t $tag -t $latest -f $pathToDockerFile .'.run;
+  'docker  build ${buildArgs.join(' ')}$cleanArg -t $tag '
+          '-t $latest -f $pathToDockerFile .'
+      .run;
 
   if (push) {
     'docker push $tag'.run;
