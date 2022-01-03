@@ -1,3 +1,6 @@
+# 1.1.20
+- Added doco on the dockerPublish command.
+
 # 1.1.19
 - doco improvements in the readme.
 
