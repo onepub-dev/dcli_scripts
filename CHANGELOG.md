@@ -1,3 +1,6 @@
+# 1.1.19
+- doco improvements in the readme.
+
 # 1.1.18
 Added --column-statistics=0 to dmysql backup so we can backup a v5 db using v8 tools.
 # 1.1.17
