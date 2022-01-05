@@ -1,3 +1,8 @@
+# 1.1.21
+Fixed a bug in dmysql when running using the mariad client which doesn't support --column-statistics.
+We just retry the command without the switch if it fails.
+
+
 # 1.1.20
 - Added doco on the dockerPublish command.
 

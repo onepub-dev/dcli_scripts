@@ -24,16 +24,27 @@ class BackupCommand extends Command<void> {
   }
 
   void backup(MySqlSettings settings, String pathToBackupfile) {
-    'mysqldump --host ${settings.host} '
-            '--port=${settings.port} '
-            '--user ${settings.user} '
-            // so we can backup a v5 db using v8 tools. For large table this
-            // is also recommended.
-            '--column-statistics=0 '
-            '--password="${settings.password}" '
-            '--databases ${settings.dbname} '
-            '--result-file=$pathToBackupfile '
-        .start(nothrow: true);
+    var columnStatistics = '--column-statistics=0 ';
+    var success = false;
+    while (!success) {
+      final result = 'mysqldump --host ${settings.host} '
+              '--port=${settings.port} '
+              '--user ${settings.user} '
+              // so we can backup a v5 db using v8 tools. For large table this
+              // is also recommended.
+              '$columnStatistics'
+              '--password="${settings.password}" '
+              '--databases ${settings.dbname} '
+              '--result-file=$pathToBackupfile '
+          .start(nothrow: true, progress: Progress.capture());
+
+      if (result.toParagraph().contains('column-statistics=0')) {
+        /// retry without --column-statistics.
+        columnStatistics = '';
+      } else {
+        success = true;
+      }
+    }
   }
 }
 
