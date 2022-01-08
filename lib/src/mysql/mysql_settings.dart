@@ -1,6 +1,8 @@
 import 'package:dcli/dcli.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
+import 'backup_command.dart';
+
 /// Connects you to a mysql cli pulling settings (username/password)
 /// from a local settings file.
 /// Use
@@ -17,6 +19,11 @@ class MySqlSettings {
 
   factory MySqlSettings.load(String dbname) {
     final pathToDbSettings = pathToSettings(dbname);
+    if (!exists(pathToDbSettings)) {
+      throw MissingConfigurationException('''
+No configuration exists for $dbname at ${truepath(pathToDbSettings)}. 
+Check your database name or run dmysql config $dbname''');
+    }
     final settings = SettingsYaml.load(pathToSettings: pathToDbSettings);
     final host = settings['host'] as String? ?? 'localhost';
     final port = settings['port'] as int? ?? 3306;
@@ -56,6 +63,13 @@ class MySqlSettings {
         validator: Ask.required,
         hidden: true);
 
+    if (!_checkDbExists(settings)) {
+      if (!confirm(orange(
+          "The database $dbname doesn't exist. Do you want to continue?"))) {
+        throw ExitException(-1);
+      }
+    }
+
     settings.save();
     return MySqlSettings.load(dbname);
   }
@@ -67,4 +81,36 @@ class MySqlSettings {
   final String dbname;
 
   static String pathToSettings(String dbname) => join(pathToDMysql, dbname);
+
+  static bool _checkDbExists(SettingsYaml settings) {
+    final host = settings['host'] as String;
+    final port = settings['port'] as int;
+    final database = settings['dbname'] as String;
+    final user = settings['user'] as String;
+    final password = settings['password'] as String;
+    final result = 'mysqlshow --host=$host --port=$port '
+            '--user=$user --password="$password" $database'
+        .start(nothrow: true, progress: Progress.capture());
+
+    if (result.exitCode != 0) {
+      final text = result.toParagraph();
+
+      if (text.contains('Unknown database')) {
+        return false;
+      } else {
+        printerr(red(text));
+        throw ExitException(result.exitCode!);
+      }
+    }
+
+    return true;
+  }
+}
+
+class MissingConfigurationException implements Exception {
+  MissingConfigurationException(this.message);
+  String message;
+
+  @override
+  String toString() => message;
 }

@@ -5,6 +5,11 @@ import 'mysql.dart';
 import 'mysql_settings.dart';
 
 class BackupCommand extends Command<void> {
+  BackupCommand() {
+    argParser.addFlag('overwrite',
+        abbr: 'w',
+        help: 'If the backup file already exist then overwrite the file.');
+  }
   @override
   String get description => 'backups up a database.';
 
@@ -20,7 +25,18 @@ class BackupCommand extends Command<void> {
 
     final args = getArgs(argResults, additionalArgs: ['Path to backup file']);
 
-    backup(MySqlSettings.load(args[0]), args[1]);
+    final overwrite = argResults!['overwrite'] as bool;
+
+    var pathToBackupfile = args[1];
+
+    if (extension(pathToBackupfile) != 'sql') {
+      pathToBackupfile += '.sql';
+    }
+    if (exists(pathToBackupfile) && !overwrite) {
+      printerr('The backup file ${truepath(pathToBackupfile)} already exists.  '
+          'Delete it or use --overwrite');
+    }
+    backup(MySqlSettings.load(args[0]), pathToBackupfile);
   }
 
   void backup(MySqlSettings settings, String pathToBackupfile) {
