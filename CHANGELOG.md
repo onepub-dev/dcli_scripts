@@ -1,3 +1,7 @@
+# 1.2.0
+- updated dcli version.
+- Added option to dmysql so it auto generates a sequence of backup files if you don't provide a name. Improved the usage message.
+
 # 1.1.22
 - Added additional optoins and error handling to dmysql.  When configuring a db we now check if it exists. We report missing config file rather than trying to use defaults. We won't overwrite an existing backup file. option to remove a config for a db.
 
