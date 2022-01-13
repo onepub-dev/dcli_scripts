@@ -66,7 +66,7 @@ Check your database name or run dmysql config $dbname''');
     if (!_checkDbExists(settings)) {
       if (!confirm(orange(
           "The database $dbname doesn't exist. Do you want to continue?"))) {
-        throw ExitException(-1);
+        throw ExitException(1, '');
       }
     }
 
@@ -98,8 +98,7 @@ Check your database name or run dmysql config $dbname''');
       if (text.contains('Unknown database')) {
         return false;
       } else {
-        printerr(red(text));
-        throw ExitException(result.exitCode!);
+        throw ExitException(result.exitCode!, text);
       }
     }
 

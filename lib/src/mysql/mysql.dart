@@ -25,16 +25,19 @@ Future<void> mysqlRun(List<String> args) async {
     await runner.run(args);
   } on MissingConfigurationException catch (e) {
     printerr(red(e.message));
-    showUsage(runner.argParser);
+    showUsage(runner);
   } on UsageException catch (e) {
     printerr(e.message);
-    showUsage(runner.argParser);
+    showUsage(runner);
   } on ExitException catch (e) {
+    if (e.message.isNotEmpty) {
+      printerr(red(e.message));
+    }
     exit(e.exitCode);
   }
 }
 
-void showUsage(ArgParser parser) {
+void showUsage(CommandRunner runner) {
   print('''
   
 ${blue('dmysql')}
@@ -46,7 +49,7 @@ ${green('To run:')}
 ${green('To configure settings for a db:')}
    ${DartScript.self.basename} --config <dbname>
   ''');
-  print(parser.usage);
+  print(runner.usage);
   exit(1);
 }
 
@@ -54,8 +57,8 @@ List<String> getArgs(ArgResults? argResults,
     {List<String> additionalArgs = const <String>[]}) {
   if (argResults!.rest.isEmpty) {
     printerr('You must pass a database name.');
-    showUsage(runner.argParser);
-    throw ExitException(1);
+    showUsage(runner);
+    throw ExitException(1, '');
   }
   final results = <String>[argResults.rest[0]];
 
@@ -63,8 +66,8 @@ List<String> getArgs(ArgResults? argResults,
     final arg = additionalArgs[i - 1];
     if (argResults.rest.length < i + 1) {
       printerr("You must pass '$arg'.\n");
-      showUsage(runner.argParser);
-      throw ExitException(1);
+      showUsage(runner);
+      throw ExitException(1, '');
     }
     results.add(argResults.rest[i]);
   }

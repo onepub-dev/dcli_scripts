@@ -11,7 +11,15 @@ class BackupCommand extends Command<void> {
         help: 'If the backup file already exist then overwrite the file.');
   }
   @override
-  String get description => 'backups up a database.';
+  String get description => '''
+Backups up a database.
+
+${blue('dmysql backup <dbname> [<path to backup file>]')}
+
+If you don't provide the path of a backup file (or path is a directory)
+then one will be generated in the form:
+
+<dbname>.backup.<nnnn>.sql''';
 
   @override
   String get name => 'backup';
@@ -19,24 +27,43 @@ class BackupCommand extends Command<void> {
   @override
   void run() {
     if (which('mysqldump').notfound) {
-      printerr(red('You must install mysqldump first'));
-      throw ExitException(1);
+      throw ExitException(1, 'You must install mysqldump first');
     }
 
-    final args = getArgs(argResults, additionalArgs: ['Path to backup file']);
+    final args = getArgs(argResults);
+
+    final dbName = args[0];
 
     final overwrite = argResults!['overwrite'] as bool;
 
-    var pathToBackupfile = args[1];
+    String pathToBackupFile;
+    if (argResults!.rest.length == 2) {
+      final backupArg = argResults!.rest[1];
+      if (isDirectory(backupArg)) {
+        final backupFileName = getBackupFileSequence(backupArg, dbName);
+        pathToBackupFile = join(backupArg, backupFileName);
+      } else {
+        pathToBackupFile = backupArg;
+      }
+    } else {
+      // no backuparg
+      final backupFileName = getBackupFileSequence(pwd, dbName);
 
-    if (extension(pathToBackupfile) != 'sql') {
-      pathToBackupfile += '.sql';
+      pathToBackupFile = join(pwd, backupFileName);
     }
-    if (exists(pathToBackupfile) && !overwrite) {
-      printerr('The backup file ${truepath(pathToBackupfile)} already exists.  '
+
+    // , additionalArgs: ['Path to backup file'])
+
+    if (extension(pathToBackupFile) != '.sql') {
+      pathToBackupFile += '.sql';
+    }
+    if (exists(pathToBackupFile) && !overwrite) {
+      printerr('The backup file ${truepath(pathToBackupFile)} already exists.  '
           'Delete it or use --overwrite');
     }
-    backup(MySqlSettings.load(args[0]), pathToBackupfile);
+    backup(MySqlSettings.load(dbName), pathToBackupFile);
+    print(blue('Backed up database to $pathToBackupFile'));
+    print('');
   }
 
   void backup(MySqlSettings settings, String pathToBackupfile) {
@@ -64,11 +91,50 @@ class BackupCommand extends Command<void> {
   }
 }
 
+String getBackupFileSequence(String path, String dbName) {
+  final backups =
+      find('$dbName.backup.*.sql', workingDirectory: path, recursive: false)
+          .toList()
+        ..sort((lhs, rhs) => _extractVersion(rhs) - _extractVersion(lhs));
+
+  if (backups.isEmpty) {
+    return '$dbName.backup.0001.sql';
+  }
+
+  final first = backups.first;
+  final version = '${_extractVersion(first) + 1}'.padLeft(4, '0');
+
+  return '$dbName.backup.$version.sql';
+}
+
+int _extractVersion(String backupName) {
+  final parts = backupName.split('.');
+  if (parts.length != 4) {
+    throw ExitException(
+        1, 'Invalid backup seqence name found ${basename(backupName)}');
+  }
+  final version = int.tryParse(parts[2]);
+  if (version == null) {
+    throw ExitException(
+        1, 'Invalid backup seqence name found ${basename(backupName)}');
+  }
+  return version;
+}
+
+// class InvalidBackupName implements Exception {
+//   InvalidBackupName(this.backupName);
+//   String backupName;
+
+//   @override
+//   String toString() => backupName;
+// }
+
 class ExitException implements Exception {
-  ExitException(this.exitCode);
+  ExitException(this.exitCode, this.message);
 
   int exitCode;
+  String message;
 
   @override
-  String toString() => 'Application ended with exitCode $exitCode';
+  String toString() => 'Error: $exitCode $message';
 }
