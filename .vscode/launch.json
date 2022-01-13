@@ -8,8 +8,15 @@
             "name": "dwhich",
             "request": "launch",
             "type": "dart",
-            "program": "dwhich.dart",
+            "program": "bin/dwhich.dart",
             "args": ["dswitch"]
+        }, 
+        {
+            "name": "dmysql - show usage",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/dmysql.dart",
+            "args": ["backup"]
         }, 
         {
             "name": "hex_dump",
