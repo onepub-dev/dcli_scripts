@@ -37,7 +37,7 @@ Future<void> mysqlRun(List<String> args) async {
   }
 }
 
-void showUsage(CommandRunner runner) {
+void showUsage(CommandRunner<void> runner) {
   print('''
   
 ${blue('dmysql')}

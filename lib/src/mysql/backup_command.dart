@@ -108,15 +108,15 @@ String getBackupFileSequence(String path, String dbName) {
 }
 
 int _extractVersion(String backupName) {
-  final parts = backupName.split('.');
+  final parts = basename(backupName).split('.');
   if (parts.length != 4) {
     throw ExitException(
-        1, 'Invalid backup seqence name found ${basename(backupName)}');
+        1, 'Invalid backup sequence name found ${basename(backupName)}');
   }
   final version = int.tryParse(parts[2]);
   if (version == null) {
     throw ExitException(
-        1, 'Invalid backup seqence name found ${basename(backupName)}');
+        1, 'Invalid backup sequence name found ${basename(backupName)}');
   }
   return version;
 }

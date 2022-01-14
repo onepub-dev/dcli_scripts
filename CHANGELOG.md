@@ -1,3 +1,6 @@
+# 1.2.1
+- Fixed bug in dmysql when the directory path had a '.' in it.
+
 # 1.2.0
 - updated dcli version.
 - Added option to dmysql so it auto generates a sequence of backup files if you don't provide a name. Improved the usage message.
