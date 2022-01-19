@@ -18,7 +18,7 @@ class ConfigCommand extends Command<void> {
 
   @override
   void run() {
-    final args = getArgs(argResults);
+    final args = getArgs(this, argResults);
 
     final dbname = args[0];
 

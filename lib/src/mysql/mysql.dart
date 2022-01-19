@@ -21,6 +21,9 @@ Future<void> mysqlRun(List<String> args) async {
     ..addCommand(CliCommand())
     ..addCommand(ConfigCommand());
 
+  runner.argParser
+      .addFlag('debug', abbr: 'd', help: 'Output debug information');
+
   try {
     await runner.run(args);
   } on MissingConfigurationException catch (e) {
@@ -53,8 +56,9 @@ ${green('To configure settings for a db:')}
   exit(1);
 }
 
-List<String> getArgs(ArgResults? argResults,
+List<String> getArgs(Command<void> command, ArgResults? argResults,
     {List<String> additionalArgs = const <String>[]}) {
+  Settings().setVerbose(enabled: command.globalResults!['debug'] as bool);
   if (argResults!.rest.isEmpty) {
     printerr('You must pass a database name.');
     showUsage(runner);

@@ -13,7 +13,7 @@ class RestoreCommand extends Command<void> {
 
   @override
   void run() {
-    final args = getArgs(argResults, additionalArgs: ['backup file.sql']);
+    final args = getArgs(this, argResults, additionalArgs: ['backup file.sql']);
     final dbname = args[0];
     final sqlFile = args[1];
 
