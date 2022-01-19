@@ -124,7 +124,6 @@ then one will be generated in the form:
 
   /// Compares two files to see if they have the same content.
   bool diff(String pathTobackup, String pathToPriorBackup) {
-
     /// skip the diff if the files sizes are different.
     if (stat(pathTobackup).size != stat(pathToPriorBackup).size) {
       return false;

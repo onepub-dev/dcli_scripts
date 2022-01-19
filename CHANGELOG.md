@@ -1,3 +1,6 @@
+# 1.2.2
+- changed the backup command to discard a backup if it isdentical to the prior backup. Use the --always option to force it to retain the backup regardless.
+
 # 1.2.1
 - Fixed bug in dmysql when the directory path had a '.' in it.
 

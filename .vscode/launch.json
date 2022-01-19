@@ -18,6 +18,16 @@
             "program": "bin/dmysql.dart",
             "args": ["backup"]
         }, 
+
+        
+        {
+            "name": "dmysql - backup",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/dmysql.dart",
+            "args": ["backup", "onepub"],
+            "pwd" : "/home/bsutton/git/onepub.server/schema"
+        },
         {
             "name": "hex_dump",
             "request": "launch",
