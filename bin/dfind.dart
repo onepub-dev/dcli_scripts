@@ -18,5 +18,5 @@ void main(List<String> args) {
   final pattern = results.rest[0];
   print('looking for $pattern');
 
-  find(pattern).forEach(print);
+  find(pattern, includeHidden: true).forEach(print);
 }
