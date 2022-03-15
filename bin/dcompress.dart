@@ -15,9 +15,17 @@ Map<String, String> extensionToCommand = <String, String>{
 /// dcompress <compress file.>
 /// de-compresses a variety of file formats.
 void main(List<String> args) {
-  final parser = ArgParser()
-    ..addFlag('subdir', abbr: 'd', help: 'Extracts the file to a subdirectory');
-  final results = parser.parse(args);
+  final parser = ArgParser();
+
+  ArgResults results;
+
+  try {
+    results = parser.parse(args);
+  } on FormatException catch (e) {
+    printerr(red(e.message));
+    showUsage(parser);
+    return;
+  }
 
   if (results.rest.length != 1) {
     print('Expands a compressed file.');
@@ -56,6 +64,11 @@ void main(List<String> args) {
     }
     exit(1);
   }
+}
+
+void showUsage(ArgParser parser) {
+  print('Expands a compress file, support a wide variety of file types. ');
+  print(parser.usage);
 }
 
 String? getCommand(String tarFile) {
