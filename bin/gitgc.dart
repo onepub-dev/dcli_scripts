@@ -14,6 +14,8 @@ import 'package:dcli/dcli.dart';
 void main(List<String> args) {
   find('.git', includeHidden: true, types: [Find.directory]).forEach((gitPath) {
     print('cleaning $gitPath');
-    'git gc'.start(workingDirectory: gitPath, progress: Progress.print());
+
+    'git gc'.start(
+        workingDirectory: gitPath, progress: Progress.print(), nothrow: true);
   });
 }
