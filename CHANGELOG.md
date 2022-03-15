@@ -1,3 +1,7 @@
+# 1.2.4
+- added usage statement to dcompress if the arg parsing fails.
+- added nothrow so that a failed git gc doesn't stop the clean process.
+
 # 1.2.3
 - dfind now searches hidden directories.
 
