@@ -90,7 +90,10 @@ class DiskCommand extends Command<void> {
 
     directorySizes.sort((a, b) => b.size - a.size);
 
-    print(orange('Free Space: ${humanNumber(availableSpace(pwd))}'));
+    print('${orange('Space Used by ${truepath(pwd)}:')} '
+        '${green(humanNumber(totalSpace))}');
+    print(
+        '${orange('Free Space:')} ${green(humanNumber(availableSpace(pwd)))}');
 
     for (var i = 0; i < min(50, directorySizes.length); i++) {
       if (directorySizes[i].size == 0) {
@@ -101,7 +104,6 @@ class DiskCommand extends Command<void> {
           widths: [10, -1],
           alignments: [TableAlignment.right, TableAlignment.left]));
     }
-    print(orange('Total Space Used: ${humanNumber(totalSpace)}'));
   }
 }
 
