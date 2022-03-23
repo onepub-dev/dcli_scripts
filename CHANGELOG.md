@@ -1,3 +1,6 @@
+# 1.2.5
+- changed hog disk to output the total size of scanned files.
+
 # 1.2.4
 - added usage statement to dcompress if the arg parsing fails.
 - added nothrow so that a failed git gc doesn't stop the clean process.
