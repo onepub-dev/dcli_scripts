@@ -68,6 +68,7 @@ class DiskCommand extends Command<void> {
 
     print(orange('Found ${directories.length} directories'));
 
+    var totalSpace = 0;
     print(green('Calculating sizes...'));
     for (final directory in directories) {
       final directorySize = DirectorySize(directory);
@@ -80,6 +81,7 @@ class DiskCommand extends Command<void> {
           .forEach((file) {
         try {
           directorySize.size += stat(file).size;
+          totalSpace += directorySize.size;
         } on FileSystemException catch (e) {
           printerr(e.toString());
         }
@@ -99,6 +101,7 @@ class DiskCommand extends Command<void> {
           widths: [10, -1],
           alignments: [TableAlignment.right, TableAlignment.left]));
     }
+    print(orange('Total Space Used: ${humanNumber(totalSpace)}'));
   }
 }
 
