@@ -18,6 +18,7 @@ dev_dependencies:
 executables: 
   add_gnome_launcher: 
   artifactory: 
+  bobthefish:
   certbot_renew: 
   clean: 
   dcompress: 
