@@ -1,3 +1,5 @@
+# 1.2.7
+
 # 1.2.6
 - changed hog disk to output the total size of scanned files.
 
