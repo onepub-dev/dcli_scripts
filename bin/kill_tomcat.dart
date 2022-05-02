@@ -12,8 +12,8 @@ void main() {
         final pidPart = parts[1];
         final pid = int.tryParse(pidPart) ?? -1;
         if (pid != -1) {
-          print('Killing tomcat with pid=$pid');
           'kill -9 $pid'.run;
+          print('Killed tomcat with pid=$pid');
           killed = true;
         }
       }
