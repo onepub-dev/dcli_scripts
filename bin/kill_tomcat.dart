@@ -12,7 +12,11 @@ void main() {
         final pidPart = parts[1];
         final pid = int.tryParse(pidPart) ?? -1;
         if (pid != -1) {
-          'kill -9 $pid'.run;
+          try {
+            'kill -9 $pid'.start(progress: Progress.devNull());
+          } on RunException {
+            'kill -9 $pid'.start(privileged: true);
+          }
           print('Killed tomcat with pid=$pid');
           killed = true;
         }
