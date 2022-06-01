@@ -15,6 +15,9 @@ void main(List<String> args) {
   print(blue('Cleaning unused docker containers'));
   'docker container prune  -f'.run;
 
+  print(blue('Pruning unused docker volumes '));
+  'docker volume prune'.run;
+
   print(blue('Pruning docker objects'));
   'docker system prune -a -f'.run;
 
