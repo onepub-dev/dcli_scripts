@@ -1,5 +1,5 @@
 name: dcli_scripts
-version: 1.2.8
+version: 1.2.10
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
@@ -13,7 +13,6 @@ dependencies:
   settings_yaml: ^3.4.0
   uuid: ^3.0.5
   win32: ^2.6.1
-
 dev_dependencies: 
   lint_hard: ^1.0.0
   test: ^1.20.1
