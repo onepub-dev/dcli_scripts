@@ -12,6 +12,12 @@ import 'package:dcli/dcli.dart';
 ///
 
 void main() {
-  'systemd-resolve --flush-caches'.start(privileged: true);
-  'systemd-resolve --statistics'.start(privileged: true);
+  if (which('resolvectl').notfound) {
+    'systemd-resolve --flush-caches'.start(privileged: true);
+    'systemd-resolve --statistics'.start(privileged: true);
+  } else {
+    // 22.04 onward.
+    'resolvectl flush-caches'.start(privileged: true);
+    'resolvectl statistics'.start(privileged: true);
+  }
 }
