@@ -1,4 +1,9 @@
 #! /usr/bin/env dcli
+/* Copyright (C) Rhiannon Sutton - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Rhiannon Sutton <bsutton@onepub.dev>, Jan 2022
+ */
 
 import 'package:dcli/dcli.dart';
 
