@@ -30,6 +30,17 @@ dmysql restore <db name> [path to backup]''';
 
   void restore(MySqlSettings settings, String sqlFile) {
     print('restoring $sqlFile to ${settings.dbname}');
+
+    'mysql --host ${settings.host} --port=${settings.port} '
+            '--user ${settings.user} --password="${settings.password}" '
+            '-e "drop database ${settings.dbname}"'
+        .start(nothrow: true);
+
+    'mysql --host ${settings.host} --port=${settings.port} '
+            '--user ${settings.user} --password="${settings.password}" '
+            '-e "create database ${settings.dbname}"'
+        .start(nothrow: true);
+
     'mysql --host ${settings.host} --port=${settings.port} '
             '--user ${settings.user} --password="${settings.password}" '
             '--database ${settings.dbname} '
