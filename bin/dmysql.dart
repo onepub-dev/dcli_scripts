@@ -5,8 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
 import 'package:dcli_scripts/src/mysql/mysql.dart';
 
 /// Connects you to a mysql cli pulling settings (username/password)

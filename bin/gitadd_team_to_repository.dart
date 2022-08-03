@@ -5,8 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
 /// Script to migrate bitbucket repos into github.
 /// You need to provide a csv file containing a list of repos on bitbucket
 /// The csv file must contain two columns:
