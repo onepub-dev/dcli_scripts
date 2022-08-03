@@ -1,3 +1,8 @@
+# 1.3.0
+- Added --routines to the mysql backup so that storedprocs and functions are backed up.
+- Improved mysql restore. It now drops and re-creates the db.
+- added copyright notices.
+
 # 1.2.10
 - added code to the clean command to prune unused docker volumes
 - updated dnsflush to work on ubuntu 22.04
