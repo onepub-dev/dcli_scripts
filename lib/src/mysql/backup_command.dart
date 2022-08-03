@@ -98,6 +98,7 @@ then one will be generated in the form:
                 '$columnStatistics'
                 '--password="${settings.password}" '
                 '--databases ${settings.dbname} '
+                '--routines '
                 '--result-file=$tmpFile '
             .start(nothrow: true, progress: Progress.capture());
 
