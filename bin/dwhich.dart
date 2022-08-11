@@ -12,6 +12,7 @@ import 'package:dcli/dcli.dart';
 void main(List<String> args) {
   final parser = ArgParser()
     ..addFlag('verbose', abbr: 'v', negatable: false)
+    ..addFlag('debug', abbr: 'd', negatable: false)
     ..addFlag('scan',
         abbr: 's',
         negatable: false,
@@ -20,6 +21,7 @@ void main(List<String> args) {
 
   final results = parser.parse(args);
   final _verbose = results['verbose'] as bool;
+  final _debug = results['debug'] as bool;
   final scan = results['scan'] as bool;
 
   if (results.rest.length != 1) {
@@ -31,16 +33,14 @@ void main(List<String> args) {
 
   final command = results.rest[0];
 
-  Settings().setVerbose(enabled: _verbose);
+  Settings().setVerbose(enabled: _debug);
 
   log(_verbose, () => 'Path: ${env['PATH']}');
 
-  if (_verbose) {
-    _checkDuplicates();
-  }
+  final paths = dedupPaths(verbose: _verbose);
 
   String? lastPath;
-  for (var path in PATH) {
+  for (var path in paths) {
     log(scan, () => 'Searching: ${truepath(path)}');
     if (path.isEmpty) {
       verbose(() => 'Empty path found');
@@ -70,16 +70,19 @@ void main(List<String> args) {
 }
 
 /// reports any duplicate path entries.
-void _checkDuplicates() {
+Set<String> dedupPaths({required bool verbose}) {
   final paths = <String>{};
 
   for (final path in PATH) {
     if (paths.contains(path)) {
-      printerr(orange('Found duplicated path: $path in PATH'));
+      if (verbose) {
+        printerr(orange('Found duplicated path: $path in PATH'));
+      }
     } else {
       paths.add(path);
     }
   }
+  return paths;
 }
 
 String? checkPath(String cmd) {
