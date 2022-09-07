@@ -8,7 +8,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:dcli/dcli.dart';
+import 'package:dcli/dcli.dart' hide ExitException;
 
 import 'backup_command.dart';
 import 'cli_command.dart';

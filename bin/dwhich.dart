@@ -6,78 +6,117 @@
  */
 
 import 'dart:io';
-import 'package:dcli/dcli.dart';
+import 'package:dcli/dcli.dart' hide ExitException;
+import 'package:dcli_scripts/src/dwhich/args.dart';
+import 'package:dcli_scripts/src/dwhich/exit_exception.dart';
+
+bool found = false;
+bool execuable = false;
+bool pathIsValid = false;
 
 /// dwhich appname - searches for 'appname' on the path
-void main(List<String> args) {
-  final parser = ArgParser()
-    ..addFlag('verbose', abbr: 'v', negatable: false)
-    ..addFlag('debug', abbr: 'd', negatable: false)
-    ..addFlag('scan',
-        abbr: 's',
-        negatable: false,
-        help: 'Does an extended search of your path for all occurances of '
-            'the app and validates the path');
+void main(List<String> cliArgs) {
+  final Args args;
+  var found = false;
+  var exectuable = false;
 
-  final results = parser.parse(args);
-  final _verbose = results['verbose'] as bool;
-  final _debug = results['debug'] as bool;
-  final scan = results['scan'] as bool;
+  try {
+    args = Args.parse(cliArgs);
 
-  if (results.rest.length != 1) {
-    print(red('You must pass the name of the executable to search for.'));
-    print(green('Usage:'));
-    print(green('   which ${parser.usage}<exe>'));
-    exit(1);
-  }
+    Settings().setVerbose(enabled: args.debug);
 
-  final command = results.rest[0];
+    // validation(args, () => 'Path: ${env['PATH']}');
 
-  Settings().setVerbose(enabled: _debug);
+    final paths = dedupPaths(args);
 
-  log(_verbose, () => 'Path: ${env['PATH']}');
+    String? priorPath;
 
-  final paths = dedupPaths(verbose: _verbose);
-
-  String? lastPath;
-  for (var path in paths) {
-    log(scan, () => 'Searching: ${truepath(path)}');
-    if (path.isEmpty) {
-      verbose(() => 'Empty path found');
-      if (Platform.isLinux) {
-        path = '.';
-
-        /// current
-        printerr(orange(
-            'WARNING: current directory is on your path due to an empty path '
-            '${lastPath == null ? '' : 'after $lastPath'} .'));
-      } else {
-        printerr(red(
-            'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
+    for (final path in paths) {
+      // validation(args, () => 'Searching: ${truepath(path)}');
+      if (!validatePath(path, args, priorPath)) {
         continue;
       }
+
+      final pathToCmd = containsCommand(truepath(path, args.command));
+      if (pathToCmd != null) {
+        found = true;
+        if (!isExecutable(pathToCmd)) {
+          print('Found at: $pathToCmd but it is not executable.');
+          continue;
+        }
+        exectuable = true;
+
+        print('Found at: $pathToCmd');
+
+        // found an exectuable.
+        if (args.first) {
+          break;
+        }
+      }
+      priorPath = path;
     }
-    if (!exists(path)) {
-      printerr(red('The path $path does not exist.'));
-      continue;
+  } on ExitException catch (e) {
+    printerr(red(e.message));
+    if (e.exitCode == ExitException.invalidArgs) {
+      Args.showUsage();
     }
-    final pathToCmd = checkPath(truepath(path, command));
-    if (pathToCmd != null) {
-      print(red('Found at: $pathToCmd'));
-    }
-    lastPath = path;
+    exit(e.exitCode);
   }
+  final goodPath = printProblems(args);
+
+  exit(ExitException.mapExitCode(
+      found: found, exectuable: exectuable, goodPath: goodPath));
+}
+
+bool validatePath(String path, Args args, String? lastPath) {
+  var valid = true;
+  var _path = path;
+  // validation(args, () => 'Searching: ${truepath(path)}');
+  if (_path.isEmpty) {
+    validation(args, () => 'Empty path found');
+    if (Platform.isLinux) {
+      _path = '.';
+
+      /// current
+      validation(
+          args,
+          () => orange('WARNING: current directory is on your path due '
+              'to an empty path '
+              '${lastPath == null ? '' : 'after $lastPath'} .'));
+    } else {
+      validation(args, () => red(
+          // ignore: lines_longer_than_80_chars
+          'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
+      valid = false;
+    }
+  }
+
+  if (valid && !exists(_path)) {
+    validation(args, () => red('The path $_path does not exist.'));
+    valid = false;
+  }
+  return valid;
+}
+
+/// Returns true if there we no problems dectected with PATH
+bool printProblems(Args args) {
+  if (problems.isNotEmpty) {
+    print('');
+    print(orange('Problems:'));
+    for (final problem in problems) {
+      printerr('    ${orange(problem)}');
+    }
+  }
+  return problems.isEmpty;
 }
 
 /// reports any duplicate path entries.
-Set<String> dedupPaths({required bool verbose}) {
+Set<String> dedupPaths(Args args) {
   final paths = <String>{};
 
   for (final path in PATH) {
     if (paths.contains(path)) {
-      if (verbose) {
-        printerr(orange('Found duplicated path: $path in PATH'));
-      }
+      validation(args, () => orange('Found duplicated path: $path in PATH'));
     } else {
       paths.add(path);
     }
@@ -85,7 +124,7 @@ Set<String> dedupPaths({required bool verbose}) {
   return paths;
 }
 
-String? checkPath(String cmd) {
+String? containsCommand(String cmd) {
   if (!Platform.isWindows || extension(cmd).isNotEmpty) {
     return exists(cmd) ? cmd : null;
   }
@@ -99,9 +138,10 @@ String? checkPath(String cmd) {
   return null;
 }
 
+final problems = <String>[];
 // ignore: avoid_positional_boolean_parameters
-void log(bool verbose, String Function() message) {
-  if (verbose) {
-    print(message());
+void validation(Args args, String Function() message) {
+  if (args.validate) {
+    problems.add(message());
   }
 }

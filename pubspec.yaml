@@ -1,20 +1,20 @@
 name: dcli_scripts
-version: 1.3.0
+version: 1.3.1
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
   sdk: '>=2.17.0 <3.0.0'
 dependencies: 
-  args: ^2.1.1
-  dcli: ^1.30.2
-  docker2: ^2.1.2
-  path: ^1.6.4
-  pub_release: ^7.1.16
-  settings_yaml: ^3.4.0
-  uuid: ^3.0.5
-  win32: ^2.6.1
+  args: ^2.3.1
+  dcli: ^1.34.0
+  docker2: ^2.2.8
+  path: ^1.8.2
+  pub_release: ^8.0.3
+  settings_yaml: ^3.4.2
+  uuid: ^3.0.6
+  win32: ^2.7.0
 dev_dependencies: 
-  lint_hard: ^1.0.0
+  lint_hard: ^2.1.0
   test: ^1.20.1
 executables: 
   add_gnome_launcher: 
@@ -44,6 +44,7 @@ executables:
   eclipse_launcher: 
   find_old_dart_packages: 
   find_text: 
+  gactivate:
   gitadd_team_to_repository: 
   gitcreation_date: 
   gitgc: 

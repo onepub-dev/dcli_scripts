@@ -37,8 +37,8 @@ const String lineDelimiterOption = 'line-delimiter';
 const String sortkeyOption = 'sortkey';
 const String outputOption = 'output';
 
-void main(List<String> args) {
-  dsort(args);
+void main(List<String> args) async {
+  await dsort(args);
 }
 
 Future<void> dsort(List<String> args) async {

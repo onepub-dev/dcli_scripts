@@ -16,10 +16,10 @@ import 'dart:io';
 /// For details on installing dcli.
 ///
 
-void main() {
+void main() async {
   //'vi'.run;
 
-  Process.run('vi', []).then((result) {
+  await Process.run('vi', []).then((result) {
     stdout.write(result.stdout);
     stderr.write(result.stderr);
   });

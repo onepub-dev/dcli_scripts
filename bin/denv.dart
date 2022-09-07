@@ -10,7 +10,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 
-/// prints all environment variables
+/// prints  environment variables that match a passed prefix or
+/// all environment variables if the --print flag is passed
 void main(List<String> args) {
   final parser = ArgParser()
     ..addFlag('print',
@@ -18,17 +19,18 @@ void main(List<String> args) {
 
   final results = parser.parse(args);
 
-  final doPrint = results['print'] as bool?;
+  final doPrint = results['print'] as bool;
 
   final envVars = Platform.environment;
 
-  if (doPrint == true) {
+  if (doPrint) {
     envVars.forEach((key, value) => print('$key:$value'));
     exit(0);
   }
 
   if (results.rest.length != 1) {
-    print('You must pass the name (or the begining) of an envionment variable');
+    print(
+        'You must pass the name (or the begining) of an environment variable');
     exit(1);
   }
   var name = results.rest[0];

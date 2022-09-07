@@ -16,8 +16,8 @@ import 'dart:io';
 /// For details on installing dcli.
 ///
 
-void main() {
-  NetworkInterface.list().then((interfaces) {
+void main() async {
+  await NetworkInterface.list().then((interfaces) {
     for (final interface in interfaces) {
       print('name: ${interface.name}');
       var i = 0;

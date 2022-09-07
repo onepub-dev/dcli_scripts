@@ -19,13 +19,13 @@ import 'package:dcli/dcli.dart';
 /// For details on installing dcli.
 ///
 
-void main(List<String> args) {
+void main(List<String> args) async {
   // args = ['disk'];
-  CommandRunner<void>('hog', 'Find resource hogs')
+  final runner = CommandRunner<void>('hog', 'Find resource hogs')
     ..addCommand(DiskCommand())
     ..addCommand(MemoryCommand())
-    ..addCommand(CPUCommand())
-    ..run(args);
+    ..addCommand(CPUCommand());
+  await runner.run(args);
 }
 
 class CPUCommand extends Command<void> {
