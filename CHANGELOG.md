@@ -1,3 +1,7 @@
+# 1.4.0
+- Added gactivate. cleaned out lintes.
+- Improved dwhich path dedupliation so we don't get the same error twice.
+
 # 1.3.0
 - Added --routines to the mysql backup so that storedprocs and functions are backed up.
 - Improved mysql restore. It now drops and re-creates the db.

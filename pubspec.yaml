@@ -1,5 +1,5 @@
 name: dcli_scripts
-version: 1.3.1
+version: 1.4.0
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment: 
@@ -44,7 +44,7 @@ executables:
   eclipse_launcher: 
   find_old_dart_packages: 
   find_text: 
-  gactivate:
+  gactivate: 
   gitadd_team_to_repository: 
   gitcreation_date: 
   gitgc: 
