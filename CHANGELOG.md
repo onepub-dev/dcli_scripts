@@ -1,3 +1,8 @@
+# 1.5.0
+- gactivate can now aot compile a package from .pub-cache and add it to the 
+dcli path.  This is usefuly if you switch dart versions a lot and also speeds
+up the exection of any cli tool.
+
 # 1.4.0
 - Added gactivate. cleaned out lintes.
 - Improved dwhich path dedupliation so we don't get the same error twice.

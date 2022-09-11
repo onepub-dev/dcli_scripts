@@ -14,9 +14,56 @@ import 'package:dcli/dcli.dart';
 /// For details on installing dcli.
 ///
 void main(List<String> args) {
-  if (args.length != 1) {
-    printerr(red('You must pass a path.'));
-    exit(1);
+  final parser = ArgParser()
+    ..addFlag('compile',
+        abbr: 'c',
+        help: 'compiles a global activated package and installs it '
+            'into the dcli bin');
+  final argResult = parser.parse(args);
+  final compile = argResult['compile'] as bool;
+
+  if (compile) {
+    compilePackage(argResult);
+  } else {
+    if (args.length != 1) {
+      printerr(red('You must pass a path.'));
+      exit(1);
+    }
+
+    'dart pub global activate -spath ${args[0]}'.run;
   }
-  'dart pub global activate -spath ${args[0]}'.run;
+}
+
+void compilePackage(ArgResults argResults) {
+  if (argResults.rest.length != 1) {
+    printerr(red('You must provide the name of a package to compile'));
+  }
+
+  final packageName = argResults.rest[0];
+
+  final version = PubCache().findPrimaryVersion(packageName);
+  final pathToPackage =
+      PubCache().pathToPackage(packageName, version.toString());
+
+  // we can't compile in the .pub_cache as pub get throws errors
+  // so copy the package to a temp dir.
+  withTempDir((tempDir) {
+    copyTree(pathToPackage, tempDir);
+    final pubspec = PubSpec.fromFile(join(tempDir, 'pubspec.yaml'));
+    final execs = pubspec.executables;
+    if (execs.isEmpty) {
+      printerr(red('No exectubables listed in the pubspec.yaml'));
+      throw ExitException(1);
+    }
+    final binDir = join(tempDir, 'bin');
+    for (final executable in execs) {
+      'dcli compile ${executable.scriptPath}'.start(workingDirectory: tempDir);
+      final installPath = join(Settings().pathToDCliBin, executable.name);
+      if (exists(installPath)) {
+        delete(installPath);
+      }
+      move(join(binDir, basenameWithoutExtension(executable.scriptPath)),
+          installPath);
+    }
+  });
 }
