@@ -52,7 +52,7 @@ void compilePackage(ArgResults argResults) {
     final pubspec = PubSpec.fromFile(join(tempDir, 'pubspec.yaml'));
     final execs = pubspec.executables;
     if (execs.isEmpty) {
-      printerr(red('No exectubables listed in the pubspec.yaml'));
+      printerr(red('No executables listed in the pubspec.yaml'));
       throw ExitException(1);
     }
     final binDir = join(tempDir, 'bin');
