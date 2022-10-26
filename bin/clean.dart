@@ -17,6 +17,15 @@ import 'package:dcli/dcli.dart';
 /// take up lots of space.
 
 void main(List<String> args) {
+  print(blue('cleaning .dart_tools..'));
+  find('pubspec.yaml').forEach((path) {
+    final tools = join(dirname(path), '.dart_tools');
+    if (exists(tools)) {
+      print('Deleting $tools');
+      deleteDir(tools);
+    }
+  });
+
   print(blue('Cleaning unused docker containers'));
   'docker container prune  -f'.run;
 
