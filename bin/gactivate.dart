@@ -19,7 +19,15 @@ void main(List<String> args) {
         abbr: 'c',
         help: 'compiles a global activated package and installs it '
             'into the dcli bin');
-  final argResult = parser.parse(args);
+
+  final ArgResults argResult;
+  try {
+    argResult = parser.parse(args);
+  } on FormatException catch (e) {
+    printerr(red(e.message));
+    print(parser.usage);
+    exit(1);
+  }
   final compile = argResult['compile'] as bool;
 
   if (compile) {
