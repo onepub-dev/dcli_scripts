@@ -413,10 +413,10 @@ packages:
     dependency: "direct main"
     description:
       name: pub_release
-      sha256: bbfcd7488f19e04028036e423ea9a3b4af2b3e9b96dd8eda7d4044a5c7047d14
+      sha256: b387e284e95452caeff644dd7ccce0adb5088781ed8978ccde727ca2ee91050a
       url: "https://pub.dev"
     source: hosted
-    version: "9.0.0-beta.1"
+    version: "9.0.0"
   pub_semver:
     dependency: transitive
     description:
