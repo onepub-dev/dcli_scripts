@@ -11,10 +11,12 @@
 /// repo_name, repo_url
 /// e.g.
 /// adfiler,https://<user>@bitbucket.org/<org>>/<repo_name>.git
+library;
 
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 void main() {

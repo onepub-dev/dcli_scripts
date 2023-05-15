@@ -3,7 +3,8 @@
  * Proprietary and confidential
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
-import 'package:dcli/dcli.dart' hide ExitException;
+import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 import 'backup_command.dart';

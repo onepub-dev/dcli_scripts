@@ -1,3 +1,6 @@
+# 3.0.0
+Upgraded to dart 3.0.0
+
 # 1.6.0
 - updated dependencies
 - Added better error handling for gactivate.

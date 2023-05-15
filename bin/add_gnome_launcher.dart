@@ -6,7 +6,9 @@
  */
 
 import 'dart:io';
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 String? name;
 List<String>? categories;
@@ -85,6 +87,7 @@ String? getRequiredString(ArgResults parsed, String option) {
   return parsed[option] as String?;
 }
 
+// ignore: unreachable_from_main
 bool getRequiredBool(ArgResults parsed, String option) {
   if (!parsed.wasParsed(option)) {
     print(red('You must provide the --$option argument'));
@@ -95,6 +98,7 @@ bool getRequiredBool(ArgResults parsed, String option) {
 
 bool getBool(ArgResults parsed, String option) => parsed[option] == 'true';
 
+// ignore: unreachable_from_main
 List<String>? getRequiredList(ArgResults parsed, String option) {
   if (!parsed.wasParsed(option)) {
     print(red('You must provide the --$option argument'));

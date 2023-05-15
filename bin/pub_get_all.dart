@@ -6,6 +6,7 @@
  */
 
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 /// Recursively runs pub get on all subdirectories.
 void main() {

@@ -8,7 +8,6 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:dcli/dcli.dart';
 
 /// prints  environment variables that match a passed prefix or
 /// all environment variables if the --print flag is passed

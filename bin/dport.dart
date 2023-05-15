@@ -6,6 +6,7 @@
  */
 
 import 'dart:io';
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 
 ///
@@ -76,6 +77,7 @@ bool viaNetstat(int? portNo) {
   return found;
 }
 
+// ignore: unreachable_from_main
 bool viaLsof(int portNo) {
   // 'ss -tulpn src :$portNo'.start(privileged: true);
 

@@ -6,6 +6,7 @@
  */
 
 import 'dart:io';
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 
 /// Syncs the current git repo with the upstream repo it was forked from.
@@ -91,6 +92,7 @@ String getDefaultBranch() {
   return parts[2];
 }
 
+// ignore: unreachable_from_main
 String getBranch() {
   final line = 'git status'.firstLine;
 

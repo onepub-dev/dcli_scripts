@@ -7,6 +7,7 @@
 
 import 'dart:io';
 import 'dart:math';
+import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 
@@ -105,7 +106,7 @@ class DiskCommand extends Command<void> {
         continue;
       }
       print(Format().row(
-          [(humanNumber(directorySizes[i].size)), directorySizes[i].pathTo],
+          [humanNumber(directorySizes[i].size), directorySizes[i].pathTo],
           widths: [10, -1],
           alignments: [TableAlignment.right, TableAlignment.left]));
     }
@@ -118,6 +119,7 @@ class DirectorySize {
   int size = 0;
 }
 
+// ignore: unreachable_from_main
 void showUsage(ArgParser parser) {
   print('Usage: hog -v -prompt <a questions>');
   print(parser.usage);
@@ -184,6 +186,7 @@ int availableSpace(String path) {
   return (int.tryParse(hsize) ?? 0) * factor;
 }
 
+// ignore: unreachable_from_main
 void removeOldKernels() {
   r'''dpkg --list | grep 'linux-image' | awk '{ print $2 }' | sort -V | sed -n '/'"$(uname -r | sed "s/\([0-9.-]*\)-\([^0-9]\+\)/\1/")"'/q;p' | xargs sudo apt-get -y purge'''
       .run;

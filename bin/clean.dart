@@ -9,6 +9,7 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 /// Cleans up disk space usage.
 /// Cleans out unused docker objects

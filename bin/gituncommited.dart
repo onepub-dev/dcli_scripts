@@ -7,7 +7,9 @@
 
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 /// Search all subdirectories looking for git projects
 /// It then reports any that have uncommited files or which
@@ -54,7 +56,7 @@ void main(List<String> args) {
       }
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      print('error: ${e.toString()}');
+      print('error: $e');
       print(uncommited);
     }
   });

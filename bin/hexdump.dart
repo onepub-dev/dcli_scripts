@@ -7,6 +7,7 @@
 
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 
 /// Outputs a hexi-decimal representation of a file
@@ -130,6 +131,7 @@ void dump(String file, int width, ArgParser parser,
 
 /// Replaces all non-printable characters in value with a space.
 /// tabs, newline etc are all considered non-printable.
+// ignore: unreachable_from_main
 String replaceNoPrintable(String value) {
   final charCodes = <int>[];
 

@@ -6,7 +6,9 @@
  */
 
 import 'dart:io';
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 /// Search for text within files with the given glob
 void main(List<String> args) {
