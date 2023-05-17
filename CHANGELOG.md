@@ -1,3 +1,6 @@
+# 2.1.0
+- Updated dependencies.
+
 # 2.0.0
 Upgraded to dart 3.0.0
 
