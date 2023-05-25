@@ -157,26 +157,26 @@ packages:
     dependency: "direct main"
     description:
       name: dcli
-      sha256: a5e5d77a1b57b6590ac6a15e7be3307c398283606ffe0c608ce600d47204839d
+      sha256: "1b4a960f39e60d177dadbfc57059e391b69ac914c76dc6b91e5ba76b0f92d294"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.2"
+    version: "2.2.3"
   dcli_core:
     dependency: transitive
     description:
       name: dcli_core
-      sha256: "441ebd54e5f0b549516537e82c8e62ca866351d7abff99183c9b8a8bdf324506"
+      sha256: e003589850948427397de976c126a9874d3f57634f4e01d5e2e10ce8d3cc3866
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.2"
+    version: "2.2.3"
   docker2:
     dependency: "direct main"
     description:
       name: docker2
-      sha256: ea9e0318f6ac3b3fabd54e4854c2bed1471207f20bcf13ae658a2d00b8683b49
+      sha256: "63d83b4aa38671fb68ec17fb64049e814f83590edb762f09435c9a25d10da948"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "4.0.0"
   equatable:
     dependency: transitive
     description:
@@ -229,10 +229,10 @@ packages:
     dependency: transitive
     description:
       name: glob
-      sha256: "4515b5b6ddb505ebdd242a5f2cc5d22d3d6a80013789debfbda7777f47ea308c"
+      sha256: "0e7014b3b7d4dac1ca4d6114f82bf1782ee86745b9b42a92c9289c23d8a0ab63"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.2"
   globbing:
     dependency: transitive
     description:
@@ -325,10 +325,10 @@ packages:
     dependency: transitive
     description:
       name: logging
-      sha256: "04094f2eb032cbb06c6f6e8d3607edcfcb0455e2bb6cbc010cb01171dcb64e6d"
+      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.2.0"
   matcher:
     dependency: transitive
     description:
