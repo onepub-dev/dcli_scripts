@@ -1,3 +1,5 @@
+# 3.0.0
+- upgraded to dcli 3.x
 # 2.1.1
 - upgraded to docker2 4.0
 
