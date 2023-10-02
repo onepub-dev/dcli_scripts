@@ -1,3 +1,6 @@
+# 3.1.0
+- upgraded dependencies.
+
 # 3.0.0
 - upgraded to dcli 3.x
 # 2.1.1
