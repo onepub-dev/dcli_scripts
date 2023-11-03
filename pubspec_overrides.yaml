@@ -1,0 +1,3 @@
+dependency_overrides:
+  dcli:
+    path: ../dcli/dcli

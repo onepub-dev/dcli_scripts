@@ -10,6 +10,7 @@ dependencies:
   docker2: ^4.0.0
   path: ^1.8.2
   pub_release: ^9.1.0
+  pubspec_manager: ^1.0.0-alpha.6
   settings_yaml: ^7.0.0
   uuid: ^4.0.0
   win32: ^4.1.4

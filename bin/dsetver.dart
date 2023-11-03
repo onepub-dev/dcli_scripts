@@ -6,9 +6,11 @@
  */
 
 import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:pub_release/pub_release.dart' as pub;
+import 'package:pubspec_manager/pubspec_manager.dart';
 
 /// Updates the version no. on your dart package by changing pubspec.yaml
 /// version and genearating src/version/version.g.dart which
@@ -62,7 +64,7 @@ void main(List<String> args) {
   }
 
   pub.updateVersion(
-      parsedVersion, PubSpec.fromFile(pathToPubspec), pathToPubspec);
+      parsedVersion, PubSpec.loadFromPath(pathToPubspec), pathToPubspec);
 }
 
 void showUsage(ArgParser parser) {

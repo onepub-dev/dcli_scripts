@@ -7,14 +7,15 @@
 
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
+import 'package:pubspec_manager/pubspec_manager.dart';
 
 /// Recursively runs pub get on all subdirectories.
 void main() {
   for (final project in find('pubspec.yaml').toList()) {
     try {
-      final pubspec = PubSpec.fromFile(project);
+      final pubspec = PubSpec.loadFromPath(project);
 
-      if (pubspec.dependencies.keys.contains('flutter')) {
+      if (pubspec.dependencies.exists('flutter')) {
         print(blue('Flutter project: ${dirname(project)}'));
         if (which('flutter').notfound) {
           printerr(red('You need to install flutter to pub get this project'));
