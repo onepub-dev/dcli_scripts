@@ -420,10 +420,10 @@ packages:
     dependency: "direct main"
     description:
       name: pub_release
-      sha256: a06a7986197d134d8e285ba796606be34e35e5cf5a97fa4e0f0fff9b4efe4b68
+      sha256: "5cea6f972a46ef4eea881d26bba6bb1502a493a557b486494a90886b8c9560c2"
       url: "https://pub.dev"
     source: hosted
-    version: "9.1.0"
+    version: "9.3.0"
   pub_semver:
     dependency: transitive
     description:
@@ -432,14 +432,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  pubspec:
-    dependency: transitive
-    description:
-      name: pubspec
-      sha256: f534a50a2b4d48dc3bc0ec147c8bd7c304280fff23b153f3f11803c4d49d927e
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.0"
   pubspec_lock:
     dependency: transitive
     description:
@@ -672,14 +664,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
-  uri:
-    dependency: transitive
-    description:
-      name: uri
-      sha256: "889eea21e953187c6099802b7b4cf5219ba8f3518f604a1033064d45b1b8268a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   uuid:
     dependency: "direct main"
     description:
