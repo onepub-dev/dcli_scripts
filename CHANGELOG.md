@@ -1,3 +1,7 @@
+# 3.1.1
+- upgraded to pub_release to fix problems with the tool scripts
+- migrated to using pubspec_manager
+
 # 3.1.0
 - upgraded dependencies.
 
