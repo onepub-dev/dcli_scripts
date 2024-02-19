@@ -1,3 +1,6 @@
+# 3.2.0-alpha.1
+- upgraded to dcli 4.0.0-alpha.1
+
 # 3.1.1
 - upgraded to pub_release to fix problems with the tool scripts
 - migrated to using pubspec_manager

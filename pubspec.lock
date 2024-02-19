@@ -5,18 +5,18 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: "36a321c3d2cbe01cbcb3540a87b8843846e0206df3e691fa7b23e19e78de6d49"
+      sha256: "0b2f2bd91ba804e53a61d757b986f89f1f9eaed5b11e4b2f5a2468d86d6c9fc7"
       url: "https://pub.dev"
     source: hosted
-    version: "65.0.0"
+    version: "67.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
-      sha256: dfe03b90ec022450e22513b5e5ca1f01c0c01de9c3fba2f7fd233cb57a6b9a07
+      sha256: "37577842a27e4338429a1cbc32679d508836510b056f1eedf0c8d20e39c1383d"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.0"
+    version: "6.4.1"
   archive:
     dependency: transitive
     description:
@@ -143,15 +143,15 @@ packages:
       path: "../dcli/dcli"
       relative: true
     source: path
-    version: "3.2.8"
+    version: "3.3.5"
   dcli_core:
     dependency: transitive
     description:
       name: dcli_core
-      sha256: "48dd685637ba54df7f51742c148b59853fe86b6415424303ec4b67b50e5dbd47"
+      sha256: "60782bcd669b88bfbde729c63dad891443a6e17d16f7c24fd5a8e2e3960f432a"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.8"
+    version: "3.3.5"
   dcli_terminal:
     dependency: transitive
     description:
@@ -164,10 +164,10 @@ packages:
     dependency: "direct main"
     description:
       name: docker2
-      sha256: "67269a50bfa53d597e4e42b80d580d1c59287f0d8387a823958d29e186a0e652"
+      sha256: "4f7b67f806ea359388d58f820776f1a7acfe735b6b102f91522b0ef4f4419b37"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.0"
+    version: "4.3.1"
   equatable:
     dependency: transitive
     description:
@@ -188,10 +188,10 @@ packages:
     dependency: transitive
     description:
       name: file
-      sha256: "1b92bec4fc2a72f59a8e15af5f52cd441e4a7860b49499d69dfa817af20e925d"
+      sha256: "5fc22d7c25582e38ad9a8515372cd9a93834027aacf1801cf01164dac0ffa08c"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.4"
+    version: "7.0.0"
   fixnum:
     dependency: transitive
     description:
@@ -252,10 +252,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: d4872660c46d929f6b8a9ef4e7a7eff7e49bbf0c4ec3f385ee32df5119175139
+      sha256: a2bbf9d017fcced29139daa8ed2bba4ece450ab222871df93ca9eec6f80c34ba
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.2"
+    version: "1.2.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -300,10 +300,10 @@ packages:
     dependency: transitive
     description:
       name: js
-      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
+      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.7"
+    version: "0.7.1"
   json2yaml:
     dependency: transitive
     description:
@@ -364,18 +364,18 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: d584fa6707a52763a52446f02cc621b077888fb63b93bbcb1143a7be5a0c0c04
+      sha256: "7687075e408b093f36e6bbf6c91878cc0d4cd10f409506f7bc996f68220b9136"
       url: "https://pub.dev"
     source: hosted
-    version: "1.11.0"
+    version: "1.12.0"
   mime:
     dependency: transitive
     description:
       name: mime
-      sha256: e4ff8e8564c03f255408decd16e7899da1733852a9110a58fe6d1b817684a63e
+      sha256: "2e123074287cc9fd6c09de8336dae606d1ddb88d9ac47358826db698c176a1f2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.4"
+    version: "1.0.5"
   node_preamble:
     dependency: transitive
     description:
@@ -404,10 +404,10 @@ packages:
     dependency: transitive
     description:
       name: pointycastle
-      sha256: "7c1e5f0d23c9016c5bbd8b1473d0d3fb3fc851b876046039509e18e0c7485f2c"
+      sha256: "43ac87de6e10afabc85c445745a7b799e04de84cebaa4fd7bf55a5e1e9604d29"
       url: "https://pub.dev"
     source: hosted
-    version: "3.7.3"
+    version: "3.7.4"
   pool:
     dependency: transitive
     description:
@@ -428,10 +428,10 @@ packages:
     dependency: "direct main"
     description:
       name: pub_release
-      sha256: "542aef1fd9933ab8e832ca56744ff3b6632b8e231b5d4261174ab5d07fdbc536"
+      sha256: "27556fee93f2399fda671d72092ea60be7251dc0eeee1db4d092af33c972fb93"
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.1"
+    version: "10.0.3"
   pub_semver:
     dependency: transitive
     description:
@@ -452,10 +452,10 @@ packages:
     dependency: "direct main"
     description:
       name: pubspec_manager
-      sha256: "5211e3ed5699495d9c846020033ab47046929e0666c76f0af0b6af6a4982a3e0"
+      sha256: "180fe6f4880d9031176c772ea1be915a2678789d5072790fc7a188767e467e77"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0-alpha.12"
+    version: "1.0.0-alpha.14"
   scope:
     dependency: transitive
     description:
@@ -468,10 +468,10 @@ packages:
     dependency: "direct main"
     description:
       name: settings_yaml
-      sha256: b803b97e6f303f43248212e7d2ab329b584b8c38011341c10302519f1865c189
+      sha256: c568c79a1a2e48235d7f6cb06a78b15867879cc1995796dd324b9bc125e6b077
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.0"
+    version: "8.0.1"
   shelf:
     dependency: transitive
     description:
@@ -580,10 +580,10 @@ packages:
     dependency: transitive
     description:
       name: strings
-      sha256: "074ee21f17a17bb907af60e5b9e7494cd53bba0bf9d73599892c787a0c172a42"
+      sha256: "1f3db7347b8dfd9844ee7fb34883cffbe6cc723a63cb9f4a0aa19e619304b030"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.3"
+    version: "3.0.0"
   sum_types:
     dependency: transitive
     description:
@@ -620,10 +620,10 @@ packages:
     dependency: "direct dev"
     description:
       name: test
-      sha256: "694c108e13c6b35b15fcb0f8f03eddf8373f93b044c9497b5e81ce09f7381bda"
+      sha256: "7ee446762c2c50b3bd4ea96fe13ffac69919352bd3b4b17bac3f3465edc58073"
       url: "https://pub.dev"
     source: hosted
-    version: "1.25.1"
+    version: "1.25.2"
   test_api:
     dependency: transitive
     description:
