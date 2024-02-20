@@ -9,8 +9,9 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:dcli_core/dcli_core.dart' as core;
 
-void main(List<String> args) {
+void main(List<String> args) async {
   final parser = ArgParser()..addFlag('verbose', abbr: 'v', negatable: false);
 
   late final ArgResults parsed;
@@ -29,8 +30,8 @@ void main(List<String> args) {
   }
 
   final url = parsed.rest[0];
-  withTempFile((file) {
-    fetch(url: url, saveToPath: file, fetchProgress: showProgress);
+  await core.withTempFileAsync((file) async {
+    await fetch(url: url, saveToPath: file, fetchProgress: showProgress);
     print(green('Data Recieved'));
     cat(file);
   }, create: false);

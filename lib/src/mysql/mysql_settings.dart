@@ -40,7 +40,7 @@ Check your database name or run dmysql config $dbname''');
         host: host, port: port, user: user, password: password, dbname: dbname);
   }
 
-  factory MySqlSettings.config(String dbname) {
+  static Future<MySqlSettings> config(String dbname) async {
     final pathToDbSettings = MySqlSettings.pathToSettings(dbname);
 
     if (!exists(dirname(pathToDbSettings))) {
@@ -77,7 +77,7 @@ Check your database name or run dmysql config $dbname''');
     }
 
     // ignore: discarded_futures
-    waitForEx(settings.save());
+    await settings.save();
     return MySqlSettings.load(dbname);
   }
 

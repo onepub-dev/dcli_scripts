@@ -7,11 +7,13 @@
 
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:dcli_core/dcli_core.dart' as core;
 
 /// Retrives the date a github repo was created.
-void main(List<String> args) {
+void main(List<String> args) async {
   final parser = ArgParser()
     ..addFlag(
       'verbose',
@@ -42,10 +44,10 @@ void main(List<String> args) {
 
   final repo = parsed['repo'] as String;
 
-  withTempFile((jsonFile) {
+  await core.withTempFileAsync((jsonFile) async {
     final url = 'https://api.github.com/repos/$owner/$repo';
     print('fetching $url');
-    fetch(url: url, saveToPath: jsonFile);
+    await fetch(url: url, saveToPath: jsonFile);
 
     final json =
         jsonDecode(read(jsonFile).toList().join('\n')) as Map<String, dynamic>;

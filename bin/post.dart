@@ -9,6 +9,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:dcli_core/dcli_core.dart' as core;
 
 /// dpath appname
 /// print the systems PATH variable contents and validates each path.
@@ -22,7 +23,7 @@ const String posixTick = '''\u2714''';
 // ignore: unreachable_from_main
 const String cross = 'x';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   final parser = ArgParser()..addFlag('verbose', abbr: 'v', negatable: false);
 
   late final ArgResults parsed;
@@ -41,8 +42,8 @@ void main(List<String> args) {
   }
 
   final url = parsed.rest[0];
-  withTempFile((file) {
-    fetch(
+  await core.withTempFileAsync((file) async {
+    await fetch(
         url: url,
         method: FetchMethod.post,
         saveToPath: file,

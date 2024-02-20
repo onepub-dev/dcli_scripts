@@ -22,7 +22,7 @@ class ConfigCommand extends Command<void> {
   String get name => 'config';
 
   @override
-  void run() {
+  Future<void> run() async {
     final args = getArgs(this, argResults);
 
     final dbname = args[0];
@@ -35,11 +35,11 @@ class ConfigCommand extends Command<void> {
         printerr(red('No config for $dbname exits at $pathTo'));
       }
     } else {
-      config(dbname);
+      await config(dbname);
     }
   }
 
-  void config(String dbname) {
-    MySqlSettings.config(dbname);
+  Future<void> config(String dbname) async {
+    await MySqlSettings.config(dbname);
   }
 }
