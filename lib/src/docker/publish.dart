@@ -54,7 +54,7 @@ void dockerPublish(
     bool confirm = true,
     List<String> buildArgs = const <String>[]}) {
   final project = DartProject.self;
-  final name = project.pubSpec.name;
+  final name = project.pubSpec.name.value;
   final version = project.pubSpec.version.toString();
 
   var _fresh = fresh;
