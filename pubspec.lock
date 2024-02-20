@@ -140,18 +140,27 @@ packages:
   dcli:
     dependency: "direct main"
     description:
-      path: "../dcli/dcli"
-      relative: true
-    source: path
-    version: "3.3.5"
-  dcli_core:
-    dependency: transitive
-    description:
-      name: dcli_core
-      sha256: "60782bcd669b88bfbde729c63dad891443a6e17d16f7c24fd5a8e2e3960f432a"
+      name: dcli
+      sha256: "2f66b366cf29b204254ca5a6abd9a4fde0421393176b731eca1f5d1b8e926410"
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.5"
+    version: "4.0.1-alpha.8"
+  dcli_common:
+    dependency: transitive
+    description:
+      name: dcli_common
+      sha256: "19691ee49c3223c689c9d7405280bee057263aebc0abfa600082b51efc47cdbc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1-alpha.8"
+  dcli_core:
+    dependency: "direct main"
+    description:
+      name: dcli_core
+      sha256: "9baccd5e7bd5b44616a4d780e9accc85b2c7efd4364f97616b18c9aa018c8a39"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1-alpha.9"
   dcli_terminal:
     dependency: transitive
     description:
@@ -164,10 +173,10 @@ packages:
     dependency: "direct main"
     description:
       name: docker2
-      sha256: "4f7b67f806ea359388d58f820776f1a7acfe735b6b102f91522b0ef4f4419b37"
+      sha256: "93eb31c8d873722d1c040c712b2ca430708fefe79e07fe40daf53cfee001182c"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.1"
+    version: "4.5.0-alpha.8"
   equatable:
     dependency: transitive
     description:
@@ -212,10 +221,10 @@ packages:
     dependency: transitive
     description:
       name: fsm2
-      sha256: "7cfc5503617e88f352f224e6715afb345bd23bd2a23e83d2b1ea977014f0111a"
+      sha256: daa0ab5c0e8f485a4b1e1d19e3974fc02c77264cbf327a916d446bfb116d1099
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "3.1.0-alpha.1"
   functional_data:
     dependency: transitive
     description:
@@ -428,10 +437,10 @@ packages:
     dependency: "direct main"
     description:
       name: pub_release
-      sha256: "27556fee93f2399fda671d72092ea60be7251dc0eeee1db4d092af33c972fb93"
+      sha256: fb164b12da7497fa6928d5b3ab97556c939df81c2ed391f3869d3da77630350a
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.3"
+    version: "10.0.8"
   pub_semver:
     dependency: transitive
     description:
@@ -452,10 +461,10 @@ packages:
     dependency: "direct main"
     description:
       name: pubspec_manager
-      sha256: "180fe6f4880d9031176c772ea1be915a2678789d5072790fc7a188767e467e77"
+      sha256: bddf87f12c7507205d0a5741096164e88b65ebe6cbb285c5a8e798e87f3518d0
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0-alpha.14"
+    version: "1.0.0-alpha.16"
   scope:
     dependency: transitive
     description:
@@ -468,10 +477,10 @@ packages:
     dependency: "direct main"
     description:
       name: settings_yaml
-      sha256: c568c79a1a2e48235d7f6cb06a78b15867879cc1995796dd324b9bc125e6b077
+      sha256: "918174e22e7945385ea03fb57b1ff23bd1f29884af6911cbb02f2757f86e5d3e"
       url: "https://pub.dev"
     source: hosted
-    version: "8.0.1"
+    version: "8.1.0-alpha.1"
   shelf:
     dependency: transitive
     description:

@@ -1,3 +1,7 @@
+# 3.2.0-alpha.2
+- fixed some async calls after upgrading to dcli 4.x
+- Fixed a bug in dockerPublish that was incorrectly getting the pubspec name object rather then the string name.
+
 # 3.2.0-alpha.1
 - upgraded to dcli 4.0.0-alpha.1
 

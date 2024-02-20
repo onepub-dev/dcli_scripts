@@ -1,12 +1,13 @@
 name: dcli_scripts
-version: 3.2.0-alpha.1
+version: 3.2.0-alpha.2
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
-environment: 
+environment:
   sdk: '>=3.0.0 <4.0.0'
-dependencies: 
+dependencies:
   args: ^2.3.1
   dcli: ^4.0.0-alpha.1
+  dcli_core: ^4.0.1-alpha.9
   docker2: ^4.0.0
   path: ^1.8.2
   pub_release: ^10.0.1
@@ -14,47 +15,47 @@ dependencies:
   settings_yaml: ^8.0.1
   uuid: ^4.0.0
   win32: ^4.1.4
-dev_dependencies: 
+dev_dependencies:
   lint_hard: ^4.0.0
   test: ^1.0.0
-executables: 
-  add_gnome_launcher: 
-  artifactory: 
-  bobthefish: 
-  certbot_renew: 
-  clean: 
-  dcompress: 
-  dcopydir: 
-  denv: 
-  dfind: 
-  dmailhog: 
-  dnsflush: 
-  docker_dcli: 
-  docker_push: 
-  downit: 
-  dmysql: 
-  dpath: 
-  dport: 
-  dreplace: 
-  dsetver: 
-  dsort: 
-  dvirtualbox: 
-  dwc: 
-  dwhich: 
-  dzfs_clean: 
-  eclipse_launcher: 
-  find_old_dart_packages: 
-  find_text: 
-  gactivate: 
-  gitadd_team_to_repository: 
-  gitcreation_date: 
-  gitgc: 
-  gituncommited: 
-  gitsyncfork: 
-  gitupdate_remote: 
-  hexdump: 
-  hog: 
-  install_flutter: 
-  ipaddr: 
-  kill_tomcat: 
-  pub_get_all: 
+executables:
+  add_gnome_launcher:
+  artifactory:
+  bobthefish:
+  certbot_renew:
+  clean:
+  dcompress:
+  dcopydir:
+  denv:
+  dfind:
+  dmailhog:
+  dnsflush:
+  docker_dcli:
+  docker_push:
+  downit:
+  dmysql:
+  dpath:
+  dport:
+  dreplace:
+  dsetver:
+  dsort:
+  dvirtualbox:
+  dwc:
+  dwhich:
+  dzfs_clean:
+  eclipse_launcher:
+  find_old_dart_packages:
+  find_text:
+  gactivate:
+  gitadd_team_to_repository:
+  gitcreation_date:
+  gitgc:
+  gituncommited:
+  gitsyncfork:
+  gitupdate_remote:
+  hexdump:
+  hog:
+  install_flutter:
+  ipaddr:
+  kill_tomcat:
+  pub_get_all:
