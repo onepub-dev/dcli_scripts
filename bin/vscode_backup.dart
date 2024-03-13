@@ -1,4 +1,4 @@
-#! /usr/bin/env dcli
+#! /usr/bin/env dart
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -6,6 +6,7 @@
  */
 
 import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';

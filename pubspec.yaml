@@ -6,8 +6,8 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 dependencies:
   args: ^2.3.1
-  dcli: ^4.0.0-alpha.1
-  dcli_core: ^4.0.1-alpha.9
+  dcli: ^4.0.1-alpha.8
+  dcli_core: ^4.0.1-alpha.8
   docker2: ^4.0.0
   path: ^1.8.2
   pub_release: ^10.0.1

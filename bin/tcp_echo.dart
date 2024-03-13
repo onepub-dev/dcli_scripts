@@ -15,7 +15,7 @@ void main(List<String> args) async {
   try {
     final parsed = parser.parse(args);
     port = int.tryParse(parsed['port'] as String) ?? 3001;
-  } on FormatException catch (e) {
+  } on FormatException catch (_) {
     showUsage(parser);
   }
   try {
