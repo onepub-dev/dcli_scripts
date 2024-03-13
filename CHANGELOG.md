@@ -1,3 +1,7 @@
+# 3.3.0
+- changed the #! to use dart rather than dcli. Upgraded to latest version of dcli.
+- added a app that listens on a tcp port and echos andy data recieved.
+
 # 3.2.0-alpha.2
 - fixed some async calls after upgrading to dcli 4.x
 - Fixed a bug in dockerPublish that was incorrectly getting the pubspec name object rather then the string name.
