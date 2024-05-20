@@ -1,3 +1,6 @@
+# 3.4.0
+- upgraded to release version of dcli 4.x
+
 # 3.3.0
 - changed the #! to use dart rather than dcli. Upgraded to latest version of dcli.
 - added a app that listens on a tcp port and echos andy data recieved.

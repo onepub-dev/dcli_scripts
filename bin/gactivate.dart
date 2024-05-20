@@ -62,12 +62,12 @@ void compilePackage(ArgResults argResults) {
     copyTree(pathToPackage, tempDir);
     final pubspec = PubSpec.loadFromPath(join(tempDir, 'pubspec.yaml'));
     final execs = pubspec.executables;
-    if (execs.isEmpty) {
+    if (execs.length == 0) {
       printerr(red('No executables listed in the pubspec.yaml'));
       throw Exception('No executables listed in the pubspec.yaml');
     }
     final binDir = join(tempDir, 'bin');
-    for (final executable in execs) {
+    for (final executable in execs.list) {
       'dcli compile ${executable.scriptPath}'.start(workingDirectory: tempDir);
       final installPath = join(Settings().pathToDCliBin, executable.name);
       if (exists(installPath)) {
