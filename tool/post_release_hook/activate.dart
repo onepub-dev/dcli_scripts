@@ -7,7 +7,8 @@
 
 
 import 'package:dcli/dcli.dart';
+import 'package:dcli_scripts/src/version/version.g.dart';
 
 void main(List<String> args) {
-  PubCache().globalActivate('dcli_scripts');
+  PubCache().globalActivate('dcli_scripts', version: packageVersion);
 }

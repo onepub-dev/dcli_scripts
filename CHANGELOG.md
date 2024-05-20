@@ -1,3 +1,6 @@
+# 3.4.1
+- upgraded packages.
+
 # 3.4.0
 - upgraded to release version of dcli 4.x
 

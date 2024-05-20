@@ -1,5 +1,5 @@
 name: dcli_scripts
-version: 3.4.0
+version: 3.4.1
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment:
@@ -10,7 +10,7 @@ dependencies:
   dcli_core: ^4.0.0
   docker2: ^4.0.0
   path: ^1.8.2
-  pub_release: ^10.0.1
+  pub_release: ^10.1.0
   pubspec_manager: ^1.0.0
   settings_yaml: ^8.0.1
   uuid: ^4.0.0
