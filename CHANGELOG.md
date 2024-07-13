@@ -1,3 +1,6 @@
+# 3.4.2
+- upgraded packages.
+
 # 3.4.1
 - upgraded packages.
 
