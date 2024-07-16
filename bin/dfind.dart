@@ -15,7 +15,6 @@ import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
   final parser = ArgParser();
-  // ignore: cascade_invocations
   parser
     ..addFlag('help', abbr: 'h', help: 'Display this help information.')
     ..addOption('text', abbr: 't', help: 'Search for text within files.')
@@ -41,11 +40,19 @@ void main(List<String> args) {
 
   if (searchText != null) {
     print(
-        '''Searching for text "$searchText" within files matching pattern "$pattern"''');
+        green('''Searching for text "$searchText" within files matching pattern "$pattern"'''));
 
     find(pattern, includeHidden: true).forEach((file) {
-      if (File(file).readAsStringSync().contains(searchText)) {
-        print('Found "$searchText" in $file');
+      try {
+        if (File(file).readAsStringSync().contains(searchText)) {
+          print(orange('Found "$searchText" in $file'));
+        }
+      } on FileSystemException catch (e) {
+        if (e.message == "Failed to decode data using encoding 'utf-8'") {
+          print('Skipping binary file: $file');
+        } else {
+          print('Error reading file $file: ${e.message}');
+        }
       }
     });
   } else {
