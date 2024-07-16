@@ -14,13 +14,13 @@ import 'package:dcli/dcli.dart';
 /// Recursively search for files that match the passed glob pattern.
 
 void main(List<String> args) {
-  final parser = ArgParser();
-  parser
+  final parser = ArgParser()
     ..addFlag('help', abbr: 'h', help: 'Display this help information.')
     ..addOption('text', abbr: 't', help: 'Search for text within files.')
     ..addOption('pattern',
         abbr: 'p',
-        help: 'Limit search to files matching the provided glob (pattern).');
+        help: 'Limit search to files matching the provided glob (pattern).')
+    ..addFlag('warnings', abbr: 'w', help: 'Show skipped files.');
 
   final results = parser.parse(args);
 
@@ -31,6 +31,7 @@ void main(List<String> args) {
 
   final pattern = results['pattern'] as String? ?? '*';
   final searchText = results['text'] as String?;
+  final showWarnings = results['warnings'] as bool;
 
   if (searchText == null && results.rest.isEmpty) {
     printerr(
@@ -39,8 +40,8 @@ void main(List<String> args) {
   }
 
   if (searchText != null) {
-    print(
-        green('''Searching for text "$searchText" within files matching pattern "$pattern"'''));
+    print(green(
+        '''Searching for text "$searchText" within files matching pattern "$pattern"'''));
 
     find(pattern, includeHidden: true).forEach((file) {
       try {
@@ -49,7 +50,9 @@ void main(List<String> args) {
         }
       } on FileSystemException catch (e) {
         if (e.message == "Failed to decode data using encoding 'utf-8'") {
-          print('Skipping binary file: $file');
+          if (showWarnings) {
+            print('Skipping binary file: $file');
+          }
         } else {
           print('Error reading file $file: ${e.message}');
         }
