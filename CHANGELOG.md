@@ -1,3 +1,7 @@
+# 3.4.3
+- added flag to dfind to control whether warnings about skipped files are output.
+- added ability for dfind to search for text within files.
+
 # 3.4.2
 - upgraded packages.
 

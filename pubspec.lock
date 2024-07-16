@@ -154,10 +154,10 @@ packages:
     dependency: "direct main"
     description:
       name: dcli_core
-      sha256: e055c7e953e6fa95800f0c7fa7f02f99efcd75a84b7acd5f07936854d859adc4
+      sha256: "0204cc8f33877b33705bd138bb863fd511a0c4bbe8c491b9867a5b612b36733f"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.3"
+    version: "4.0.5"
   dcli_terminal:
     dependency: transitive
     description:

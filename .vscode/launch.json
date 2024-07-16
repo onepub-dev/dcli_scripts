@@ -9,31 +9,48 @@
             "request": "launch",
             "type": "dart",
             "program": "bin/dwhich.dart",
-            "args": ["dswitch"]
-        }, 
+            "args": [
+                "dswitch"
+            ]
+        },
         {
             "name": "dmysql - show usage",
             "request": "launch",
             "type": "dart",
             "program": "bin/dmysql.dart",
-            "args": ["backup"]
-        }, 
-
-        
+            "args": [
+                "backup"
+            ]
+        },
+        {
+            "name": "dfind - ",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/dfind.dart",
+            "args": [
+                "-t",
+                "kuma"
+            ]
+        },
         {
             "name": "dmysql - backup",
             "request": "launch",
             "type": "dart",
             "program": "bin/dmysql.dart",
-            "args": ["backup", "onepub"],
-            "pwd" : "/home/bsutton/git/onepub.server/schema"
+            "args": [
+                "backup",
+                "onepub"
+            ],
+            "pwd": "/home/bsutton/git/onepub.server/schema"
         },
         {
             "name": "hex_dump",
             "request": "launch",
             "type": "dart",
             "program": "hexdump.dart",
-            "args": ["hexdump.dart"]
+            "args": [
+                "hexdump.dart"
+            ]
         }
     ]
 }
