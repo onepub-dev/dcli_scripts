@@ -21,12 +21,14 @@ void main() {
           printerr(red('You need to install flutter to pub get this project'));
         } else {
           'flutter pub get'.start(
-              workingDirectory: dirname(project), progress: Progress.devNull());
+              workingDirectory: dirname(project),
+              progress: Progress.printStdErr());
         }
       } else {
         print(blue('Dart: project: ${dirname(project)}'));
         'dart pub get'.start(
-            workingDirectory: dirname(project), progress: Progress.devNull());
+            workingDirectory: dirname(project),
+            progress: Progress.printStdErr());
       }
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {

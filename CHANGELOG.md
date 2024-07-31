@@ -1,3 +1,7 @@
+# 3.4.4
+- change pub_get_all so that it now prints any errors rather than
+just reporting a failure.
+
 # 3.4.3
 - added flag to dfind to control whether warnings about skipped files are output.
 - added ability for dfind to search for text within files.
