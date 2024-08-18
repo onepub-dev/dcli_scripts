@@ -37,7 +37,7 @@ void main(List<String> args) {
 
   if (results.command != null) {
     build = results.command!.name == 'build';
-    if (build != true) {
+    if (!build) {
       throw ArgumentError('The command arg must be "build" or nothing.');
     }
   }

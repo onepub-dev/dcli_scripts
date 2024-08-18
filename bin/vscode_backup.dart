@@ -38,15 +38,12 @@ void main(List<String> args) {
   switch (result.command!.name) {
     case 'backup':
       backup();
-      break;
 
     case 'restore':
       restore(restoreParser, args.sublist(1));
-      break;
 
     case 'uninstall':
       uninstall();
-      break;
   }
 }
 

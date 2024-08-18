@@ -19,7 +19,7 @@ import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
-void main() {
+void main() async {
   const list = 'repo.list.csv';
   if (!exists(list)) {
     printerr('List not found');
@@ -34,11 +34,11 @@ void main() {
     final parts = repo.split(',');
     final name = parts[0].replaceAll('"', '');
     final url = parts[1].replaceAll('"', '');
-    import(name, url);
+    await import(name, url);
   }
 }
 
-void import(String name, String url) {
+Future<void> import(String name, String url) async {
   final settings = SettingsYaml.load(pathToSettings: 'bitbucket.yaml');
   final password = settings['password'] as String;
   final token = settings['gittoken'] as String;
@@ -47,9 +47,9 @@ void import(String name, String url) {
 
   Settings().setVerbose(enabled: false);
 
-  createGithubRepo(owner, name);
+  await createGithubRepo(owner, name);
 
-  withTempDir((dir) {
+  await withTempDirAsync((dir) async {
     print('Cloning into $dir');
     final _url = url.replaceAll('@', ':$password@');
 
@@ -63,8 +63,8 @@ void import(String name, String url) {
   }, keep: true);
 }
 
-void createGithubRepo(String owner, String name) {
-  withTempDir((dir) {
+Future<void> createGithubRepo(String owner, String name) async {
+  await withTempDirAsync((dir) async {
     final url = 'git@github.com:$owner/$name.git';
     'gh repo create  $url --confirm --private'
         .start(workingDirectory: dir, progress: Progress.print());

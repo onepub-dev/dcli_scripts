@@ -25,7 +25,7 @@ void main(List<String> args) {
   for (final path in PATH) {
     final pathexists = exists(path);
 
-    if (pathexists == true) {
+    if (pathexists) {
       print('Test:  $posixTick ${normalize(path)}');
     } else {
       print(red('Test: $cross ${normalize(path)}'));

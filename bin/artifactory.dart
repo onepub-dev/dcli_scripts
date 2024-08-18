@@ -90,7 +90,7 @@ void start({required bool daemon}) {
     return;
   }
 
-  if (daemon == false) {
+  if (!daemon) {
     print(blue('Starting Artifactory in interactive mode.'));
   }
 
@@ -114,7 +114,7 @@ void start({required bool daemon}) {
           '-p $bind:$port:8081 -p $bind:$port2:8082 -v /var/opt/jfrog/artifactory:/var/opt/jfrog/artifactory',
       daemon: daemon);
 
-  if (daemon == true) {
+  if (daemon) {
     print(blue('Artifactory daemon has started'));
   }
 

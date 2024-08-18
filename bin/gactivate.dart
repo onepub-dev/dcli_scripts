@@ -16,7 +16,7 @@ import 'package:pubspec_manager/pubspec_manager.dart';
 ///
 /// For details on installing dcli.
 ///
-void main(List<String> args) {
+void main(List<String> args) async {
   final parser = ArgParser()
     ..addFlag('compile',
         abbr: 'c',
@@ -34,7 +34,7 @@ void main(List<String> args) {
   final compile = argResult['compile'] as bool;
 
   if (compile) {
-    compilePackage(argResult);
+    await compilePackage(argResult);
   } else {
     if (args.length != 1) {
       printerr(red('You must pass a path.'));
@@ -45,7 +45,7 @@ void main(List<String> args) {
   }
 }
 
-void compilePackage(ArgResults argResults) {
+Future<void> compilePackage(ArgResults argResults) async {
   if (argResults.rest.length != 1) {
     printerr(red('You must provide the name of a package to compile'));
   }
@@ -58,7 +58,7 @@ void compilePackage(ArgResults argResults) {
 
   // we can't compile in the .pub_cache as pub get throws errors
   // so copy the package to a temp dir.
-  withTempDir((tempDir) {
+  await withTempDirAsync((tempDir) async {
     copyTree(pathToPackage, tempDir);
     final pubspec = PubSpec.loadFromPath(join(tempDir, 'pubspec.yaml'));
     final execs = pubspec.executables;

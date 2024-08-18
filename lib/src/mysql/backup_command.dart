@@ -38,7 +38,7 @@ then one will be generated in the form:
   String get name => 'backup';
 
   @override
-  void run() {
+  Future<void> run() async {
     if (which('mysqldump').notfound) {
       throw ExitException(1, 'You must install mysqldump first');
     }
@@ -76,20 +76,21 @@ then one will be generated in the form:
       printerr('The backup file ${truepath(pathToBackupFile)} already exists.  '
           'Delete it or use --overwrite');
     }
-    if (backup(MySqlSettings.load(dbName), pathToBackupFile, pathToMostRecent,
+    if (await backup(
+        MySqlSettings.load(dbName), pathToBackupFile, pathToMostRecent,
         always: always)) {
       print(blue('Backed up database to $pathToBackupFile'));
     }
     print('');
   }
 
-  bool backup(MySqlSettings settings, String pathToBackupfile,
+  Future<bool> backup(MySqlSettings settings, String pathToBackupfile,
       String? pathToPriorBackup,
-      {required bool always}) {
+      {required bool always}) async {
     var created = false;
     var columnStatistics = '--column-statistics=0 ';
     var success = false;
-    withTempFile((tmpFile) {
+    await withTempFileAsync((tmpFile) async {
       while (!success) {
         final result = 'mysqldump --host ${settings.host} '
                 '--port=${settings.port} '

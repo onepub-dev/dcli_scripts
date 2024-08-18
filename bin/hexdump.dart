@@ -35,7 +35,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  if (parsed['help'] as bool == true) {
+  if (parsed['help'] as bool) {
     showUsage(parser);
     exit(1);
   }
