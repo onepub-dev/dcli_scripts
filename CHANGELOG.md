@@ -1,3 +1,9 @@
+# 4.0.0
+- min dart version 3.5
+- Merge branch 'master' of github.com:bsutton/dcli_scripts
+- upgraded to dcli 6.x
+- Update bobthefish.dart
+
 # 3.4.4
 - change pub_get_all so that it now prints any errors rather than
 just reporting a failure.
