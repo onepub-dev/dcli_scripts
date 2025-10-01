@@ -9,6 +9,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:strings/strings.dart';
 
 /// dfind <glob>
 /// Recursively search for files that match the passed glob pattern.
@@ -17,35 +18,38 @@ void main(List<String> args) {
   final parser = ArgParser()
     ..addFlag('help', abbr: 'h', help: 'Display this help information.')
     ..addOption('text', abbr: 't', help: 'Search for text within files.')
-    ..addOption('pattern',
-        abbr: 'p',
-        help: 'Limit search to files matching the provided glob (pattern).')
     ..addFlag('warnings', abbr: 'w', help: 'Show skipped files.');
 
   final results = parser.parse(args);
 
   if (results['help'] as bool) {
-    print(parser.usage);
+    print('''
+dfind [options] <glob>
+Finds files that match the passed glob pattern
+If you pass in --text <text> then dfind will search within the matched files
+
+${parser.usage}
+''');
     exit(0);
   }
 
-  final pattern = results['pattern'] as String? ?? '*';
   final searchText = results['text'] as String?;
   final showWarnings = results['warnings'] as bool;
 
-  if (searchText == null && results.rest.isEmpty) {
-    printerr(
-        '''You must provide a filename (glob pattern) to search for or text to search within files.''');
+  if (results.rest.isEmpty) {
+    printerr('''You must provide a filename (glob pattern) to match on.''');
     exit(1);
   }
 
-  if (searchText != null) {
+  final pattern = results.rest[0];
+
+  if (Strings.isNotBlank(searchText)) {
     print(green(
         '''Searching for text "$searchText" within files matching pattern "$pattern"'''));
 
     find(pattern, includeHidden: true).forEach((file) {
       try {
-        if (File(file).readAsStringSync().contains(searchText)) {
+        if (File(file).readAsStringSync().contains(searchText!)) {
           print(orange('Found "$searchText" in $file'));
         }
       } on FileSystemException catch (e) {
@@ -59,9 +63,8 @@ void main(List<String> args) {
       }
     });
   } else {
-    final globPattern = results.rest[0];
-    print('Searching for files matching pattern $globPattern');
+    print('Searching for files matching pattern $pattern');
 
-    find(globPattern, includeHidden: true).forEach(print);
+    find(pattern, includeHidden: true).forEach(print);
   }
 }
