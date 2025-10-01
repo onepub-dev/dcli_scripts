@@ -32,6 +32,17 @@
                 "kuma"
             ]
         },
+          {
+            "name": "dfind - text",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/dfind.dart",
+            "args": [
+                "-t",
+                "kuma",
+                "*.dart"
+            ]
+        },
         {
             "name": "dmysql - backup",
             "request": "launch",
