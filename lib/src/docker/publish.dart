@@ -85,7 +85,7 @@ void dockerPublish(
         'RUN mkdir -p /BUILD_TOKEN/$uuid');
   }
 
-  'docker  build ${buildArgs.join(' ')}$cleanArg -t $tag '
+  'docker  build ${buildArgs.join(' ')} $cleanArg -t $tag '
           '-t $latest -f $pathToDockerFile .'
       .run;
 
