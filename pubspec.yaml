@@ -1,5 +1,5 @@
 name: dcli_scripts
-version: 4.2.0
+version: 4.3.0
 description: A collection of cli scripts that do odd jobs for me.
 repository: https://github.com/bsutton/dcli_scripts
 environment:
