@@ -78,6 +78,7 @@ bool viaNetstat(int? portNo) {
   return found;
 }
 
+// for future use.
 // ignore: unreachable_from_main
 bool viaLsof(int portNo) {
   // 'ss -tulpn src :$portNo'.start(privileged: true);

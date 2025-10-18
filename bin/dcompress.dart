@@ -10,7 +10,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 
-Map<String, String> extensionToCommand = <String, String>{
+var extensionToCommand = <String, String>{
   '.tar.gz': 'tar -zxvf %F',
   '.tar': 'tar -xvf %F',
   '.xz': 'tar -xvf %F',
@@ -18,7 +18,9 @@ Map<String, String> extensionToCommand = <String, String>{
   '.zip': 'unzip %F'
 };
 
+/// ```bash
 /// dcompress <compress file.>
+/// ```
 /// de-compresses a variety of file formats.
 void main(List<String> args) {
   final parser = ArgParser();
@@ -54,7 +56,6 @@ void main(List<String> args) {
     cmd = cmd.replaceAll('%F', tarFile);
     try {
       cmd.run;
-      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       if (e is RunException && e.exitCode == 2) {
         printerr(red('The extractor for $tarFile $cmd could not be found.'));

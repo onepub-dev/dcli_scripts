@@ -20,7 +20,7 @@ import 'package:path/path.dart';
 /// For details on installing dcli.
 ///
 
-String backupfile = '.vscode_extension.bak';
+var backupfile = '.vscode_extension.bak';
 
 void main(List<String> args) {
   final parser = ArgParser()..addCommand('backup');

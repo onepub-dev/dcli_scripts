@@ -1,6 +1,5 @@
 #! /usr/bin/env dart
 
-// ignore: unused_import
 import 'dart:io';
 
 import 'package:args/args.dart';

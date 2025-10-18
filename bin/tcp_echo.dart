@@ -25,7 +25,6 @@ void main(List<String> args) async {
     await for (final socket in serverSocket) {
       await handleConnection(socket);
     }
-    // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     print('Error: $e');
   }
@@ -49,7 +48,6 @@ Future<void> handleConnection(Socket socket) async {
       print('Client disconnected: $remoteAddress:$remotePort');
       await socket.close();
     },
-    // ignore: avoid_types_on_closure_parameters
     onError: (Object error) async {
       print('Error: $error');
       await socket.close();

@@ -5,7 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-// ignore_for_file: file_names
 import 'dart:io';
 
 import 'package:args/args.dart';

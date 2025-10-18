@@ -217,10 +217,11 @@ then one will be generated in the form:
 // }
 
 class ExitException implements Exception {
-  ExitException(this.exitCode, this.message);
-
   int exitCode;
+
   String message;
+
+  ExitException(this.exitCode, this.message);
 
   @override
   String toString() => 'Error: $exitCode $message';

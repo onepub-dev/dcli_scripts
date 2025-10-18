@@ -10,12 +10,12 @@ import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 
 /// The port that artifactory will listen on.
-String port = '8081';
-String port2 = '8082';
-String bind = '127.0.0.1';
-String name = 'artifactory';
+var port = '8081';
+var port2 = '8082';
+var bind = '127.0.0.1';
+var name = 'artifactory';
 
-String imageName = 'docker.bintray.io/jfrog/artifactory-oss:latest';
+var imageName = 'docker.bintray.io/jfrog/artifactory-oss:latest';
 
 /// installs, starts/stops the artifactory docker container.
 void main(List<String> args) {

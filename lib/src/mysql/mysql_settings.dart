@@ -13,9 +13,19 @@ import 'backup_command.dart';
 /// from a local settings file.
 /// Use
 
-String pathToDMysql = '$HOME/.dmysql';
+var pathToDMysql = '$HOME/.dmysql';
 
 class MySqlSettings {
+  final String host;
+
+  final int port;
+
+  final String user;
+
+  final String password;
+
+  final String dbname;
+
   MySqlSettings(
       {required this.host,
       required this.port,
@@ -76,16 +86,9 @@ Check your database name or run dmysql config $dbname''');
       }
     }
 
-    // ignore: discarded_futures
     await settings.save();
     return MySqlSettings.load(dbname);
   }
-
-  final String host;
-  final int port;
-  final String user;
-  final String password;
-  final String dbname;
 
   static String pathToSettings(String dbname) => join(pathToDMysql, dbname);
 
@@ -114,8 +117,9 @@ Check your database name or run dmysql config $dbname''');
 }
 
 class MissingConfigurationException implements Exception {
-  MissingConfigurationException(this.message);
   String message;
+
+  MissingConfigurationException(this.message);
 
   @override
   String toString() => message;

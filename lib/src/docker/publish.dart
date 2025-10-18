@@ -6,8 +6,8 @@
 
 import 'dart:io';
 
-import 'package:dcli/dcli.dart' hide confirm;
 import 'package:dcli/dcli.dart' as dcli;
+import 'package:dcli/dcli.dart' hide confirm;
 import 'package:uuid/uuid.dart';
 
 /// Designed to build and publish a Docker file built using dcli and
@@ -28,7 +28,7 @@ import 'package:uuid/uuid.dart';
 /// The repository name will be generated from your pubspec.yaml and
 /// the [repository] argument in the form:
 ///
-/// <repository>/<pubspec.name>:<pubspec.version>
+/// `<repository>/<pubspec.name>:<pubspec.version>`
 ///
 /// If you pass the [clean] = true then the image will be rebuilt from scratch
 /// If you pass the [fresh] = true then we search for the BUILD_TOKEN line
@@ -57,8 +57,6 @@ void dockerPublish(
   final name = project.pubSpec.name.value;
   final version = project.pubSpec.version.toString();
 
-  var _fresh = fresh;
-
   if (confirm && !dcli.confirm('Building $name $version')) {
     printerr(red('Stopping build'));
     exit(1);
@@ -66,7 +64,7 @@ void dockerPublish(
 
   if (pack) {
     'dcli pack'.run;
-    _fresh = true;
+    fresh = true;
   }
 
   print(blue('Building $name $version'));
@@ -79,7 +77,7 @@ void dockerPublish(
     cleanArg = ' --no-cache';
   }
 
-  if (_fresh) {
+  if (fresh) {
     final uuid = const Uuid().v4().replaceAll('-', '');
     replace(pathToDockerFile, RegExp('RUN mkdir -p /BUILD_TOKEN/.*'),
         'RUN mkdir -p /BUILD_TOKEN/$uuid');

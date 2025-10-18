@@ -115,11 +115,14 @@ class DiskCommand extends Command<void> {
 }
 
 class DirectorySize {
-  DirectorySize(this.pathTo);
   String pathTo;
-  int size = 0;
+
+  var size = 0;
+
+  DirectorySize(this.pathTo);
 }
 
+// for future use.
 // ignore: unreachable_from_main
 void showUsage(ArgParser parser) {
   print('Usage: hog -v -prompt <a questions>');
@@ -187,6 +190,7 @@ int availableSpace(String path) {
   return (int.tryParse(hsize) ?? 0) * factor;
 }
 
+// for future use.
 // ignore: unreachable_from_main
 void removeOldKernels() {
   r'''dpkg --list | grep 'linux-image' | awk '{ print $2 }' | sort -V | sed -n '/'"$(uname -r | sed "s/\([0-9.-]*\)-\([^0-9]\+\)/\1/")"'/q;p' | xargs sudo apt-get -y purge'''

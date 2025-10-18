@@ -10,7 +10,7 @@
 /// The csv file must contain two columns:
 /// repo_name, repo_url
 /// e.g.
-/// adfiler,https://<user>@bitbucket.org/<org>>/<repo_name>.git
+/// `adfiler,https://<user>@bitbucket.org/<org>>/<repo_name>.git`
 ///
 /// You need to provide a 'github.yaml' file (in the cwd)
 /// that contains a git personal access token

@@ -68,12 +68,11 @@ void main(List<String> cliArgs) {
 
 bool validatePath(String path, Args args, String? lastPath) {
   var valid = true;
-  var _path = path;
   // validation(args, () => 'Searching: ${truepath(path)}');
-  if (_path.isEmpty) {
+  if (path.isEmpty) {
     validation(args, () => 'Empty path found');
     if (Platform.isLinux) {
-      _path = '.';
+      path = '.';
 
       /// current
       validation(
@@ -82,15 +81,14 @@ bool validatePath(String path, Args args, String? lastPath) {
               'to an empty path '
               '${lastPath == null ? '' : 'after $lastPath'} .'));
     } else {
-      validation(args, () => red(
-          // ignore: lines_longer_than_80_chars
-          'Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'));
+      validation(args, () => red('''
+Found empty path ${lastPath == null ? '' : 'after $lastPath'}.'''));
       valid = false;
     }
   }
 
-  if (valid && !exists(_path)) {
-    validation(args, () => red('The path $_path does not exist.'));
+  if (valid && !exists(path)) {
+    validation(args, () => red('The path $path does not exist.'));
     valid = false;
   }
   return valid;
@@ -137,7 +135,6 @@ String? containsCommand(String cmd) {
 }
 
 final problems = <String>[];
-// ignore: avoid_positional_boolean_parameters
 void validation(Args args, String Function() message) {
   if (args.validate) {
     problems.add(message());

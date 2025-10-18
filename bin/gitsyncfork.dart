@@ -93,6 +93,7 @@ String getDefaultBranch() {
   return parts[2];
 }
 
+// for future use.
 // ignore: unreachable_from_main
 String getBranch() {
   final line = 'git status'.firstLine;

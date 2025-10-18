@@ -54,7 +54,6 @@ void main(List<String> args) {
           print('Push required on $gitPath');
         }
       }
-      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       print('error: $e');
       print(uncommited);

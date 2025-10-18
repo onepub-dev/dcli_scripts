@@ -14,15 +14,6 @@ import 'package:dcli_core/dcli_core.dart' as core;
 /// dpath appname
 /// print the systems PATH variable contents and validates each path.
 
-// ignore: unreachable_from_main
-const String tick = '''\xE2\x9C\x93''';
-
-// ignore: unreachable_from_main
-const String posixTick = '''\u2714''';
-
-// ignore: unreachable_from_main
-const String cross = 'x';
-
 void main(List<String> args) async {
   final parser = ArgParser()..addFlag('verbose', abbr: 'v', negatable: false);
 

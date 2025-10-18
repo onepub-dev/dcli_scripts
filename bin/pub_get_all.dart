@@ -30,7 +30,6 @@ void main() {
             workingDirectory: dirname(project),
             progress: Progress.printStdErr());
       }
-      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       printerr(red('pub get of ${dirname(project)} failed: $e'));
     }

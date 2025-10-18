@@ -10,7 +10,7 @@
 /// The csv file must contain two columns:
 /// repo_name, repo_url
 /// e.g.
-/// adfiler,https://<user>@bitbucket.org/<org>>/<repo_name>.git
+/// `adfiler,https://<user>@bitbucket.org/<org>>/<repo_name>.git`
 library;
 
 import 'dart:io';
@@ -51,9 +51,9 @@ Future<void> import(String name, String url) async {
 
   await withTempDirAsync((dir) async {
     print('Cloning into $dir');
-    final _url = url.replaceAll('@', ':$password@');
+    final url0 = url.replaceAll('@', ':$password@');
 
-    'git clone --bare $_url'
+    'git clone --bare $url0'
         .start(workingDirectory: dir, progress: Progress.print());
 
     'git push --mirror https://$username:$token@github.com/$owner/$name.git'

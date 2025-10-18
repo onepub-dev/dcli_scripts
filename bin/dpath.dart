@@ -12,12 +12,13 @@ import 'package:path/path.dart';
 /// dpath appname
 /// print the systems PATH variable contents and validates each path.
 
+// for future use.
 // ignore: unreachable_from_main
-const String tick = '''\xE2\x9C\x93''';
+const tick = '''\xE2\x9C\x93''';
 
-const String posixTick = '''\u2714''';
+const posixTick = '''\u2714''';
 
-const String cross = 'x';
+const cross = 'x';
 
 void main(List<String> args) {
   ArgParser().addFlag('verbose', abbr: 'v', negatable: false);

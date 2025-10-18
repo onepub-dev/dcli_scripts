@@ -11,7 +11,9 @@ import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:strings/strings.dart';
 
+/// ```bash
 /// dfind <glob>
+/// ```
 /// Recursively search for files that match the passed glob pattern.
 
 void main(List<String> args) {

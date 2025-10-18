@@ -14,7 +14,7 @@ import 'package:path/path.dart';
 
 /// dsort
 ///
-/// ```
+/// ```bash
 /// dsort --field-delimiter=<FD> --linedelimiter=<LD> --key=<columns>
 ///     --output output <file>
 ///
@@ -35,10 +35,10 @@ import 'package:path/path.dart';
 /// ```
 ///
 
-const String fieldDelimiterOption = 'field-delimiter';
-const String lineDelimiterOption = 'line-delimiter';
-const String sortkeyOption = 'sortkey';
-const String outputOption = 'output';
+const fieldDelimiterOption = 'field-delimiter';
+const lineDelimiterOption = 'line-delimiter';
+const sortkeyOption = 'sortkey';
+const outputOption = 'output';
 
 void main(List<String> args) async {
   await dsort(args);

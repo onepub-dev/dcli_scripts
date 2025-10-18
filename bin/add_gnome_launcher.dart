@@ -18,7 +18,7 @@ String? comment;
 String? iconPath;
 String? exePath;
 
-ArgParser parser = ArgParser();
+var parser = ArgParser();
 
 ///
 /// Creates a gnome launcher.
@@ -88,6 +88,7 @@ String? getRequiredString(ArgResults parsed, String option) {
   return parsed[option] as String?;
 }
 
+// for future use.
 // ignore: unreachable_from_main
 bool getRequiredBool(ArgResults parsed, String option) {
   if (!parsed.wasParsed(option)) {
@@ -99,6 +100,7 @@ bool getRequiredBool(ArgResults parsed, String option) {
 
 bool getBool(ArgResults parsed, String option) => parsed[option] == 'true';
 
+// for future use.
 // ignore: unreachable_from_main
 List<String>? getRequiredList(ArgResults parsed, String option) {
   if (!parsed.wasParsed(option)) {

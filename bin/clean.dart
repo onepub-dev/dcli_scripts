@@ -5,6 +5,7 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
+// this is a main.
 // ignore: prefer_relative_imports
 import 'dart:io';
 
