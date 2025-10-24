@@ -1,3 +1,6 @@
+# 4.4.0
+- upgraded to dcli 8.2.0
+
 # 4.3.0
 - upgraded packges, dcli, docker2, pubspec_manager and lint_hard
 - added the strings dependency.
