@@ -7,7 +7,7 @@ Some of my favourites:
 | command | description | Example|
 | --- | --- | --- |
 | dport | finds what process has a tcp port open.| dport 80|
-| clean | cleans out stale docker and git files and highlights large directories. | clean|
+| clean | cleans Rust `target`, Node `node_modules`, stale Docker and Git files, then highlights large directories. | clean|
 | dmailhog | installs and starts/stops mailhog. | dmailhog \| dmailhog --shutdown |
 | dmysql |  Backup/Restore and connects you to a mysql cli pulling settings (username/password) from a per database local settings file. | dmysql mydb backup \| dmysql mydb restore `<path>`
 | dwhich | an improved which command that also highlights invalid paths
@@ -187,4 +187,3 @@ RUN dart pub get
 RUN dart bin/pig_build.dart --current --no-tools --no-full
 
 ```
-

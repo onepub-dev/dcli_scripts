@@ -10,15 +10,29 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
+import 'package:dcli_scripts/src/clean/project_cleaner.dart';
 import 'package:path/path.dart';
 
+const _minimumUnusedAge = Duration(hours: 8);
+
 /// Cleans up disk space usage.
+/// Cleans unused entries, including hidden entries, out of /tmp and local caches.
 /// Cleans out unused docker objects
 /// Performs a git clean
 /// Finally runs hog to highlight directories that
 /// take up lots of space.
 
 void main(List<String> args) {
+  _cleanCaches();
+
+  print(blue('Cleaning Rust and Node project artifacts..'));
+  cleanProjectArtifacts(
+    Directory.current,
+    onDelete: (path) => print('Deleting $path'),
+    onError: (path, exception) =>
+        printerr(yellow('Unable to clean $path: $exception')),
+  );
+
   print(blue('cleaning .dart_tools..'));
   find('pubspec.yaml').forEach((path) {
     final tools = join(dirname(path), '.dart_tools');
@@ -44,11 +58,63 @@ void main(List<String> args) {
   }
   'gitgc'.start(terminal: true, workingDirectory: join(HOME, 'git'));
 
-  print(blue('cleaning dcli test directories..'));
-  if (exists('/tmp/dcli')) {
-    deleteDir('/tmp/dcli');
-  }
-
   print(blue('Running hog'));
   'hog disk'.start(terminal: true, workingDirectory: HOME);
+}
+
+void _cleanCaches() {
+  _cleanDirectory('/tmp');
+  _cleanDirectory(join(HOME, '.gradle', 'caches'));
+  _cleanDirectory(join(HOME, '.dartServer'));
+  _cleanDirectory(join(HOME, '.cache'));
+}
+
+void _cleanDirectory(String path) {
+  print(blue('Cleaning $path'));
+
+  final directory = Directory(path);
+  if (!directory.existsSync()) {
+    return;
+  }
+
+  final openPaths = _findOpenPaths(path);
+  if (openPaths == null) {
+    printerr(yellow('Skipping $path because open files cannot be checked'));
+    return;
+  }
+
+  final now = DateTime.now();
+  for (final entry in directory.listSync(followLinks: false)) {
+    try {
+      final age = now.difference(entry.statSync().modified);
+      final isOpen = openPaths.any((openPath) =>
+          openPath == entry.path || isWithin(entry.path, openPath));
+
+      if (age < _minimumUnusedAge || isOpen) {
+        print('Keeping active entry ${entry.path}');
+        continue;
+      }
+
+      entry.deleteSync(recursive: true);
+    } on FileSystemException catch (exception) {
+      printerr(yellow('Unable to delete ${entry.path}: ${exception.message}'));
+    }
+  }
+}
+
+Set<String>? _findOpenPaths(String path) {
+  if (which('lsof').notfound) {
+    return null;
+  }
+
+  try {
+    final result = Process.runSync('lsof', ['-w', '-Fn', '+D', path]);
+    return (result.stdout as String)
+        .split('\n')
+        .where((line) => line.startsWith('n'))
+        .map((line) => line.substring(1))
+        .toSet();
+  } on ProcessException {
+    return null;
+  }
 }
