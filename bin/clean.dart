@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 import 'package:dcli_scripts/src/clean/project_cleaner.dart';
 import 'package:dcli_scripts/src/git/git_gc.dart';
+import 'package:dcli_scripts/src/hog/disk_hog.dart';
 import 'package:path/path.dart';
 
 const _minimumUnusedAge = Duration(hours: 8);
@@ -26,13 +27,15 @@ const _minimumUnusedAge = Duration(hours: 8);
 void main(List<String> args) {
   _cleanCaches();
 
+  final projectRoot = Directory(join(HOME, 'git'));
   print(blue('Cleaning Rust and Node project artifacts..'));
-  cleanProjectArtifacts(
-    Directory.current,
+  final deletedArtifacts = cleanProjectArtifacts(
+    projectRoot,
     onDelete: (path) => print('Deleting $path'),
     onError: (path, exception) =>
         printerr(yellow('Unable to clean $path: $exception')),
   );
+  print('Deleted $deletedArtifacts project artifact directories');
 
   print(blue('cleaning .dart_tools..'));
   find('pubspec.yaml').forEach((path) {
@@ -47,20 +50,24 @@ void main(List<String> args) {
   'docker container prune  -f'.run;
 
   print(blue('Pruning unused docker volumes '));
-  'docker volume prune'.run;
+  'docker volume prune -f'.run;
 
   print(blue('Pruning docker objects'));
   'docker system prune -a -f'.run;
 
   print(blue('Running git clean'));
   runGitGc(
-    Directory(join(HOME, 'git')),
+    projectRoot,
     onError: (path, exception) =>
         printerr(yellow('Unable to scan $path: $exception')),
   );
 
   print(blue('Running hog'));
-  'hog disk'.start(terminal: true, workingDirectory: HOME);
+  runDiskHog(
+    Directory(HOME),
+    onError: (path, exception) =>
+        printerr(yellow('Unable to scan $path: $exception')),
+  );
 }
 
 void _cleanCaches() {
