@@ -11,6 +11,7 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 import 'package:dcli_scripts/src/clean/project_cleaner.dart';
+import 'package:dcli_scripts/src/git/git_gc.dart';
 import 'package:path/path.dart';
 
 const _minimumUnusedAge = Duration(hours: 8);
@@ -52,11 +53,11 @@ void main(List<String> args) {
   'docker system prune -a -f'.run;
 
   print(blue('Running git clean'));
-  if (which('gitgc').notfound) {
-    printerr(red('gitgc not found. Run dart pub global activate dcli_scripts'));
-    exit(1);
-  }
-  'gitgc'.start(terminal: true, workingDirectory: join(HOME, 'git'));
+  runGitGc(
+    Directory(join(HOME, 'git')),
+    onError: (path, exception) =>
+        printerr(yellow('Unable to scan $path: $exception')),
+  );
 
   print(blue('Running hog'));
   'hog disk'.start(terminal: true, workingDirectory: HOME);
