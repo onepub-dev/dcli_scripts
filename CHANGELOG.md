@@ -1,3 +1,9 @@
+# 4.5.0
+- fix: scan project root and run robust disk report
+- fix: tolerate disappearing directories during git cleanup
+- feat: clean generated project artifacts
+- added rust project cleanup and /tmp cleanup
+
 # 4.4.0
 - upgraded to dcli 8.2.0
 
