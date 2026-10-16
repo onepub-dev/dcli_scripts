@@ -113,37 +113,37 @@ int availableSpace(String path) {
     throw FileSystemException("The given path $path doesn't exist");
   }
 
-  final lines = 'df -h "$path"'.toList();
+  // Use fixed-size blocks so values such as 1.5T need no rounding or suffix
+  // parsing. -P keeps the filesystem entry on one line.
+  final result = Process.runSync('df', ['-Pk', path]);
+  if (result.exitCode != 0) {
+    throw FileSystemException(
+      'Unable to retrieve free space: ${result.stderr}',
+      path,
+    );
+  }
+
+  return parseAvailableSpace(result.stdout as String);
+}
+
+/// Parses the available 1024-byte blocks reported by `df -Pk`.
+int parseAvailableSpace(String output) {
+  final lines = output.trim().split('\n');
   if (lines.length != 2) {
     throw FileSystemException(
       'An error occurred retrieving the device path: ${lines.join('\n')}',
     );
   }
 
-  final parts = lines[1].split(RegExp(r'\s+'));
-  if (parts.length != 6) {
+  final parts = lines[1].trim().split(RegExp(r'\s+'));
+  if (parts.length < 4) {
     throw FileSystemException('An error parsing line: ${lines[1]}');
   }
 
-  final humanAvailable = parts[3];
-  if (humanAvailable == '0') {
-    return 0;
+  final availableBlocks = int.tryParse(parts[3]);
+  if (availableBlocks == null) {
+    throw FileSystemException('Invalid available space in line: ${lines[1]}');
   }
 
-  final factors = <String, int>{
-    'G': 1000000000,
-    'M': 1000000,
-    'K': 1000,
-    'B': 1,
-  };
-  final factorLetter = humanAvailable.substring(humanAvailable.length - 1);
-  final factor = factors[factorLetter];
-  if (factor == null) {
-    throw FileSystemException(
-      "Unrecognized size factor '$factorLetter' in $humanAvailable",
-    );
-  }
-
-  final size = humanAvailable.substring(0, humanAvailable.length - 1);
-  return (int.tryParse(size) ?? 0) * factor;
+  return availableBlocks * 1024;
 }

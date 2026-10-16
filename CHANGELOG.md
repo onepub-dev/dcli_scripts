@@ -1,3 +1,7 @@
+# 4.5.1
+- fix: handle terabyte-scale free space in clean and hog
+- fix: include dwhich support files in the published package
+
 # 4.5.0
 - fix: scan project root and run robust disk report
 - fix: tolerate disappearing directories during git cleanup
