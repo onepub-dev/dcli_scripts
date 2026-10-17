@@ -26,6 +26,7 @@ const _minimumUnusedAge = Duration(hours: 8);
 
 void main(List<String> args) {
   _cleanCaches();
+  _cleanZfsSnapshots();
 
   final projectRoot = Directory(join(HOME, 'git'));
   print(blue('Cleaning Rust and Node project artifacts..'));
@@ -37,14 +38,24 @@ void main(List<String> args) {
   );
   print('Deleted $deletedArtifacts project artifact directories');
 
-  print(blue('cleaning .dart_tools..'));
-  find('pubspec.yaml').forEach((path) {
-    final tools = join(dirname(path), '.dart_tools');
-    if (exists(tools)) {
-      print('Deleting $tools');
-      deleteDir(tools);
-    }
-  });
+  print(blue('Cleaning stale .dart_tool directories..'));
+  final deletedDartTools = cleanStaleDartToolDirectories(
+    projectRoot,
+    onDelete: (path) => print('Deleting $path'),
+    onError: (path, exception) =>
+        printerr(yellow('Unable to clean $path: $exception')),
+  );
+  print('Deleted $deletedDartTools stale .dart_tool directories');
+
+  final codexWorkspaces = Directory(join(HOME, '.codex', 'workspaces'));
+  print(blue('Cleaning stale Codex workspaces..'));
+  final deletedWorkspaces = cleanStaleDirectories(
+    codexWorkspaces,
+    onDelete: (path) => print('Deleting $path'),
+    onError: (path, exception) =>
+        printerr(yellow('Unable to clean $path: $exception')),
+  );
+  print('Deleted $deletedWorkspaces stale Codex workspaces');
 
   print(blue('Cleaning unused docker containers'));
   'docker container prune  -f'.run;
@@ -68,6 +79,31 @@ void main(List<String> args) {
     onError: (path, exception) =>
         printerr(yellow('Unable to scan $path: $exception')),
   );
+}
+
+void _cleanZfsSnapshots() {
+  print(blue('Cleaning old autozsys ZFS snapshots'));
+
+  if (which('zfs').notfound) {
+    print('Skipping ZFS snapshot cleanup: zfs is not installed');
+    return;
+  }
+
+  final snapshots = <String>[];
+  final progress = Progress(snapshots.add, stderr: printerr);
+  'zfs list -H -t snapshot -o name'
+      .start(privileged: true, progress: progress, nothrow: true);
+
+  for (final snapshot in snapshots) {
+    final separator = snapshot.indexOf('@');
+    if (separator == -1 ||
+        !snapshot.substring(separator + 1).startsWith('autozsys_')) {
+      continue;
+    }
+
+    print('Destroying $snapshot');
+    'zfs destroy -v $snapshot'.start(privileged: true, nothrow: true);
+  }
 }
 
 void _cleanCaches() {

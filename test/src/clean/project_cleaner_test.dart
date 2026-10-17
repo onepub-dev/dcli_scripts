@@ -50,4 +50,43 @@ void main() {
       isTrue,
     );
   });
+
+  test('deletes .dart_tool only when its contents are over a week old', () {
+    final stale = Directory(join(root.path, 'stale', '.dart_tool'))
+      ..createSync(recursive: true);
+    final staleFile = File(join(stale.path, 'package_config.json'))
+      ..writeAsStringSync('{}');
+    final recent = Directory(join(root.path, 'recent', '.dart_tool'))
+      ..createSync(recursive: true);
+    final recentFile = File(join(recent.path, 'package_config.json'))
+      ..writeAsStringSync('{}');
+    final now = DateTime.now().add(const Duration(days: 8));
+    staleFile.setLastModifiedSync(now.subtract(const Duration(days: 8)));
+    recentFile.setLastModifiedSync(now.subtract(const Duration(days: 6)));
+
+    expect(
+      cleanStaleDartToolDirectories(root, now: now),
+      1,
+    );
+    expect(stale.existsSync(), isFalse);
+    expect(recent.existsSync(), isTrue);
+  });
+
+  test('deletes stale directories directly beneath a workspace root', () {
+    final workspaceRoot = Directory(join(root.path, 'workspaces'))
+      ..createSync();
+    final stale = Directory(join(workspaceRoot.path, 'stale'))
+      ..createSync(recursive: true);
+    final staleFile = File(join(stale.path, 'state'))..writeAsStringSync('');
+    final recent = Directory(join(workspaceRoot.path, 'recent'))
+      ..createSync(recursive: true);
+    final recentFile = File(join(recent.path, 'state'))..writeAsStringSync('');
+    final now = DateTime.now().add(const Duration(days: 8));
+    staleFile.setLastModifiedSync(now.subtract(const Duration(days: 8)));
+    recentFile.setLastModifiedSync(now.subtract(const Duration(days: 6)));
+
+    expect(cleanStaleDirectories(workspaceRoot, now: now), 1);
+    expect(stale.existsSync(), isFalse);
+    expect(recent.existsSync(), isTrue);
+  });
 }
