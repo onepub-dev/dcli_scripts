@@ -1,4 +1,4 @@
-#! /usr/bin/env dart
+#! /usr/bin/env dcli
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -25,8 +25,14 @@ const _minimumUnusedAge = Duration(hours: 8);
 /// take up lots of space.
 
 void main(List<String> args) {
+  if (!Shell.current.isPrivilegedProcess) {
+    printerr(red('Run clean with sudo: sudo ./bin/clean.dart'));
+    exitCode = 1;
+    return;
+  }
+  Shell.current.releasePrivileges();
+
   _cleanCaches();
-  _cleanZfsSnapshots();
 
   final projectRoot = Directory(join(HOME, 'git'));
   print(blue('Cleaning Rust and Node project artifacts..'));
@@ -81,36 +87,22 @@ void main(List<String> args) {
   );
 }
 
-void _cleanZfsSnapshots() {
-  print(blue('Cleaning old autozsys ZFS snapshots'));
-
-  if (which('zfs').notfound) {
-    print('Skipping ZFS snapshot cleanup: zfs is not installed');
-    return;
-  }
-
-  final snapshots = <String>[];
-  final progress = Progress(snapshots.add, stderr: printerr);
-  'zfs list -H -t snapshot -o name'
-      .start(privileged: true, progress: progress, nothrow: true);
-
-  for (final snapshot in snapshots) {
-    final separator = snapshot.indexOf('@');
-    if (separator == -1 ||
-        !snapshot.substring(separator + 1).startsWith('autozsys_')) {
-      continue;
-    }
-
-    print('Destroying $snapshot');
-    'zfs destroy -v $snapshot'.start(privileged: true, nothrow: true);
-  }
-}
-
 void _cleanCaches() {
-  _cleanDirectory('/tmp');
-  _cleanDirectory(join(HOME, '.gradle', 'caches'));
-  _cleanDirectory(join(HOME, '.dartServer'));
-  _cleanDirectory(join(HOME, '.cache'));
+  // Resolve the invoking user's paths before temporarily restoring root's HOME.
+  final paths = [
+    '/tmp',
+    join(HOME, '.gradle', 'caches'),
+    join(HOME, '.dartServer'),
+    join(HOME, '.cache'),
+  ];
+  for (final path in paths) {
+    try {
+      // Both lsof and deletion need access to protected cache entries.
+      Shell.current.withPrivileges(() => _cleanDirectory(path));
+    } finally {
+      Shell.current.releasePrivileges();
+    }
+  }
 }
 
 void _cleanDirectory(String path) {
