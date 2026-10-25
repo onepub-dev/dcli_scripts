@@ -11,6 +11,8 @@ Iterable<Directory> findDirectoriesSafely(
   List<FileSystemEntity> entries;
   try {
     entries = root.listSync(followLinks: false);
+  } on PathNotFoundException {
+    return;
   } on FileSystemException catch (exception) {
     onError?.call(root.path, exception);
     return;
@@ -49,6 +51,8 @@ void runDiskHog(
         }
       }
       directorySizes.add(directorySize);
+    } on PathNotFoundException {
+      continue;
     } on FileSystemException catch (exception) {
       onError?.call(directory.path, exception);
     }

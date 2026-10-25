@@ -11,6 +11,7 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 import 'package:dcli_scripts/src/clean/project_cleaner.dart';
+import 'package:dcli_scripts/src/clean/workspace_report.dart';
 import 'package:dcli_scripts/src/git/git_gc.dart';
 import 'package:dcli_scripts/src/hog/disk_hog.dart';
 import 'package:path/path.dart';
@@ -32,10 +33,11 @@ void main(List<String> args) {
   }
   Shell.current.releasePrivileges();
 
+  _reportWorkspaces();
   _cleanCaches();
 
   final projectRoot = Directory(join(HOME, 'git'));
-  print(blue('Cleaning Rust and Node project artifacts..'));
+  print(blue('Cleaning Node project artifacts..'));
   final deletedArtifacts = cleanProjectArtifacts(
     projectRoot,
     onDelete: (path) => print('Deleting $path'),
@@ -43,6 +45,23 @@ void main(List<String> args) {
         printerr(yellow('Unable to clean $path: $exception')),
   );
   print('Deleted $deletedArtifacts project artifact directories');
+
+  print(blue('Cleaning Rust deps unused for more than three days..'));
+  var deletedRustDeps = 0;
+  for (final root in [
+    projectRoot,
+    Directory(join(HOME, 'Documents', 'Codex')),
+    Directory(join(HOME, 'pretemp', 'tmp')),
+    Directory(join(HOME, '.codex', 'workspaces')),
+  ]) {
+    deletedRustDeps += cleanStaleRustDepsDirectories(
+      root,
+      onDelete: (path) => print('Deleting $path'),
+      onError: (path, exception) =>
+          printerr(yellow('Unable to clean $path: $exception')),
+    );
+  }
+  print('Deleted $deletedRustDeps stale Rust deps directories');
 
   print(blue('Cleaning stale .dart_tool directories..'));
   final deletedDartTools = cleanStaleDartToolDirectories(
@@ -52,16 +71,6 @@ void main(List<String> args) {
         printerr(yellow('Unable to clean $path: $exception')),
   );
   print('Deleted $deletedDartTools stale .dart_tool directories');
-
-  final codexWorkspaces = Directory(join(HOME, '.codex', 'workspaces'));
-  print(blue('Cleaning stale Codex workspaces..'));
-  final deletedWorkspaces = cleanStaleDirectories(
-    codexWorkspaces,
-    onDelete: (path) => print('Deleting $path'),
-    onError: (path, exception) =>
-        printerr(yellow('Unable to clean $path: $exception')),
-  );
-  print('Deleted $deletedWorkspaces stale Codex workspaces');
 
   print(blue('Cleaning unused docker containers'));
   'docker container prune  -f'.run;
@@ -85,6 +94,53 @@ void main(List<String> args) {
     onError: (path, exception) =>
         printerr(yellow('Unable to scan $path: $exception')),
   );
+}
+
+void _reportWorkspaces() {
+  print(blue('Codex workspace review (report only; nothing retired)..'));
+  print('The optional .clean-keep marker hides a workspace from this report. '
+      'Known cache cleanup remains independent.');
+  print(
+      'Git evidence uses local upstream refs, which may be stale; no fetch is '
+      'performed. Likely finished does not establish safe deletion.');
+  try {
+    final reports = reportOldCodexWorkspaces(
+      Directory(HOME),
+      onError: (path, exception) =>
+          printerr(yellow('Unable to inspect $path: $exception')),
+    );
+    for (final classification in WorkspaceClassification.values) {
+      final group =
+          reports.where((report) => report.classification == classification);
+      print(blue('${classification.label} (${group.length})'));
+      for (final report in group) {
+        final age = DateTime.now().difference(report.latestModification).inDays;
+        final size = (report.bytes / (1024 * 1024)).toStringAsFixed(1);
+        print(
+            '${report.path}: ${age}d since latest change, $size MiB apparent');
+        if (report.git.isEmpty) {
+          print('  No Git repository found; may contain non-Git work.');
+        }
+        for (final status in report.git.take(5)) {
+          print('  $status');
+        }
+        if (report.git.length > 5) {
+          print('  ${report.git.length - 5} additional nested repositories');
+        }
+        for (final reason in report.reasons.take(10)) {
+          print('  $reason');
+        }
+        if (report.reasons.length > 10) {
+          print('  ${report.reasons.length - 10} additional '
+              'investigation reasons');
+        }
+      }
+    }
+    print('${reports.length} workspaces older than 30 days for manual review; '
+        'age and Git status do not establish safe deletion.');
+  } on FileSystemException catch (exception) {
+    printerr(yellow('Unable to discover Codex workspaces: $exception'));
+  }
 }
 
 void _cleanCaches() {

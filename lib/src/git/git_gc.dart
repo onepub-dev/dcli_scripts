@@ -5,8 +5,8 @@ import 'package:path/path.dart';
 
 /// Finds Git metadata directories beneath [root].
 ///
-/// Directories which disappear or become inaccessible during the scan are
-/// reported through [onError] without stopping the rest of the scan.
+/// Directories which disappear during the scan are silently skipped. Other
+/// filesystem errors are reported through [onError] without stopping the scan.
 Iterable<Directory> findGitDirectories(
   Directory root, {
   void Function(String path, Object exception)? onError,
@@ -14,6 +14,8 @@ Iterable<Directory> findGitDirectories(
   List<FileSystemEntity> entries;
   try {
     entries = root.listSync(followLinks: false);
+  } on PathNotFoundException {
+    return;
   } on FileSystemException catch (exception) {
     onError?.call(root.path, exception);
     return;

@@ -43,7 +43,7 @@ void main() {
     );
   });
 
-  test('reports a missing scan root without throwing', () {
+  test('silently skips a missing scan root', () {
     final missing = Directory(join(root.path, 'missing'));
     final errors = <Object>[];
 
@@ -54,6 +54,25 @@ void main() {
       ),
       isEmpty,
     );
-    expect(errors, hasLength(1));
+    expect(errors, isEmpty);
+  });
+
+  test('reports listing errors other than missing paths', () {
+    final file = File(join(root.path, 'file'))..writeAsStringSync('data');
+    final errors = <Object>[];
+    final paths = <String>[];
+
+    expect(
+      findGitDirectories(
+        Directory(file.path),
+        onError: (path, exception) {
+          paths.add(path);
+          errors.add(exception);
+        },
+      ),
+      isEmpty,
+    );
+    expect(paths, <String>[file.path]);
+    expect(errors, <Matcher>[isA<FileSystemException>()]);
   });
 }

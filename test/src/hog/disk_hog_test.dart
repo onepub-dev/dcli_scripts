@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dcli_scripts/src/hog/disk_hog.dart';
@@ -27,7 +28,7 @@ void main() {
     );
   });
 
-  test('reports a directory that disappears without throwing', () {
+  test('silently skips a missing directory', () {
     final missing = Directory(join(root.path, 'temporary'));
     final errors = <Object>[];
 
@@ -38,7 +39,70 @@ void main() {
       ),
       isEmpty,
     );
-    expect(errors, hasLength(1));
+    expect(errors, isEmpty);
+  });
+
+  test('continues after a directory disappears during traversal', () {
+    Directory(join(root.path, 'first')).createSync();
+    Directory(join(root.path, 'second')).createSync();
+    final errors = <Object>[];
+    final iterator = findDirectoriesSafely(
+      root,
+      onError: (path, exception) => errors.add(exception),
+    ).iterator;
+
+    expect(iterator.moveNext(), isTrue);
+    iterator.current.deleteSync();
+    expect(iterator.moveNext(), isTrue);
+    expect(iterator.current.existsSync(), isTrue);
+    expect(iterator.moveNext(), isFalse);
+    expect(errors, isEmpty);
+  });
+
+  test('reports listing errors other than missing paths', () {
+    final file = File(join(root.path, 'file'))..writeAsStringSync('data');
+    final errors = <Object>[];
+    final paths = <String>[];
+
+    expect(
+      findDirectoriesSafely(
+        Directory(file.path),
+        onError: (path, exception) {
+          paths.add(path);
+          errors.add(exception);
+        },
+      ),
+      isEmpty,
+    );
+    expect(paths, <String>[file.path]);
+    expect(errors, <Matcher>[isA<FileSystemException>()]);
+  });
+
+  test('silently skips directories removed before size calculation', () {
+    final temporary = Directory(join(root.path, 'temporary'))..createSync();
+    final retained = Directory(join(root.path, 'retained'))..createSync();
+    File(join(retained.path, 'file')).writeAsStringSync('retained data');
+    final errors = <Object>[];
+    final output = <String>[];
+
+    runZoned(
+      () => runDiskHog(
+        root,
+        onError: (path, exception) => errors.add(exception),
+      ),
+      zoneSpecification: ZoneSpecification(
+        print: (self, parent, zone, line) {
+          output.add(line);
+          if (line.contains('Calculating sizes...')) {
+            temporary.deleteSync();
+          }
+        },
+      ),
+    );
+
+    expect(errors, isEmpty);
+    expect(output.any((line) => line.contains(retained.path)), isTrue);
+    expect(output.any((line) => line.contains(temporary.path)), isFalse);
   });
 
   test('parses terabyte-scale available space from df blocks', () {
