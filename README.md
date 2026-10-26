@@ -9,7 +9,8 @@ Some of my favourites:
 | dport | finds what process has a tcp port open.| dport 80|
 | clean | cleans Rust `target`, Node `node_modules`, stale Docker and Git files, then highlights large directories. | clean|
 | dmailhog | installs and starts/stops mailhog. | dmailhog \| dmailhog --shutdown |
-| dmysql |  Backup/Restore and connects you to a mysql cli pulling settings (username/password) from a per database local settings file. | dmysql mydb backup \| dmysql mydb restore `<path>`
+| dmysql | Back up, restore, or connect to MySQL using private per-database settings. | `dmysql backup mydb` |
+| dcompress | Safely extract a TAR or tar.gz archive into a separate directory. | `dcompress --to output archive.tar.gz` |
 | dwhich | an improved which command that also highlights invalid paths
 | gitgc | runs garbage collection on all your git projects.
 | hog | finds system resource hogs.
@@ -41,6 +42,18 @@ dport 80
 # dmysql
 Allows you to store the username/password for a mysql database in a configure file and then run a number of mysql commands against that database withouth continuously re-entering the username/password.
 
+The settings directory and files are restricted to the current user. Database
+names may contain letters, digits, underscores, and hyphens. Passwords are
+passed to MySQL through a temporary private option file, then removed.
+Connections use TCP, including `localhost`, so the configured port is honored.
+`my_print_defaults` is required to detect TLS options in your normal MySQL
+configuration. If it finds any, move them to the per-database dmysql file before
+using this version. For Oracle MySQL, set `sslMode: VERIFY_IDENTITY` (or
+`VERIFY_CA`/`REQUIRED`) and `sslCa: /path/to/ca.pem`. For MariaDB, set
+`sslVerifyServerCert: true` and `sslCa: /path/to/ca.pem`. Optional `sslCert` and
+`sslKey` fields support client certificates. The command refuses inherited TLS
+settings until you configure them explicitly, preventing an unnoticed downgrade.
+
 ## Example
 
 To create a configuration file for a given database run:
@@ -57,7 +70,7 @@ Once you have created a config you can run any of the following commands.
 Backup the database via:
 
 ```bash
-dmysql backup <path to backup file>
+dmysql backup <dbname> [path to backup file]
 ```
 
 ### restore
@@ -66,7 +79,7 @@ Restore a database
 WARNING: this will delete you existing schema.
 
 ```bash
-dmysql restore <path to backup file>
+dmysql restore <dbname> <path to backup file>
 ```
 
 ### cli
@@ -75,6 +88,13 @@ Connect to the mysql cli
 ```bash
 dmysql cli <database name>
 ```
+
+# dcompress
+
+`dcompress archive.tar.gz` extracts into a new `archive` directory.
+Use `--to directory` to choose another destination. Existing nonempty
+destinations are refused. Only TAR and tar.gz are supported in this release;
+use a trusted extractor for other archive formats.
 
 # find_text
 

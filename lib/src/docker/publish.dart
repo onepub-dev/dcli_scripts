@@ -44,15 +44,16 @@ import 'package:uuid/uuid.dart';
 ///
 /// The [buildArgs] is a list of arguments that are passed to the docker build
 /// command.
-void dockerPublish(
-    {required String pathToDockerFile,
-    required String repository,
-    bool pack = false,
-    bool clean = false,
-    bool fresh = false,
-    bool push = true,
-    bool confirm = true,
-    List<String> buildArgs = const <String>[]}) {
+void dockerPublish({
+  required String pathToDockerFile,
+  required String repository,
+  bool pack = false,
+  bool clean = false,
+  bool fresh = false,
+  bool push = true,
+  bool confirm = true,
+  List<String> buildArgs = const <String>[],
+}) {
   final project = DartProject.self;
   final name = project.pubSpec.name.value;
   final version = project.pubSpec.version.toString();
@@ -72,23 +73,39 @@ void dockerPublish(
   final tag = '$repository/$name:$version';
   final latest = '$repository/$name:latest';
 
-  var cleanArg = '';
-  if (clean) {
-    cleanArg = ' --no-cache';
-  }
-
   if (fresh) {
     final uuid = const Uuid().v4().replaceAll('-', '');
-    replace(pathToDockerFile, RegExp('RUN mkdir -p /BUILD_TOKEN/.*'),
-        'RUN mkdir -p /BUILD_TOKEN/$uuid');
+    replace(
+      pathToDockerFile,
+      RegExp('RUN mkdir -p /BUILD_TOKEN/.*'),
+      'RUN mkdir -p /BUILD_TOKEN/$uuid',
+    );
   }
 
-  'docker  build ${buildArgs.join(' ')} $cleanArg -t $tag '
-          '-t $latest -f $pathToDockerFile .'
-      .run;
+  _docker([
+    'build',
+    ...buildArgs,
+    if (clean) '--no-cache',
+    '-t',
+    tag,
+    '-t',
+    latest,
+    '-f',
+    pathToDockerFile,
+    '.',
+  ]);
 
   if (push) {
-    'docker push $tag'.run;
-    'docker push $latest'.run;
+    _docker(['push', tag]);
+    _docker(['push', latest]);
+  }
+}
+
+void _docker(List<String> args) {
+  final result = Process.runSync('docker', args);
+  stdout.write(result.stdout);
+  stderr.write(result.stderr);
+  if (result.exitCode != 0) {
+    throw StateError('docker ${args.first} exited with ${result.exitCode}');
   }
 }

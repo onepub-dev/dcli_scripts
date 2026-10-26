@@ -3,10 +3,13 @@
  * Proprietary and confidential
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:args/command_runner.dart';
-import 'package:dcli/dcli.dart';
 
 import 'mysql.dart';
+import 'mysql_defaults.dart';
 import 'mysql_settings.dart';
 
 class RestoreCommand extends Command<void> {
@@ -19,32 +22,53 @@ dmysql restore <db name> [path to backup]''';
   String get name => 'restore';
 
   @override
-  void run() {
-    final args =
-        getArgs(this, argResults, additionalArgs: ['<path to backup file>']);
+  Future<void> run() async {
+    final args = getArgs(
+      this,
+      argResults,
+      additionalArgs: ['<path to backup file>'],
+    );
     final dbname = args[0];
     final sqlFile = args[1];
 
-    restore(MySqlSettings.load(dbname), sqlFile);
+    await restore(MySqlSettings.load(dbname), sqlFile);
   }
 
-  void restore(MySqlSettings settings, String sqlFile) {
+  Future<void> restore(MySqlSettings settings, String sqlFile) async {
+    if (!File(sqlFile).existsSync()) {
+      throw FileSystemException('Backup file does not exist', sqlFile);
+    }
     print('restoring $sqlFile to ${settings.dbname}');
-
-    'mysql --host ${settings.host} --port=${settings.port} '
-            '--user ${settings.user} --password="${settings.password}" '
-            '-e "drop database ${settings.dbname}"'
-        .start(nothrow: true);
-
-    'mysql --host ${settings.host} --port=${settings.port} '
-            '--user ${settings.user} --password="${settings.password}" '
-            '-e "create database ${settings.dbname}"'
-        .start(nothrow: true);
-
-    'mysql --host ${settings.host} --port=${settings.port} '
-            '--user ${settings.user} --password="${settings.password}" '
-            '--database ${settings.dbname} '
-            '-e "source $sqlFile"'
-        .start(nothrow: true);
+    final defaults = MySqlDefaults(settings);
+    try {
+      final db = '`${settings.dbname}`';
+      for (final statement in [
+        'DROP DATABASE IF EXISTS $db',
+        'CREATE DATABASE $db',
+      ]) {
+        final result = await Process.run('mysql', [
+          ...defaults.connectionOptions(settings),
+          '-e',
+          statement,
+        ], environment: defaults.environment);
+        if (result.exitCode != 0) {
+          throw StateError('mysql failed: ${result.stderr}');
+        }
+      }
+      final process = await Process.start('mysql', [
+        ...defaults.connectionOptions(settings),
+        '--database',
+        settings.dbname,
+      ], environment: defaults.environment);
+      final stdoutDone = process.stdout.drain<void>();
+      final stderrText = process.stderr.transform(utf8.decoder).join();
+      await File(sqlFile).openRead().pipe(process.stdin);
+      final code = await process.exitCode;
+      await stdoutDone;
+      final error = await stderrText;
+      if (code != 0) throw StateError('mysql restore failed: $error');
+    } finally {
+      defaults.dispose();
+    }
   }
 }

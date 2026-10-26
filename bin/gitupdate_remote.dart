@@ -1,4 +1,5 @@
-#! /usr/bin/env dart
+#! /usr/bin/env dcli
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -19,8 +20,12 @@ import 'package:path/path.dart';
 /// Handy if you move repos between owners.
 void main(List<String> args) {
   final parser = ArgParser()
-    ..addOption('owner',
-        abbr: 'o', mandatory: true, help: 'The owner/organisation of the repo');
+    ..addOption(
+      'owner',
+      abbr: 'o',
+      mandatory: true,
+      help: 'The owner/organisation of the repo',
+    );
 
   ArgResults results;
   try {
@@ -31,7 +36,16 @@ void main(List<String> args) {
     print(parser.usage);
     exit(1);
   }
+  if (!results.wasParsed('owner')) {
+    printerr(parser.usage);
+    exitCode = 1;
+    return;
+  }
   final owner = results['owner'] as String;
+  if (!RegExp(r'^[A-Za-z0-9][A-Za-z0-9_.-]*$').hasMatch(owner) ||
+      owner == '..') {
+    throw FormatException('Invalid GitHub owner name');
+  }
 
   find('.git', includeHidden: true, types: [Find.directory]).forEach((gitPath) {
     final repoDir = dirname(gitPath);
@@ -61,11 +75,21 @@ void main(List<String> args) {
       } else {
         final repo = basenameWithoutExtension(repoParts[1]);
 
-        print(orange(
-            'updating remote for $repoDir to git@github.com:$owner/$repo.git'));
+        print(
+          orange(
+            'updating remote for $repoDir to git@github.com:$owner/$repo.git',
+          ),
+        );
 
-        'git remote set-url origin git@github.com:$owner/$repo.git'
-            .start(workingDirectory: repoDir, progress: Progress.print());
+        final result = Process.runSync('git', [
+          'remote',
+          'set-url',
+          'origin',
+          'git@github.com:$owner/$repo.git',
+        ], workingDirectory: repoDir);
+        if (result.exitCode != 0) {
+          throw StateError('Could not update $repoDir: ${result.stderr}');
+        }
         'git pull'.start(workingDirectory: repoDir, progress: Progress.print());
         'git push'.start(workingDirectory: repoDir, progress: Progress.print());
       }

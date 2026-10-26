@@ -9,22 +9,30 @@ import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
 
+import '../private_temp.dart';
 import 'mysql.dart';
+import 'mysql_defaults.dart';
 import 'mysql_settings.dart';
 
 class BackupCommand extends Command<void> {
   BackupCommand() {
     argParser
-      ..addFlag('overwrite',
-          abbr: 'w',
-          help: 'If the backup file already exist then overwrite the file.')
-      ..addFlag('always',
-          abbr: 'a',
-          help: 'Create the backup file even if the db '
-              "content hasn't changed since the last backup.");
+      ..addFlag(
+        'overwrite',
+        abbr: 'w',
+        help: 'If the backup file already exist then overwrite the file.',
+      )
+      ..addFlag(
+        'always',
+        abbr: 'a',
+        help:
+            'Create the backup file even if the db '
+            "content hasn't changed since the last backup.",
+      );
   }
   @override
-  String get description => '''
+  String get description =>
+      '''
 Backups up a database.
 
 ${blue('dmysql backup <dbname> [<path to backup file>]')}
@@ -72,62 +80,101 @@ then one will be generated in the form:
     if (extension(pathToBackupFile) != '.sql') {
       pathToBackupFile += '.sql';
     }
-    if (exists(pathToBackupFile) && !overwrite) {
-      printerr('The backup file ${truepath(pathToBackupFile)} already exists.  '
-          'Delete it or use --overwrite');
+    if (FileSystemEntity.typeSync(pathToBackupFile, followLinks: false) !=
+            FileSystemEntityType.notFound &&
+        !overwrite) {
+      printerr(
+        'The backup file ${truepath(pathToBackupFile)} already exists.  '
+        'Delete it or use --overwrite',
+      );
+      throw ExitException(1, 'Backup destination already exists');
     }
     if (await backup(
-        MySqlSettings.load(dbName), pathToBackupFile, pathToMostRecent,
-        always: always)) {
+      MySqlSettings.load(dbName),
+      pathToBackupFile,
+      pathToMostRecent,
+      always: always,
+      overwrite: overwrite,
+    )) {
       print(blue('Backed up database to $pathToBackupFile'));
     }
     print('');
   }
 
-  Future<bool> backup(MySqlSettings settings, String pathToBackupfile,
-      String? pathToPriorBackup,
-      {required bool always}) async {
-    var created = false;
-    var columnStatistics = '--column-statistics=0 ';
-    var success = false;
-    await withTempFileAsync((tmpFile) async {
-      while (!success) {
-        final result = 'mysqldump --host ${settings.host} '
-                '--port=${settings.port} '
-                '--user ${settings.user} '
-                // so we can backup a v5 db using v8 tools. For large table this
-                // is also recommended.
-                '$columnStatistics'
-                '--password="${settings.password}" '
-                '--databases ${settings.dbname} '
-                '--routines '
-                '--result-file=$tmpFile '
-            .start(nothrow: true, progress: Progress.capture());
-
-        if (result.toParagraph().contains('column-statistics=0')) {
-          /// retry without --column-statistics.
-          columnStatistics = '';
-        } else {
-          success = true;
-        }
+  Future<bool> backup(
+    MySqlSettings settings,
+    String pathToBackupfile,
+    String? pathToPriorBackup, {
+    required bool always,
+    bool overwrite = false,
+  }) async {
+    final temp = createPrivateTemporaryDirectory(
+      dirname(absolute(pathToBackupfile)),
+      '.dmysql-backup-',
+    );
+    MySqlDefaults? defaults;
+    final tmpFile = join(temp.path, 'backup.sql');
+    try {
+      defaults = MySqlDefaults(settings);
+      if (!Platform.isWindows && (temp.statSync().mode & 0x3f) != 0) {
+        throw StateError('Temporary backup directory is not private');
       }
-      if (success) {
-        if (pathToPriorBackup != null) {
-          /// If the new backup is identical then we don't create a backup
-          if (always || !diff(tmpFile, pathToPriorBackup)) {
-            move(tmpFile, pathToBackupfile);
-            created = true;
-          } else {
-            print(orange("Database hasn't changed. No backup created. "
-                'Use --always to force a backup'));
-          }
-        } else {
-          move(tmpFile, pathToBackupfile);
-          created = true;
+      for (final columnStatistics in [true, false]) {
+        final result = await Process.run('mysqldump', [
+          ...defaults.connectionOptions(settings),
+          if (columnStatistics) '--column-statistics=0',
+          '--databases',
+          settings.dbname,
+          '--routines',
+          '--result-file=$tmpFile',
+        ], environment: defaults.environment);
+        if (result.exitCode == 0) break;
+        if (columnStatistics &&
+            '${result.stdout}\n${result.stderr}'.contains(
+              'column-statistics',
+            )) {
+          if (File(tmpFile).existsSync()) File(tmpFile).deleteSync();
+          continue;
         }
+        throw ExitException(
+          result.exitCode,
+          'mysqldump failed: ${result.stderr}',
+        );
       }
-    }, keep: true);
-    return created;
+      if (!File(tmpFile).existsSync()) {
+        throw StateError('mysqldump did not create a backup');
+      }
+      if (!Platform.isWindows &&
+          Process.runSync('chmod', ['600', tmpFile]).exitCode != 0) {
+        throw StateError('Could not protect temporary database backup');
+      }
+      if (pathToPriorBackup != null &&
+          !always &&
+          diff(tmpFile, pathToPriorBackup)) {
+        print(
+          orange(
+            "Database hasn't changed. No backup created. "
+            'Use --always to force a backup',
+          ),
+        );
+        return false;
+      }
+      if (!overwrite &&
+          FileSystemEntity.typeSync(pathToBackupfile, followLinks: false) !=
+              FileSystemEntityType.notFound) {
+        throw ExitException(1, 'Backup destination already exists');
+      }
+      if (Platform.isWindows &&
+          overwrite &&
+          File(pathToBackupfile).existsSync()) {
+        File(pathToBackupfile).deleteSync();
+      }
+      File(tmpFile).renameSync(pathToBackupfile);
+      return true;
+    } finally {
+      defaults?.dispose();
+      temp.deleteSync(recursive: true);
+    }
   }
 
   /// Compares two files to see if they have the same content.
@@ -142,29 +189,34 @@ then one will be generated in the form:
     var count = 0;
     String? line;
     var same = true;
-    while ((line = backupFile.readLine()) != null) {
-      count++;
-      final other = priorFile.readLine();
+    try {
+      while ((line = backupFile.readLine()) != null) {
+        count++;
+        final other = priorFile.readLine();
 
-      /// The dump completed is the last line and contains a date stamp
-      /// so it will always be different so we ignore it.
-      if (line!.startsWith('-- Dump completed on ')) {
-        continue;
+        /// The dump completed is the last line and contains a date stamp
+        /// so it will always be different so we ignore it.
+        if (line!.startsWith('-- Dump completed on ')) {
+          continue;
+        }
+
+        if (line != other) {
+          print(orange('found diff at line $count'));
+          same = false;
+          break;
+        }
       }
 
-      if (line != other) {
-        print(orange('found diff at $count: $line'));
+      /// check that we also hit the eof for prior
+      if (same && priorFile.readLine() != null) {
+        print(orange('prior has more lines at $count'));
         same = false;
-        break;
       }
+      return same;
+    } finally {
+      backupFile.close();
+      priorFile.close();
     }
-
-    /// check that we also hit the eof for prior
-    if (same && priorFile.readLine() != null) {
-      print(orange('prior is shorter at $count'));
-      same = false;
-    }
-    return same;
   }
 
   /// Gets the path to the next backup file in the sequence.
@@ -181,10 +233,11 @@ then one will be generated in the form:
 
   /// Returns the most recent backup file in the sequence.
   String? getMostRecent(String path, String dbName) {
-    final backups =
-        find('$dbName.backup.*.sql', workingDirectory: path, recursive: false)
-            .toList()
-          ..sort((lhs, rhs) => _extractVersion(rhs) - _extractVersion(lhs));
+    final backups = find(
+      '$dbName.backup.*.sql',
+      workingDirectory: path,
+      recursive: false,
+    ).toList()..sort((lhs, rhs) => _extractVersion(rhs) - _extractVersion(lhs));
 
     if (backups.isEmpty) {
       return null;
@@ -197,12 +250,16 @@ then one will be generated in the form:
     final parts = basename(backupName).split('.');
     if (parts.length != 4) {
       throw ExitException(
-          1, 'Invalid backup sequence name found ${basename(backupName)}');
+        1,
+        'Invalid backup sequence name found ${basename(backupName)}',
+      );
     }
     final version = int.tryParse(parts[2]);
     if (version == null) {
       throw ExitException(
-          1, 'Invalid backup sequence name found ${basename(backupName)}');
+        1,
+        'Invalid backup sequence name found ${basename(backupName)}',
+      );
     }
     return version;
   }

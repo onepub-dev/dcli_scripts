@@ -1,23 +1,24 @@
 name: dcli_scripts
-version: 4.5.1
+version: 5.0.0
 description: A collection of cli scripts that do odd jobs for me.
-repository: https://github.com/bsutton/dcli_scripts
+repository: https://github.com/onepub-dev/dcli_scripts
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: '>=3.13.0 <4.0.0'
 dependencies:
-  args: ^2.3.1
-  dcli: ^8.1.0
-  dcli_core: ^8.0.0
-  docker2: ^6.0.0
-  path: ^1.8.2
+  args: ^2.7.0
+  crypto: ^3.0.7
+  darchive: '>=3.0.0 <3.1.0'
+  dcli: ^10.4.2
+  dcli_core: ^10.4.0
+  path: ^1.9.1
   pub_release: ^11.4.0
-  pubspec_manager: ^3.0.1
-  settings_yaml: ^8.0.1
+  pubspec_manager: ^4.1.0
+  settings_yaml: ^8.3.1
   strings: ^4.0.1
-  uuid: ^4.0.0
-  win32: ^5.3.0
+  uuid: ^4.6.0
+  win32: ^6.4.0
 dev_dependencies:
-  lint_hard: ^6.2.1
+  lint_hard: ^8.0.1
   test: ^1.0.0
 executables:
   add_gnome_launcher:

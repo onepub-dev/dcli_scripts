@@ -1,88 +1,56 @@
-#! /usr/bin/env dart
-/* Copyright (C) S. Brett Sutton - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
- */
+#! /usr/bin/env dcli
 
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:dcli/dcli.dart';
+import 'package:darchive/src/safe_extractor.dart';
+import 'package:path/path.dart' as path;
 
-var extensionToCommand = <String, String>{
-  '.tar.gz': 'tar -zxvf %F',
-  '.tar': 'tar -xvf %F',
-  '.xz': 'tar -xvf %F',
-  '.rar': 'unrar e %F',
-  '.zip': 'unzip %F'
-};
-
-/// ```bash
-/// dcompress <compress file.>
-/// ```
-/// de-compresses a variety of file formats.
-void main(List<String> args) {
-  final parser = ArgParser();
-
-  ArgResults results;
-
+/// Extracts a TAR or tar.gz archive into a separate destination directory.
+/// The archive is validated and staged before any destination is installed.
+Future<void> main(List<String> args) async {
+  final parser = ArgParser()
+    ..addOption('to', abbr: 't', help: 'Destination directory');
+  late final ArgResults results;
   try {
     results = parser.parse(args);
-  } on FormatException catch (e) {
-    printerr(red(e.message));
-    showUsage(parser);
+  } on FormatException catch (error) {
+    stderr.writeln(error.message);
+    stderr.writeln(parser.usage);
+    exitCode = 1;
+    return;
+  }
+  if (results.rest.length != 1) {
+    stderr.writeln('Usage: dcompress [--to directory] <archive.tar[.gz]>');
+    exitCode = 1;
     return;
   }
 
-  if (results.rest.length != 1) {
-    print('Expands a compressed file.');
-    print('');
-    printerr(red('You must provide the name of the file to expand.'));
-    print('The file will be expanded in the current working directory.');
-    exit(1);
+  final archive = path.absolute(results.rest.single);
+  if (!File(archive).existsSync()) {
+    stderr.writeln('Archive does not exist: $archive');
+    exitCode = 1;
+    return;
   }
-
-  final tarFile = results.rest[0];
-
-  if (!exists(tarFile)) {
-    printerr(red("The passed file ${truepath(tarFile)} doesn't exist"));
-    exit(2);
+  final name = path.basename(archive);
+  final stem = name.endsWith('.tar.gz')
+      ? name.substring(0, name.length - '.tar.gz'.length)
+      : path.basenameWithoutExtension(name);
+  if (stem.isEmpty || stem == '.' || stem == '..') {
+    stderr.writeln('Invalid archive name');
+    exitCode = 1;
+    return;
   }
-
-  var cmd = getCommand(tarFile);
-
-  if (cmd != null) {
-    cmd = cmd.replaceAll('%F', tarFile);
-    try {
-      cmd.run;
-    } catch (e) {
-      if (e is RunException && e.exitCode == 2) {
-        printerr(red('The extractor for $tarFile $cmd could not be found.'));
-      }
-      // otherwise supress the exception as the command will print
-      // its own error.
-    }
-  } else {
-    printerr(red('The file $tarFile does not have a know extension.'));
-    printerr(green('Supported extensions are:'));
-    for (final key in extensionToCommand.keys) {
-      printerr('  $key');
-    }
-    exit(1);
+  final destination = path.absolute(results['to'] as String? ?? stem);
+  try {
+    await extractSafely(
+      archivePath: archive,
+      destination: destination,
+      overwrite: false,
+    );
+    stdout.writeln('Expanded into $destination');
+  } on Object catch (error) {
+    stderr.writeln('Could not expand archive: $error');
+    exitCode = 1;
   }
-}
-
-void showUsage(ArgParser parser) {
-  print('Expands a compress file, support a wide variety of file types. ');
-  print(parser.usage);
-}
-
-String? getCommand(String tarFile) {
-  for (final extension in extensionToCommand.keys) {
-    if (tarFile.endsWith(extension)) {
-      return extensionToCommand[extension];
-    }
-  }
-  return null;
 }

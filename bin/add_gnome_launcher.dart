@@ -1,4 +1,5 @@
-#! /usr/bin/env dart
+#! /usr/bin/env dcli
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -9,6 +10,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:dcli_scripts/src/private_temp.dart';
 import 'package:path/path.dart';
 
 String? name;
@@ -27,17 +29,24 @@ void main(List<String> args) {
   Settings().setVerbose(enabled: false);
 
   parser
-    ..addOption('name',
-        help: 'Name of the application to be displayed in the gnome menu')
-    ..addMultiOption('categories',
-        defaultsTo: ['Development'],
-        help:
-            "Gnome list of categories. ''Controls where in the gnome menu the "
-            "entry appears. e.g. 'Development'")
-    ..addOption('terminal',
-        defaultsTo: 'true',
-        help: 'If true (the default) then the app is launched '
-            'in a terminal window.')
+    ..addOption(
+      'name',
+      help: 'Name of the application to be displayed in the gnome menu',
+    )
+    ..addMultiOption(
+      'categories',
+      defaultsTo: ['Development'],
+      help:
+          "Gnome list of categories. ''Controls where in the gnome menu the "
+          "entry appears. e.g. 'Development'",
+    )
+    ..addOption(
+      'terminal',
+      defaultsTo: 'true',
+      help:
+          'If true (the default) then the app is launched '
+          'in a terminal window.',
+    )
     ..addOption('comment', help: 'Adds a comment to the Gnome menu item')
     ..addOption('iconPath', help: 'Path to an icon for the Gnome menu')
     ..addOption('exePath', help: 'Path to an executable to be run');
@@ -123,41 +132,67 @@ void showUsage() {
 }
 
 void writeDesktopEntry() {
-  final path = join(HOME, '.local', 'share', 'applications',
-      '${name!.replaceAll(RegExp('[^a-zA-Z0-9_]'), '_')}.desktop');
-  // create desktop.ini
-  if (exists(path)) {
-    delete(path);
+  final fileName = name!.replaceAll(RegExp('[^a-zA-Z0-9_]'), '_');
+  if (fileName.isEmpty) throw FormatException('Invalid launcher name');
+  final directory = join(HOME, '.local', 'share', 'applications');
+  Directory(directory).createSync(recursive: true);
+  final path = join(directory, '$fileName.desktop');
+  if (FileSystemEntity.typeSync(path, followLinks: false) ==
+      FileSystemEntityType.link) {
+    throw FileSystemException('Refusing to replace a linked launcher', path);
   }
 
-  final content = StringBuffer()..write('''
+  final executable = exePath!;
+  if (!RegExp(r'^[A-Za-z0-9_./ +\-]+$').hasMatch(executable)) {
+    throw FormatException('Executable path contains unsupported characters');
+  }
+
+  final content = StringBuffer()
+    ..write('''
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=$name
+Name=${_desktopValue(name!)}
 ''');
 
   if (comment != null) {
-    content.write('Comment=$comment\n');
+    content.write('Comment=${_desktopValue(comment!)}\n');
   }
 
   content
-    ..write('Categories=${categories!.join(';')}\n')
+    ..write('Categories=${categories!.map(_desktopCategory).join(';')};\n')
     ..write('Terminal=$terminal\n');
 
   if (iconPath != null) {
-    content.write('Icon=$iconPath\n');
+    content.write('Icon=${_desktopValue(iconPath!)}\n');
   }
 
-  if (terminal) {
-    content.write('''gnome-terminal -e 'bash -c "$exePath;bash"' ''');
-  } else {
-    content.write('Exec=$exePath\n');
-  }
+  content.write('Exec="$executable"\n');
 
-  path.write(content.toString());
+  final stage = createPrivateTemporaryDirectory(directory, '.launcher-');
+  try {
+    final stagedFile = File(join(stage.path, '$fileName.desktop'));
+    stagedFile.writeAsStringSync(content.toString());
+    stagedFile.renameSync(path);
+  } finally {
+    stage.deleteSync(recursive: true);
+  }
 
   print('Created: (in ${truepath(path)})\n');
 
   cat(path);
+}
+
+String _desktopValue(String value) {
+  if (value.runes.any((code) => code < 0x20 || code == 0x7f)) {
+    throw FormatException('Desktop entry values cannot contain controls');
+  }
+  return value.replaceAll('\\', '\\\\');
+}
+
+String _desktopCategory(String category) {
+  if (!RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(category)) {
+    throw FormatException('Invalid desktop category');
+  }
+  return category;
 }

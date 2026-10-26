@@ -1,4 +1,5 @@
-#! /usr/bin/env dart
+#! /usr/bin/env dcli
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -25,12 +26,35 @@ void main(List<String> args) {
     exit(1);
   }
 
+  if (!Shell.current.isPrivilegedProcess) {
+    printerr('Run downit with sudo: sudo ./bin/downit.dart <path>...');
+    exitCode = 1;
+    return;
+  }
+
   final user = Shell.current.loggedInUser;
+  Shell.current.releasePrivileges();
 
   for (final path in rest.toList()) {
-    if (!exists(path)) {
+    if (FileSystemEntity.typeSync(path, followLinks: false) ==
+        FileSystemEntityType.notFound) {
       print(red("The path ${truepath(path)} doesn't exists. Skipped"));
+      continue;
     }
-    'chown -R $user:$user $path'.start(privileged: true);
+    try {
+      Shell.current.withPrivileges(() {
+        final result = Process.runSync('chown', [
+          '-hR',
+          '--',
+          '$user:$user',
+          path,
+        ]);
+        if (result.exitCode != 0) {
+          throw StateError('chown failed for $path: ${result.stderr}');
+        }
+      });
+    } finally {
+      Shell.current.releasePrivileges();
+    }
   }
 }

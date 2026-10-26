@@ -1,114 +1,89 @@
-#! /usr/bin/env dart
-/* Copyright (C) S. Brett Sutton - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
- */
+#! /usr/bin/env dcli
 
 import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 
-/// Syncs the current git repo with the upstream repo it was forked from.
+/// Syncs the current fork with a named GitHub upstream.
 void main(List<String> args) {
   final parser = ArgParser()
-    ..addFlag(
-      'verbose',
-      abbr: 'v',
-      negatable: false,
-      help: 'Logs additional details to the cli',
-    )
-    ..addOption('owner',
-        abbr: 'o', help: 'The github owner of the upstream repo.')
-    ..addOption('repo',
-        abbr: 'r', help: 'The github repo name of the upstream repo.');
-
+    ..addFlag('verbose', abbr: 'v', negatable: false)
+    ..addOption('owner', abbr: 'o')
+    ..addOption('repo', abbr: 'r');
   final parsed = parser.parse(args);
-
-  if (parsed.wasParsed('verbose')) {
-    Settings().setVerbose(enabled: true);
+  if (!parsed.wasParsed('owner') || !parsed.wasParsed('repo')) {
+    printerr('Usage: gitsyncfork --owner OWNER --repo REPO');
+    exitCode = 1;
+    return;
   }
-
-  if (!parsed.wasParsed('owner')) {
-    printerr(red('You must pass a owner'));
-    showUsage(parser);
-  }
-
-  final upstreamOwner = parsed['owner'] as String;
-
-  if (!parsed.wasParsed('repo')) {
-    printerr(red('You must pass a repo'));
-    showUsage(parser);
-  }
-
-  final upstreamRepo = parsed['repo'] as String;
-
-  if (!hasUpstream(upstreamOwner, upstreamRepo)) {
-    addUpstream(upstreamOwner, upstreamRepo);
-  }
-
-  'git fetch upstream'.run;
-
-  final defaultBranch = getDefaultBranch();
-
-  'git checkout $defaultBranch'.run;
-
-  'git merge upstream/$defaultBranch'.run;
-}
-
-bool hasUpstream(String upstreamOwner, String upstreamRepo) {
-  final remotes = getRemotes();
-  var found = false;
-  for (final remote in remotes) {
-    if (remote.contains('upstream') &&
-        remote.contains(upstreamOwner) &&
-        remote.contains(upstreamRepo)) {
-      found = true;
-      break;
+  if (parsed['verbose'] as bool) Settings().setVerbose(enabled: true);
+  final owner = parsed['owner'] as String;
+  final repo = parsed['repo'] as String;
+  for (final part in [owner, repo]) {
+    if (!RegExp(r'^[A-Za-z0-9][A-Za-z0-9_.-]*$').hasMatch(part) ||
+        part == '..') {
+      throw FormatException('Invalid GitHub owner or repository name');
     }
   }
 
-  return found;
-}
-
-void addUpstream(String upstreamOwner, String upstreamRepo) {
-  'git remote add upstream https://github.com/$upstreamOwner/$upstreamRepo'.run;
-  'git remote -v'.run;
-}
-
-List<String> getRemotes() => 'git remote -v'.toList();
-
-String getDefaultBranch() {
-  final lines = 'git remote show origin'.toList(skipLines: 3);
-
-  if (lines.isEmpty) {
-    throw Exception('Unable to get default branch name');
+  final expected = 'https://github.com/$owner/$repo.git';
+  final existing = Process.runSync('git', ['remote', 'get-url', 'upstream']);
+  if (existing.exitCode != 0) {
+    _git(['remote', 'add', 'upstream', expected]);
+  } else {
+    final current = (existing.stdout as String).trim();
+    if (current != expected &&
+        current != 'https://github.com/$owner/$repo' &&
+        current != 'git@github.com:$owner/$repo.git') {
+      throw StateError('Existing upstream remote is different: $current');
+    }
   }
+  _git(['fetch', 'upstream']);
 
-  final line = lines.first.trim();
-
-  final parts = line.split(' ');
-
-  return parts[2];
-}
-
-// for future use.
-// ignore: unreachable_from_main
-String getBranch() {
-  final line = 'git status'.firstLine;
-
-  if (line == null) {
-    throw Exception('Unable to get branch name');
+  final head = Process.runSync('git', [
+    'symbolic-ref',
+    '--short',
+    'refs/remotes/origin/HEAD',
+  ]);
+  late final String branch;
+  if (head.exitCode == 0) {
+    final full = (head.stdout as String).trim();
+    if (!full.startsWith('origin/')) {
+      throw StateError('Unexpected origin default branch');
+    }
+    branch = full.substring('origin/'.length);
+  } else {
+    final remote = Process.runSync('git', ['remote', 'show', 'origin']);
+    if (remote.exitCode != 0) {
+      throw StateError('Could not determine origin default branch');
+    }
+    final matches = RegExp(
+      r'^\s*HEAD branch:\s*(\S+)\s*$',
+      multiLine: true,
+    ).firstMatch(remote.stdout as String);
+    if (matches == null) {
+      throw StateError('Could not determine origin default branch');
+    }
+    branch = matches.group(1)!;
   }
-
-  final parts = line.trim().split(' ');
-
-  return parts[2];
+  if (Process.runSync('git', [
+        'check-ref-format',
+        '--branch',
+        branch,
+      ]).exitCode !=
+      0) {
+    throw FormatException('Invalid default branch');
+  }
+  _git(['switch', branch]);
+  _git(['merge', 'upstream/$branch']);
 }
 
-void showUsage(ArgParser parser) {
-  print('Usage: gitsyncfork.dart -v -prompt <a questions>');
-  print(parser.usage);
-  exit(1);
+void _git(List<String> args) {
+  final result = Process.runSync('git', args);
+  stdout.write(result.stdout);
+  stderr.write(result.stderr);
+  if (result.exitCode != 0) {
+    throw StateError('git ${args.first} failed with ${result.exitCode}');
+  }
 }
