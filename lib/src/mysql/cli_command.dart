@@ -3,10 +3,12 @@
  * Proprietary and confidential
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
+import 'dart:io';
+
 import 'package:args/command_runner.dart';
-import 'package:dcli/dcli.dart';
 
 import 'mysql.dart';
+import 'mysql_defaults.dart';
 import 'mysql_settings.dart';
 
 class CliCommand extends Command<void> {
@@ -17,16 +19,29 @@ class CliCommand extends Command<void> {
   String get name => 'cli';
 
   @override
-  void run() {
+  Future<void> run() async {
     final args = getArgs(this, argResults);
-    cli(args[0]);
+    await cli(args[0]);
   }
 
-  void cli(String dbName) {
+  Future<void> cli(String dbName) async {
     final settings = MySqlSettings.load(dbName);
-    'mysql --host ${settings.host} --port=${settings.port} '
-            '--user ${settings.user} --password="${settings.password}" '
-            '--database ${settings.dbname}'
-        .start(nothrow: true, terminal: true);
+    final defaults = MySqlDefaults(settings);
+    try {
+      final process = await Process.start(
+        'mysql',
+        [
+          ...defaults.connectionOptions(settings),
+          '--database',
+          settings.dbname,
+        ],
+        mode: ProcessStartMode.inheritStdio,
+        environment: defaults.environment,
+      );
+      final code = await process.exitCode;
+      if (code != 0) throw StateError('mysql exited with status $code');
+    } finally {
+      defaults.dispose();
+    }
   }
 }

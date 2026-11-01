@@ -1,4 +1,4 @@
-#! /usr/bin/env dart
+#! /usr/bin/env dcli
 
 import 'dart:io';
 
@@ -17,10 +17,13 @@ import 'package:pubspec_manager/pubspec_manager.dart';
 ///
 void main(List<String> args) async {
   final parser = ArgParser()
-    ..addFlag('compile',
-        abbr: 'c',
-        help: 'compiles a global activated package and installs it '
-            'into the dcli bin');
+    ..addFlag(
+      'compile',
+      abbr: 'c',
+      help:
+          'compiles a global activated package and installs it '
+          'into the dcli bin',
+    );
 
   final ArgResults argResult;
   try {
@@ -40,20 +43,34 @@ void main(List<String> args) async {
       exit(1);
     }
 
-    'dart pub global activate -spath ${args[0]}'.run;
+    final result = await Process.run('dart', [
+      'pub',
+      'global',
+      'activate',
+      '--source',
+      'path',
+      args[0],
+    ]);
+    stdout.write(result.stdout);
+    stderr.write(result.stderr);
+    exitCode = result.exitCode;
   }
 }
 
 Future<void> compilePackage(ArgResults argResults) async {
   if (argResults.rest.length != 1) {
     printerr(red('You must provide the name of a package to compile'));
+    exitCode = 1;
+    return;
   }
 
   final packageName = argResults.rest[0];
 
   final version = PubCache().findPrimaryVersion(packageName);
-  final pathToPackage =
-      PubCache().pathToPackage(packageName, version.toString());
+  final pathToPackage = PubCache().pathToPackage(
+    packageName,
+    version.toString(),
+  );
 
   // we can't compile in the .pub_cache as pub get throws errors
   // so copy the package to a temp dir.
@@ -67,13 +84,30 @@ Future<void> compilePackage(ArgResults argResults) async {
     }
     final binDir = join(tempDir, 'bin');
     for (final executable in execs.list) {
-      'dcli compile ${executable.scriptPath}'.start(workingDirectory: tempDir);
+      if (!RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(executable.name)) {
+        throw FormatException('Invalid executable name');
+      }
+      final script = normalize(join(tempDir, executable.scriptPath));
+      if (!isWithin(binDir, script) ||
+          FileSystemEntity.typeSync(script, followLinks: false) !=
+              FileSystemEntityType.file) {
+        throw FormatException('Executable script is outside package bin');
+      }
+      final result = await Process.run('dcli', [
+        'compile',
+        script,
+      ], workingDirectory: tempDir);
+      if (result.exitCode != 0) {
+        throw StateError('dcli compile failed: ${result.stderr}');
+      }
       final installPath = join(Settings().pathToDCliBin, executable.name);
       if (exists(installPath)) {
         delete(installPath);
       }
-      move(join(binDir, basenameWithoutExtension(executable.scriptPath)),
-          installPath);
+      move(
+        join(binDir, basenameWithoutExtension(executable.scriptPath)),
+        installPath,
+      );
     }
   });
 }

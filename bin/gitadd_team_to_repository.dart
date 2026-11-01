@@ -1,86 +1,118 @@
-#! /usr/bin/env dart
-/* Copyright (C) S. Brett Sutton - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
- */
+#! /usr/bin/env dcli
 
-/// Script to migrate bitbucket repos into github.
-/// You need to provide a csv file containing a list of repos on bitbucket
-/// The csv file must contain two columns:
-/// repo_name, repo_url
-/// e.g.
-/// `adfiler,https://<user>@bitbucket.org/<org>>/<repo_name>.git`
-///
-/// You need to provide a 'github.yaml' file (in the cwd)
-/// that contains a git personal access token
-/// ```yaml
-///   gittoken: ASDFZcvaskjwerf
-/// ```
-library;
-
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
-/// Adds the given team to every repo owned by the passed organisation.
-void main(List<String> args) {
-  final argParser = ArgParser()
-    ..addOption('team',
-        abbr: 't',
-        mandatory: true,
-        help: 'Name of the team to assign to the repos')
-    ..addOption('owner',
-        abbr: 'o',
-        mandatory: true,
-        help: 'Name of owner/org that owns the repos')
-    ..addOption('permission',
-        abbr: 'p',
-        allowed: ['admin', 'push', 'pull'],
-        defaultsTo: 'pull',
-        help: 'Sets the permission the team has on the repos.');
-
-  ArgResults results;
-
+Future<void> main(List<String> args) async {
+  final parser = ArgParser()
+    ..addOption('team', abbr: 't', mandatory: true)
+    ..addOption('owner', abbr: 'o', mandatory: true)
+    ..addOption(
+      'permission',
+      abbr: 'p',
+      allowed: ['admin', 'push', 'pull'],
+      defaultsTo: 'pull',
+    );
+  late final ArgResults parsed;
   try {
-    results = argParser.parse(args);
-  } on FormatException catch (e) {
-    printerr(e.message);
-    print(argParser.usage);
-    exit(1);
+    parsed = parser.parse(args);
+  } on FormatException catch (error) {
+    stderr.writeln(error.message);
+    stderr.writeln(parser.usage);
+    exitCode = 1;
+    return;
   }
+  if (!parsed.wasParsed('team') || !parsed.wasParsed('owner')) {
+    stderr.writeln(parser.usage);
+    exitCode = 1;
+    return;
+  }
+  final team = parsed['team'] as String;
+  final owner = parsed['owner'] as String;
+  final permission = parsed['permission'] as String;
+  _validateSegment(team);
+  _validateSegment(owner);
 
-  final team = results['team'] as String;
-  final owner = results['owner'] as String;
-  final permission = results['permission'] as String;
+  const settingsPath = 'github.yaml';
+  if (FileSystemEntity.typeSync(settingsPath, followLinks: false) !=
+      FileSystemEntityType.file) {
+    throw FileSystemException(
+      'Credential file is missing or linked',
+      settingsPath,
+    );
+  }
+  if (!Platform.isWindows &&
+      Process.runSync('chmod', ['600', settingsPath]).exitCode != 0) {
+    throw StateError('Could not protect GitHub credentials');
+  }
+  final token =
+      SettingsYaml.load(pathToSettings: settingsPath)['gittoken'] as String;
 
-  final json = 'gh repo list --json "owner,name,url" $owner -L 10000'
-      .parser()
-      .jsonDecode() as List<dynamic>;
-
-  for (final repo in json) {
-    final map = repo as Map<String, dynamic>;
-    final name = map['name'] as String;
-    final ownerMap = map['owner'] as Map<String, dynamic>;
-    final owner = ownerMap['login'] as String;
-    // final url = repo['url'] as String;
-
-    addToTeam(owner, team, name, permission: permission);
+  final repos = await Process.run('gh', [
+    'repo',
+    'list',
+    owner,
+    '--json',
+    'owner,name',
+    '--limit',
+    '10000',
+  ]);
+  if (repos.exitCode != 0) {
+    throw StateError('Could not list GitHub repositories: ${repos.stderr}');
+  }
+  final entries = jsonDecode(repos.stdout as String) as List<dynamic>;
+  final client = HttpClient();
+  try {
+    for (final entry in entries) {
+      final repo = entry as Map<String, dynamic>;
+      final name = repo['name'] as String;
+      final repoOwner =
+          (repo['owner'] as Map<String, dynamic>)['login'] as String;
+      _validateSegment(name);
+      _validateSegment(repoOwner);
+      if (repoOwner.toLowerCase() != owner.toLowerCase()) continue;
+      await addToTeam(client, token, repoOwner, team, name,
+          permission: permission);
+    }
+  } finally {
+    client.close();
   }
 }
 
-void addToTeam(String owner, String team, String repoName,
-    {required String permission}) {
-  final settings = SettingsYaml.load(pathToSettings: 'github.yaml');
-  final token = settings['gittoken'] as String;
-  print('adding $team to $owner/$repoName');
-  '''
-curl -X PUT 
---header "authorization: Bearer $token" 
--H "Accept: application/vnd.github.v3+json" 
-https://api.github.com/orgs/$owner/teams/$team/repos/$owner/$repoName 
--d '{"permission":"$permission"}'''
-      .run;
+Future<void> addToTeam(
+  HttpClient client,
+  String token,
+  String owner,
+  String team,
+  String repoName, {
+  required String permission,
+}) async {
+  final uri = Uri.https(
+    'api.github.com',
+    '/orgs/$owner/teams/$team/repos/$owner/$repoName',
+  );
+  final request = await client.putUrl(uri);
+  request.headers
+    ..set(HttpHeaders.authorizationHeader, 'Bearer $token')
+    ..set(HttpHeaders.acceptHeader, 'application/vnd.github+json')
+    ..set(HttpHeaders.contentTypeHeader, 'application/json');
+  request.write(jsonEncode({'permission': permission}));
+  final response = await request.close();
+  await response.drain<void>();
+  if (response.statusCode != HttpStatus.noContent) {
+    throw HttpException(
+      'GitHub team update failed (${response.statusCode})', uri: uri);
+  }
+  print(green('Added $team to $owner/$repoName'));
+}
+
+void _validateSegment(String value) {
+  if (!RegExp(r'^[A-Za-z0-9][A-Za-z0-9_.-]*$').hasMatch(value) ||
+      value == '..') {
+    throw FormatException('Invalid GitHub owner, team, or repository name');
+  }
 }

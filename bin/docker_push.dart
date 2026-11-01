@@ -1,4 +1,5 @@
-#! /bin/env dcli
+#! /usr/bin/env dcli
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -13,14 +14,13 @@ import 'package:path/path.dart';
 
 void main(List<String> args) {
   final parser = ArgParser()
-    ..addOption('repo',
-        abbr: 'r',
-        mandatory: true,
-        help: 'The name of the docker repository to publish to.');
-  final project = DartProject.fromPath('.');
-  final projectRootPath = project.pathToProjectRoot;
-  print('projectRoot $projectRootPath');
-
+    ..addFlag('help', abbr: 'h', help: 'Show usage')
+    ..addOption(
+      'repo',
+      abbr: 'r',
+      mandatory: true,
+      help: 'The name of the docker repository to publish to.',
+    );
   ArgResults parsed;
   try {
     parsed = parser.parse(args);
@@ -29,8 +29,16 @@ void main(List<String> args) {
     exit(1);
   }
 
+  if (parsed['help'] as bool || !parsed.wasParsed('repo')) {
+    print(parser.usage);
+    exitCode = parsed['help'] as bool ? 0 : 1;
+    return;
+  }
+
+  final project = DartProject.fromPath('.');
+
   final repo = parsed['repo'] as String;
-  final projectName = project.pubSpec.name;
+  final projectName = project.pubSpec.name.value;
   final version = project.pubSpec.version;
   final name = '$repo/$projectName';
 
@@ -39,12 +47,30 @@ void main(List<String> args) {
 
   print('docker path: ${findDockerFilePath()}');
   print(green('Building $projectName docker image'));
-  'docker build -t$imageTag .'.start(workingDirectory: findDockerFilePath());
+  _docker([
+    'build',
+    '-t',
+    imageTag,
+    '.',
+  ], workingDirectory: findDockerFilePath());
   print(green('Pushing docker image: $imageTag and latest'));
   final latestTag = '$name:latest';
-  'docker image tag $imageTag $latestTag'.run;
-  'docker push $imageTag'.run;
-  'docker push $latestTag'.run;
+  _docker(['image', 'tag', imageTag, latestTag]);
+  _docker(['push', imageTag]);
+  _docker(['push', latestTag]);
+}
+
+void _docker(List<String> args, {String? workingDirectory}) {
+  final result = Process.runSync(
+    'docker',
+    args,
+    workingDirectory: workingDirectory,
+  );
+  stdout.write(result.stdout);
+  stderr.write(result.stderr);
+  if (result.exitCode != 0) {
+    throw StateError('docker ${args.first} exited with ${result.exitCode}');
+  }
 }
 
 String findDockerFilePath() {
@@ -55,5 +81,5 @@ String findDockerFilePath() {
     }
     current = dirname(current);
   }
-  return '.';
+  throw StateError('No Dockerfile found in this directory or its parents');
 }

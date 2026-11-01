@@ -1,146 +1,114 @@
-#! /usr/bin/env dart
-/* Copyright (C) S. Brett Sutton - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
- */
+#! /usr/bin/env dcli
+
+import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
-import 'package:docker2/docker2.dart';
 
-/// The port that artifactory will listen on.
-var port = '8081';
-var port2 = '8082';
-var bind = '127.0.0.1';
-var name = 'artifactory';
+const _name = 'artifactory';
+const _image = 'docker.bintray.io/jfrog/artifactory-oss:latest';
+const _volume = '/var/opt/jfrog/artifactory:/var/opt/jfrog/artifactory';
 
-var imageName = 'docker.bintray.io/jfrog/artifactory-oss:latest';
-
-/// installs, starts/stops the artifactory docker container.
-void main(List<String> args) {
-  // if (!DartScript.self.isCompiled) {
-  //   printerr('You must run this as a compiled dart script '
-  // 'as sudo is required');
-  //   exit(1);
-  // }
-  // if (!Shell.current.isPrivilegedUser) {
-  //   printerr('You must run this command as sudo.');
-  //   exit(1);
-  // }
-
-  Settings().setVerbose(enabled: true);
+Future<void> main(List<String> args) async {
   final parser = ArgParser()
-    ..addFlag('install',
-        abbr: 'i', help: 'Install the artifactory OSS docker image')
-    ..addFlag('run',
-        abbr: 'r',
-        help: 'Run the artifactory docker image. This is the default action ')
-    ..addFlag('delete',
-        abbr: 'd',
-        help: 'Delete the artifactory docker container. '
-            'The volume will be unaffected.')
-    ..addFlag('start',
-        abbr: 's', help: 'Runs artifactory docker image as a daemon.')
-    ..addFlag('stop', abbr: 't', help: 'Stops the artifactory docker process')
-    ..addFlag('attach',
-        abbr: 'a', help: 'Attach to the artifactory docker cli');
-
+    ..addFlag('help', abbr: 'h', help: 'Show help')
+    ..addFlag('install', abbr: 'i', help: 'Install the image')
+    ..addFlag('delete', abbr: 'd', help: 'Delete the container')
+    ..addFlag('start', abbr: 's', help: 'Start in the background')
+    ..addFlag('stop', abbr: 't', help: 'Stop the container')
+    ..addFlag('attach', abbr: 'a', help: 'Open a shell in the container');
   final parsed = parser.parse(args);
+
+  if (parsed['help'] as bool) {
+    print(parser.usage);
+    return;
+  }
+
   if (parsed['install'] as bool) {
-    install();
+    _docker(['pull', _image]);
+    PubCache().globalActivate('nginx_le');
   } else if (parsed['delete'] as bool) {
-    delete();
-  } else if (parsed['start'] as bool) {
-    start(daemon: true);
-  } else if (parsed['stop'] as bool) {
-    stop();
-  } else if (parsed['attach'] as bool) {
-    attach();
-  } else {
-    /// default action is run.
-    start(daemon: false);
-  }
-}
-
-void stop() {
-  print(blue('Stopping Artifactory'));
-  final container = Docker().findContainerByName(name);
-  if (container == null) {
-    printerr(red("The artifactory container doesn't exist. Run '$name -i'"));
-  } else {
-    container.stop();
-  }
-}
-
-void attach() {
-  print(blue('Attaching to the Artifactory cli'));
-  final container = Docker().findContainerByName(name);
-  if (container == null) {
-    printerr(red("The artifactory container doesn't exist. Run '$name -i'"));
-  } else {
-    container.cli();
-  }
-}
-
-void start({required bool daemon}) {
-  final container = Docker().findContainerByName(name);
-  if (container != null && container.isRunning) {
-    printerr(orange('The $name container is already running.'));
-    return;
-  }
-
-  if (!daemon) {
-    print(blue('Starting Artifactory in interactive mode.'));
-  }
-
-  final image = Docker().findImageByName(imageName);
-  if (image == null) {
-    printerr(red(
-        "The artificatory image isn't installed. Run ./artifactory.dart --install"));
-    return;
-  }
-
-  //Shell.current.withPrivileges(() {
-  // 'chown -R 1030:1030 /var/opt/jfrog/artifactory'.run;
-  // chown('/var/opt/jfrog/artifactory',
-  //     user: '1030', group: '1030', recursive: true);
-  // });
-  Docker().run(image,
-      argString:
-
-          /// list on primary and secondary artifactory ports and mount
-          /// a host volume.
-          '-p $bind:$port:8081 -p $bind:$port2:8082 -v /var/opt/jfrog/artifactory:/var/opt/jfrog/artifactory',
-      daemon: daemon);
-
-  if (daemon) {
-    print(blue('Artifactory daemon has started'));
-  }
-
-  // 'docker start --name artifactory -d -p 8081:8081 docker.bintray.io/jfrog/artifactory-oss:latest'
-  //     .run;
-}
-
-void install() {
-  print(blue('Installing the Artifactory OSS docker image'));
-  Docker().pull(imageName);
-  print(blue('Creating the $name container'));
-
-  print(blue('Installing Nginx-LE'));
-  PubCache().globalActivate('nginx_le');
-}
-
-void delete() {
-  print(blue('deleting the docker container'));
-
-  final container = Docker().findContainerByName(name);
-  if (container != null) {
-    if (container.isRunning) {
-      printerr(orange('Stopping the $name container.'));
-      container.stop();
+    if (_containerExists()) {
+      if (_isRunning()) _docker(['stop', _name]);
+      _docker(['rm', _name]);
     }
-    printerr(orange('Deleting the $name container.'));
-    container.delete();
+  } else if (parsed['stop'] as bool) {
+    if (_containerExists() && _isRunning()) _docker(['stop', _name]);
+  } else if (parsed['attach'] as bool) {
+    if (!_containerExists() || !_isRunning()) {
+      throw StateError('Artifactory is not running');
+    }
+    await _dockerInteractive(['exec', '-it', _name, '/bin/sh']);
+  } else {
+    await _start(daemon: parsed['start'] as bool);
   }
+}
+
+Future<void> _start({required bool daemon}) async {
+  if (_isRunning()) {
+    print(orange('Artifactory is already running.'));
+    return;
+  }
+  if (_containerExists()) {
+    if (daemon) {
+      _docker(['start', _name]);
+    } else {
+      await _dockerInteractive(['start', '-ai', _name]);
+    }
+    return;
+  }
+  if (Process.runSync('docker', ['image', 'inspect', _image]).exitCode != 0) {
+    throw StateError('Artifactory image is missing. Run --install first.');
+  }
+  final command = [
+    'run',
+    if (daemon) '-d' else '-it',
+    '--name',
+    _name,
+    '-p',
+    '127.0.0.1:8081:8081',
+    '-p',
+    '127.0.0.1:8082:8082',
+    '-v',
+    _volume,
+    _image,
+  ];
+  if (daemon) {
+    _docker(command);
+  } else {
+    await _dockerInteractive(command);
+  }
+}
+
+bool _containerExists() =>
+    Process.runSync('docker', ['container', 'inspect', _name]).exitCode == 0;
+
+bool _isRunning() {
+  final result = Process.runSync('docker', [
+    'container',
+    'inspect',
+    '--format',
+    '{{.State.Running}}',
+    _name,
+  ]);
+  return result.exitCode == 0 && (result.stdout as String).trim() == 'true';
+}
+
+void _docker(List<String> args) {
+  final result = Process.runSync('docker', args);
+  if ((result.stdout as String).isNotEmpty) stdout.write(result.stdout);
+  if ((result.stderr as String).isNotEmpty) stderr.write(result.stderr);
+  if (result.exitCode != 0) {
+    throw StateError('docker ${args.first} failed with ${result.exitCode}');
+  }
+}
+
+Future<void> _dockerInteractive(List<String> args) async {
+  final process = await Process.start(
+    'docker',
+    args,
+    mode: ProcessStartMode.inheritStdio,
+  );
+  final code = await process.exitCode;
+  if (code != 0) throw StateError('docker ${args.first} failed with $code');
 }

@@ -1,3 +1,23 @@
+# 5.0.0
+- Security: keep MySQL and Bitbucket/GitHub credentials out of process arguments
+  and retained Git remotes. Store MySQL configuration and temporary option files
+  in private locations. MySQL connections now use TCP with the configured port;
+  move inherited TLS options into the per-database dmysql settings.
+- Security: reject database names that escape the configuration directory;
+  abort failed database dumps rather than installing incomplete backups.
+- Security: extract TAR and tar.gz through the bounded, staged darchive decoder.
+  dcompress now writes a separate destination directory. ZIP, XZ, and RAR
+  extraction is unavailable until safe decoders are available.
+- Security: reject desktop-entry line injection, validate downloaded MailHog
+  against a pinned SHA-256, and pass privileged paths and snapshot names as
+  separate process arguments.
+- Security: keep GitHub team API tokens out of curl process arguments; validate
+  Git remote and tag names, and stage tag renames before deleting old refs.
+- Harden Docker image tags and build arguments by passing them separately to
+  Docker. Escape Eclipse launcher paths and stage desktop entries privately.
+- Upgrade to patched DCLI 10.4.2 and Dart 3.13. Replace the incompatible
+  docker2 dependency with direct Docker commands for Artifactory.
+
 # 4.5.1
 - fix: handle terabyte-scale free space in clean and hog
 - fix: include dwhich support files in the published package

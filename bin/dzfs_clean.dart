@@ -1,25 +1,60 @@
-#! /usr/bin/env dart
-/* Copyright (C) S. Brett Sutton - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
- */
+#! /usr/bin/env dcli
+
+import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 
-void main() {
-  print('clean automatically generated zfs snapshots');
-  // check if there are any to delete.
+void main(List<String> args) {
+  if (args.contains('--help') || args.contains('-h')) {
+    print('Run with sudo to remove ZFS snapshots named @auto*');
+    return;
+  }
+  if (!Shell.current.isPrivilegedProcess) {
+    stderr.writeln('Run with sudo: sudo ./bin/dzfs_clean.dart');
+    exitCode = 1;
+    return;
+  }
+  Shell.current.releasePrivileges();
 
-  final snapshots = <String>[];
+  late final ProcessResult listing;
+  try {
+    Shell.current.withPrivileges(() {
+      listing = Process.runSync('zfs', [
+        'list',
+        '-H',
+        '-t',
+        'snapshot',
+        '-o',
+        'name',
+        '-S',
+        'creation',
+      ]);
+    });
+  } finally {
+    Shell.current.releasePrivileges();
+  }
+  if (listing.exitCode != 0) {
+    throw StateError('Could not list ZFS snapshots: ${listing.stderr}');
+  }
 
-  final progress = Progress(snapshots.add, stderr: snapshots.add);
-  'zfs list -t snapshot -o name -S creation'
-      .start(privileged: true, progress: progress);
-
-  for (final snapshot in snapshots) {
-    if (snapshot.contains('@auto')) {
-      'zfs destroy -vr $snapshot'.start(privileged: true);
+  for (final snapshot in (listing.stdout as String).split('\n')) {
+    final name = snapshot.trim();
+    final marker = name.lastIndexOf('@');
+    if (marker < 1 || !name.substring(marker + 1).startsWith('auto')) {
+      continue;
+    }
+    if (!RegExp(r'^[A-Za-z0-9_./:-]+@[A-Za-z0-9_.:-]+$').hasMatch(name)) {
+      throw FormatException('Unexpected ZFS snapshot name');
+    }
+    try {
+      Shell.current.withPrivileges(() {
+        final result = Process.runSync('zfs', ['destroy', '-vr', name]);
+        if (result.exitCode != 0) {
+          throw StateError('Could not destroy $name: ${result.stderr}');
+        }
+      });
+    } finally {
+      Shell.current.releasePrivileges();
     }
   }
 }
