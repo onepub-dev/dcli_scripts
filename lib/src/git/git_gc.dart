@@ -47,7 +47,12 @@ void runGitGc(
   Directory root, {
   void Function(String path, Object exception)? onError,
 }) {
-  for (final gitDirectory in findGitDirectories(root, onError: onError)) {
+  runGitGcDirectories(findGitDirectories(root, onError: onError));
+}
+
+/// Runs Git maintenance on directories already discovered by the caller.
+void runGitGcDirectories(Iterable<Directory> gitDirectories) {
+  for (final gitDirectory in gitDirectories) {
     print('cleaning ${gitDirectory.path}');
     'git gc'.start(
       workingDirectory: gitDirectory.path,

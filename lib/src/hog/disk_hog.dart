@@ -2,12 +2,17 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart' as p;
 
 /// Recursively finds directories while tolerating entries which disappear.
 Iterable<Directory> findDirectoriesSafely(
   Directory root, {
   void Function(String path, Object exception)? onError,
+  Set<String> excludedPaths = const {},
 }) sync* {
+  if (excludedPaths.contains(root.path)) {
+    return;
+  }
   List<FileSystemEntity> entries;
   try {
     entries = root.listSync(followLinks: false);
@@ -19,9 +24,13 @@ Iterable<Directory> findDirectoriesSafely(
   }
 
   for (final entry in entries) {
-    if (entry is Directory) {
+    if (entry is Directory && !excludedPaths.contains(entry.path)) {
       yield entry;
-      yield* findDirectoriesSafely(entry, onError: onError);
+      yield* findDirectoriesSafely(
+        entry,
+        onError: onError,
+        excludedPaths: excludedPaths,
+      );
     }
   }
 }
@@ -30,9 +39,14 @@ Iterable<Directory> findDirectoriesSafely(
 void runDiskHog(
   Directory root, {
   void Function(String path, Object exception)? onError,
+  Set<String> excludedPaths = const {},
 }) {
   print(green('Scanning...'));
-  final directories = findDirectoriesSafely(root, onError: onError).toList();
+  final directories = findDirectoriesSafely(
+    root,
+    onError: onError,
+    excludedPaths: excludedPaths,
+  ).toList();
   print(orange('Found ${directories.length} directories'));
 
   final directorySizes = <DirectorySize>[];
@@ -83,6 +97,28 @@ void runDiskHog(
       ),
     );
   }
+}
+
+/// Mounts beneath [root] are separate filesystems and not part of its usage.
+Set<String> mountedDirectoriesUnder(Directory root) {
+  if (!Platform.isLinux) {
+    return {};
+  }
+  final mountInfo = File('/proc/self/mountinfo');
+  if (!mountInfo.existsSync()) {
+    return {};
+  }
+  return mountInfo
+      .readAsLinesSync()
+      .map((line) {
+        final fields = line.split(' ');
+        return fields.length > 4
+            ? fields[4].replaceAllMapped(RegExp(r'\\([0-7]{3})'),
+                (match) => String.fromCharCode(int.parse(match[1]!, radix: 8)))
+            : '';
+      })
+      .where((mountpoint) => p.isWithin(root.path, mountpoint))
+      .toSet();
 }
 
 class DirectorySize {

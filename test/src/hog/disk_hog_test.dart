@@ -28,6 +28,18 @@ void main() {
     );
   });
 
+  test('does not enter excluded mountpoints', () {
+    final mount = Directory(join(root.path, 'mount'))..createSync();
+    Directory(join(mount.path, 'remote')).createSync();
+    final local = Directory(join(root.path, 'local'))..createSync();
+
+    expect(
+      findDirectoriesSafely(root, excludedPaths: {mount.path})
+          .map((directory) => directory.path),
+      <String>[local.path],
+    );
+  });
+
   test('silently skips a missing directory', () {
     final missing = Directory(join(root.path, 'temporary'));
     final errors = <Object>[];

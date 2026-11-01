@@ -27,7 +27,7 @@ const _minimumUnusedAge = Duration(hours: 8);
 
 void main(List<String> args) {
   if (!Shell.current.isPrivilegedProcess) {
-    printerr(red('Run clean with sudo: sudo ./bin/clean.dart'));
+    printerr(red('Run clean with sudo: sudo clean'));
     exitCode = 1;
     return;
   }
@@ -82,18 +82,35 @@ void main(List<String> args) {
   'docker system prune -a -f'.run;
 
   print(blue('Running git clean'));
-  runGitGc(
-    projectRoot,
-    onError: (path, exception) =>
-        printerr(yellow('Unable to scan $path: $exception')),
-  );
+  late final List<Directory> gitDirectories;
+  try {
+    Shell.current.withPrivileges(() {
+      gitDirectories = findGitDirectories(
+        projectRoot,
+        onError: (path, exception) =>
+            printerr(yellow('Unable to scan $path: $exception')),
+      ).toList();
+    });
+  } finally {
+    Shell.current.releasePrivileges();
+  }
+  runGitGcDirectories(gitDirectories);
 
   print(blue('Running hog'));
-  runDiskHog(
-    Directory(HOME),
-    onError: (path, exception) =>
-        printerr(yellow('Unable to scan $path: $exception')),
-  );
+  final home = Directory(HOME);
+  final mountedDirectories = mountedDirectoriesUnder(home);
+  try {
+    Shell.current.withPrivileges(() {
+      runDiskHog(
+        home,
+        excludedPaths: mountedDirectories,
+        onError: (path, exception) =>
+            printerr(yellow('Unable to scan $path: $exception')),
+      );
+    });
+  } finally {
+    Shell.current.releasePrivileges();
+  }
 }
 
 void _reportWorkspaces() {
