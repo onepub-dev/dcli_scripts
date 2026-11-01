@@ -11,6 +11,7 @@ int cleanProjectArtifacts(
   Directory root, {
   void Function(String path)? onDelete,
   void Function(String path, Object exception)? onError,
+  void Function(Directory artifact)? onPermissionDenied,
 }) {
   var deleted = 0;
 
@@ -20,7 +21,14 @@ int cleanProjectArtifacts(
     }
 
     try {
-      artifact.deleteSync(recursive: true);
+      try {
+        artifact.deleteSync(recursive: true);
+      } on FileSystemException catch (exception) {
+        if (exception.osError?.errorCode != 13 || onPermissionDenied == null) {
+          rethrow;
+        }
+        onPermissionDenied(artifact);
+      }
       deleted++;
       onDelete?.call(artifact.path);
     } on FileSystemException catch (exception) {
@@ -47,6 +55,9 @@ int cleanProjectArtifacts(
       }
 
       final name = basename(entry.path);
+      if (_isDatabaseDataDirectory(entry)) {
+        continue;
+      }
       // Never inspect dependency/build trees. Apart from being very large,
       // they contain manifests belonging to dependencies rather than projects.
       if (name == 'target' || name == 'node_modules') {
@@ -135,7 +146,8 @@ int cleanStaleRustDepsDirectories(
         }
         // Dependencies and VCS internals are not independent build roots.
         if (basename(entry.path) != 'node_modules' &&
-            basename(entry.path) != '.git') {
+            basename(entry.path) != '.git' &&
+            !_isDatabaseDataDirectory(entry)) {
           visit(entry);
         }
       }
@@ -177,6 +189,10 @@ int cleanStaleDartToolDirectories(
         continue;
       }
 
+      if (_isDatabaseDataDirectory(entry)) {
+        continue;
+      }
+
       if (basename(entry.path) == '.dart_tool') {
         try {
           final newest = _newestModification(entry, onError);
@@ -199,6 +215,11 @@ int cleanStaleDartToolDirectories(
     visit(root);
   }
   return deleted;
+}
+
+bool _isDatabaseDataDirectory(Directory directory) {
+  final name = basename(directory.path);
+  return name == 'mariadb-data' || name.startsWith('mariadb-data-');
 }
 
 DateTime _newestModification(

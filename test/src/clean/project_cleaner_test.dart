@@ -51,6 +51,51 @@ void main() {
     );
   });
 
+  test('skips MariaDB data trees during artifact scans', () {
+    for (final name in ['mariadb-data', 'mariadb-data-dependencies-13103']) {
+      final data = Directory(join(root.path, name))..createSync();
+      File(join(data.path, 'package.json')).writeAsStringSync('{}');
+      Directory(join(data.path, 'node_modules')).createSync();
+    }
+
+    expect(cleanProjectArtifacts(root), 0);
+    expect(cleanStaleRustDepsDirectories(root), 0);
+    expect(cleanStaleDartToolDirectories(root), 0);
+    expect(
+      Directory(join(root.path, 'mariadb-data', 'node_modules')).existsSync(),
+      isTrue,
+    );
+  });
+
+  test('retries a protected Node artifact through the permission callback', () {
+    final project = Directory(join(root.path, 'node'))..createSync();
+    File(join(project.path, 'package.json')).writeAsStringSync('{}');
+    final artifact = Directory(join(project.path, 'node_modules'))
+      ..createSync();
+    File(join(artifact.path, 'dependency')).writeAsStringSync('data');
+    Process.runSync('chmod', ['500', artifact.path]);
+    var retries = 0;
+    try {
+      expect(
+        cleanProjectArtifacts(
+          root,
+          onPermissionDenied: (directory) {
+            retries++;
+            expect(directory.path, artifact.path);
+            Process.runSync('chmod', ['700', directory.path]);
+            directory.deleteSync(recursive: true);
+          },
+        ),
+        1,
+      );
+      expect(retries, 1);
+    } finally {
+      if (artifact.existsSync()) {
+        Process.runSync('chmod', ['700', artifact.path]);
+      }
+    }
+  });
+
   test('deletes .dart_tool only when its contents are over a week old', () {
     final stale = Directory(join(root.path, 'stale', '.dart_tool'))
       ..createSync(recursive: true);

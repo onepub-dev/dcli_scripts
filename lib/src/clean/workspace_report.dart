@@ -104,6 +104,16 @@ List<WorkspaceReport> reportOldCodexWorkspaces(
             repos.add(directory);
           }
           if (entry is Directory) {
+            if (!external && !metadata &&
+                (name == 'mariadb-data' || name.startsWith('mariadb-data-'))) {
+              reasons.add('MariaDB data requires separate cleanup: '
+                  '${relative(entry.path, from: workspace.path)}');
+              final modified = entry.statSync().modified;
+              if (modified.isAfter(latest)) {
+                latest = modified;
+              }
+              continue;
+            }
             final generated = !metadata && _isCache(entry);
             if (generated && !external) {
               caches.add(entry.path);

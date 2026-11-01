@@ -7,9 +7,11 @@
 
 // this is a main.
 // ignore: prefer_relative_imports
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
+import 'package:dcli_scripts/src/clean/mariadb_cleaner.dart';
 import 'package:dcli_scripts/src/clean/project_cleaner.dart';
 import 'package:dcli_scripts/src/clean/workspace_report.dart';
 import 'package:dcli_scripts/src/git/git_gc.dart';
@@ -17,6 +19,7 @@ import 'package:dcli_scripts/src/hog/disk_hog.dart';
 import 'package:path/path.dart';
 
 const _minimumUnusedAge = Duration(hours: 8);
+const _mariaDbUnusedAge = Duration(days: 30);
 
 /// Cleans up disk space usage.
 /// Cleans unused entries, including hidden entries, out of /tmp and local caches.
@@ -33,6 +36,7 @@ void main(List<String> args) {
   }
   Shell.current.releasePrivileges();
 
+  _cleanCodexMariaDbData();
   _reportWorkspaces();
   _cleanCaches();
 
@@ -43,6 +47,22 @@ void main(List<String> args) {
     onDelete: (path) => print('Deleting $path'),
     onError: (path, exception) =>
         printerr(yellow('Unable to clean $path: $exception')),
+    onPermissionDenied: (artifact) {
+      if (basename(artifact.path) != 'node_modules' ||
+          !isWithin(projectRoot.path, artifact.path) ||
+          FileSystemEntity.typeSync(artifact.path, followLinks: false) !=
+              FileSystemEntityType.directory ||
+          !File(join(artifact.parent.path, 'package.json')).existsSync()) {
+        throw FileSystemException('Invalid Node artifact', artifact.path);
+      }
+      try {
+        Shell.current.withPrivileges(
+          () => artifact.deleteSync(recursive: true),
+        );
+      } finally {
+        Shell.current.releasePrivileges();
+      }
+    },
   );
   print('Deleted $deletedArtifacts project artifact directories');
 
@@ -111,6 +131,111 @@ void main(List<String> args) {
   } finally {
     Shell.current.releasePrivileges();
   }
+}
+
+void _cleanCodexMariaDbData() {
+  print(blue('Cleaning Codex MariaDB data unused for 30 days..'));
+  List<String>? bindSources;
+  try {
+    try {
+      Shell.current.withPrivileges(() {
+        bindSources = _dockerBindSources();
+      });
+    } finally {
+      Shell.current.releasePrivileges();
+    }
+  } on ProcessException catch (exception) {
+    printerr(yellow('Skipping MariaDB cleanup: $exception'));
+    return;
+  }
+  if (bindSources == null || which('lsof').notfound) {
+    printerr(yellow('Skipping MariaDB cleanup: Docker or lsof is unavailable'));
+    return;
+  }
+
+  var deleted = 0;
+  final cutoff = DateTime.now().subtract(_mariaDbUnusedAge);
+  try {
+    for (final data in findCodexMariaDbData(Directory(HOME))) {
+      try {
+        try {
+          Shell.current.withPrivileges(() {
+            if (deleteStaleMariaDbData(
+              data,
+              cutoff: cutoff,
+              isInUse: (candidate) =>
+                  _isDockerMounted(candidate, bindSources!) ||
+                  _hasOpenFiles(candidate),
+            )) {
+              deleted++;
+              print('Deleting ${data.path}');
+            }
+          });
+        } finally {
+          Shell.current.releasePrivileges();
+        }
+      } on FileSystemException catch (exception) {
+        printerr(yellow('Unable to clean ${data.path}: $exception'));
+      }
+    }
+  } on FileSystemException catch (exception) {
+    printerr(yellow('Unable to discover Codex MariaDB data: $exception'));
+  }
+  print('Deleted $deleted stale MariaDB data directories');
+}
+
+List<String>? _dockerBindSources() {
+  final containers = Process.runSync('docker', ['ps', '-aq']);
+  if (containers.exitCode != 0) {
+    return null;
+  }
+  final ids = (containers.stdout as String)
+      .split('\n')
+      .where((id) => id.isNotEmpty)
+      .toList();
+  if (ids.isEmpty) {
+    return <String>[];
+  }
+  final inspection = Process.runSync('docker', ['inspect', ...ids]);
+  if (inspection.exitCode != 0) {
+    return null;
+  }
+  Object? decoded;
+  try {
+    decoded = jsonDecode(inspection.stdout as String);
+  } on FormatException {
+    return null;
+  }
+  if (decoded is! List) {
+    return null;
+  }
+  final sources = <String>[];
+  for (final container in decoded) {
+    if (container is! Map || container['Mounts'] is! List) {
+      return null;
+    }
+    for (final mount in container['Mounts'] as List) {
+      if (mount is Map &&
+          mount['Type'] == 'bind' &&
+          mount['Source'] is String) {
+        sources.add(mount['Source'] as String);
+      }
+    }
+  }
+  return sources;
+}
+
+bool _isDockerMounted(Directory data, List<String> bindSources) =>
+    bindSources.any((source) =>
+        source == data.path ||
+        isWithin(source, data.path) ||
+        isWithin(data.path, source));
+
+bool _hasOpenFiles(Directory data) {
+  final result = Process.runSync('lsof', ['-w', '-Fn', '+D', data.path]);
+  return result.exitCode != 1 ||
+      (result.stdout as String).trim().isNotEmpty ||
+      (result.stderr as String).trim().isNotEmpty;
 }
 
 void _reportWorkspaces() {

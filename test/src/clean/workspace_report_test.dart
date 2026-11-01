@@ -161,6 +161,26 @@ void main() {
     expect(report().git.single, contains('Git status unavailable'));
   });
 
+  test('private MariaDB data is reported without listing its contents', () {
+    final repo = committedRepo('database');
+    final data = Directory(join(repo.path, 'mariadb-data'))..createSync();
+    File(join(data.path, 'ibdata1')).writeAsStringSync('database');
+    Process.runSync('chmod', ['000', data.path]);
+    final errors = <Object>[];
+    try {
+      final reports = reportOldCodexWorkspaces(
+        home,
+        now: now,
+        onError: (path, exception) => errors.add(exception),
+      );
+      expect(errors, isEmpty);
+      expect(reports.single.reasons,
+          contains('MariaDB data requires separate cleanup: mariadb-data'));
+    } finally {
+      Process.runSync('chmod', ['700', data.path]);
+    }
+  });
+
   test('discovers bounded direct and date/task units, never symlinks', () {
     final direct = workspace('.codex/workspaces/first');
     final worktree = workspace('git/.codex.workspaces/second');
